@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="9Hx-VO-eKk">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Url Preview View Controller-->
+        <scene sceneID="9ad-H1-4Se">
+            <objects>
+                <viewController storyboardIdentifier="UrlPreviewView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Hx-VO-eKk" customClass="UrlPreviewViewController" customModule="Treem" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GBF-Sv-Imv"/>
+                        <viewControllerLayoutGuide type="bottom" id="KQB-qb-ceT"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="pG5-xy-IXx">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RhT-gp-YoT">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
+                                <subviews>
+                                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Header" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W4E-HG-frq" customClass="CopyableLabel" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="5" y="5" width="590" height="20"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="1Rs-NH-eGV"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="16"/>
+                                        <color key="textColor" red="0.23921568627450979" green="0.2627450980392157" blue="0.27058823529411763" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView hidden="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="seP-VR-i5K">
+                                        <rect key="frame" x="5" y="45" width="590" height="0.0"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" id="btn-bw-VZ4"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nU8-iD-19M" customClass="CopyableLabel" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="5" y="30" width="590" height="15"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="15" id="RBb-xF-Zjv"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="W4E-HG-frq" firstAttribute="top" secondItem="RhT-gp-YoT" secondAttribute="top" constant="5" id="7TB-wN-fyr"/>
+                                    <constraint firstAttribute="trailing" secondItem="W4E-HG-frq" secondAttribute="trailing" constant="5" id="9Gh-5p-PBH"/>
+                                    <constraint firstAttribute="trailing" secondItem="nU8-iD-19M" secondAttribute="trailing" constant="5" id="CUj-25-OyJ"/>
+                                    <constraint firstItem="seP-VR-i5K" firstAttribute="leading" secondItem="RhT-gp-YoT" secondAttribute="leading" constant="5" id="QnX-l1-IsP"/>
+                                    <constraint firstItem="W4E-HG-frq" firstAttribute="leading" secondItem="RhT-gp-YoT" secondAttribute="leading" constant="5" id="TLd-gB-UhL"/>
+                                    <constraint firstItem="seP-VR-i5K" firstAttribute="top" secondItem="nU8-iD-19M" secondAttribute="bottom" id="dxD-3a-DJa"/>
+                                    <constraint firstItem="nU8-iD-19M" firstAttribute="leading" secondItem="RhT-gp-YoT" secondAttribute="leading" constant="5" id="fXt-u3-b8g"/>
+                                    <constraint firstAttribute="trailing" secondItem="seP-VR-i5K" secondAttribute="trailing" constant="5" id="m9Y-jC-W2I"/>
+                                    <constraint firstAttribute="bottom" secondItem="seP-VR-i5K" secondAttribute="bottom" constant="5" id="mQa-0a-ZwL"/>
+                                    <constraint firstAttribute="height" constant="45" id="sWI-pe-vNc"/>
+                                    <constraint firstItem="nU8-iD-19M" firstAttribute="top" secondItem="W4E-HG-frq" secondAttribute="bottom" constant="5" id="yqs-TJ-6hw"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="sWI-pe-vNc"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="RhT-gp-YoT" firstAttribute="top" secondItem="GBF-Sv-Imv" secondAttribute="bottom" id="MLq-Ap-icY"/>
+                            <constraint firstAttribute="trailing" secondItem="RhT-gp-YoT" secondAttribute="trailing" id="hI7-rJ-bYv"/>
+                            <constraint firstItem="RhT-gp-YoT" firstAttribute="leading" secondItem="pG5-xy-IXx" secondAttribute="leading" id="wKJ-nj-yRO"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="DescriptionLabelBottomSpacingConstraint" destination="dxD-3a-DJa" id="nqX-bu-wTK"/>
+                        <outlet property="HeaderLabelTopConstraint" destination="7TB-wN-fyr" id="D6r-5T-RvR"/>
+                        <outlet property="LinkDescriptionLabel" destination="nU8-iD-19M" id="yhF-1S-gNs"/>
+                        <outlet property="LinkHeaderLabel" destination="W4E-HG-frq" id="cLE-S7-tXT"/>
+                        <outlet property="LinkImageView" destination="seP-VR-i5K" id="ACQ-mS-3G4"/>
+                        <outlet property="PostUrlMainView" destination="RhT-gp-YoT" id="pGo-R8-WJB"/>
+                        <outlet property="linkDescriptionLabelHeightConstraint" destination="RBb-xF-Zjv" id="nLx-r1-567"/>
+                        <outlet property="linkDescriptionLabelTopConstraint" destination="yqs-TJ-6hw" id="YY6-EB-JPR"/>
+                        <outlet property="linkHeaderLabelHeightConstraint" destination="1Rs-NH-eGV" id="nEk-W6-2Di"/>
+                        <outlet property="linkHeaderLabelTopConstraint" destination="7TB-wN-fyr" id="csr-LF-0pz"/>
+                        <outlet property="linkImageViewHeightConstraint" destination="btn-bw-VZ4" id="Lsa-0k-oc0"/>
+                        <outlet property="linkImageViewTopConstraint" destination="dxD-3a-DJa" id="qbd-Qj-4Al"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8Uc-h2-NCO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="165" y="245"/>
+        </scene>
+    </scenes>
+</document>

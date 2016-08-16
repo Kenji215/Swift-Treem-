@@ -1,0 +1,245 @@
+//
+//  ChatListViewController.swift
+//  Treem
+//
+//  Created by Daniel Sorrell on 2/11/16.
+//  Copyright © 2016 Treem LLC. All rights reserved.
+//
+
+import UIKit
+import MediaPlayer
+
+class ChatListViewController : UITableViewController, UIViewControllerTransitioningDelegate {
+
+    private var chatSessions            :[ChatSession]? = nil
+    private var forwardColor            : UIColor? = nil
+    
+    private lazy var loadingMaskViewController   = LoadingMaskViewController.getStoryboardInstance()
+    
+    var mainDelegate                    : ChatViewController? = nil
+    
+    // used for loading a chat session directly
+    var existingSessionId               : String? = nil
+    var existingSessionName             : String? = nil
+    var initializeUserIds               : [Int]? = nil
+    var parentView                      : UIView? = nil
+    
+    let downloadOperations = DownloadContentOperations()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.tableView.separatorColor = UIColor.clearColor()
+        
+        self.checkForExistingChat()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        self.setMainHeader()
+        self.loadChatSession()
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let sessions = self.chatSessions {
+            return sessions.count
+        }
+        else {
+            return 0
+        }
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> ChatListTableViewCell {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("ChatListCell", forIndexPath: indexPath) as! ChatListTableViewCell
+        
+        cell.tag = indexPath.row
+        
+        if let sessions = self.chatSessions {
+            if(sessions.indices.contains(indexPath.row)){
+                let session = sessions[indexPath.row]
+                
+                if(session.unreadChats){ cell.indicatorImageView.tintColor = AppStyles.sharedInstance.indicatorActive}
+                else{ cell.indicatorImageView.hidden = true }
+                
+                var titleLength = 0
+                var appendString = ""
+                
+                let tempTitle = session.chatName
+                
+                if Device.sharedInstance.isResolutionSmallerThaniPhone5() {
+                    titleLength = 15
+                }
+                else if Device.sharedInstance.isResolutionSmallerThaniPhone6() {
+                    titleLength = 20
+                }
+                else if Device.sharedInstance.isResolutionSmallerThaniPhone6Plus() {
+                    titleLength = 30
+                }
+                else {
+                    titleLength = 35
+                }
+                
+                if tempTitle!.characters.count < titleLength {
+                    titleLength = tempTitle!.characters.count
+                }
+                else {
+                    appendString = "..."
+                }
+                
+                cell.chatNameLabel.text = (session.chatName!.substringWithRange(Range<String.Index>(start: tempTitle!.startIndex, end: tempTitle!.startIndex.advancedBy(titleLength)))) + appendString
+                
+                cell.startDateLabel.text = session.chatStart?.getRelativeShorthandDateFormattedString()
+                cell.dividerView.backgroundColor = AppStyles.sharedInstance.lightGrayColor
+                
+                if let creator = session.creator {
+                    cell.creatorNameLabel.text = creator.getFullName()
+                    
+                    
+                    // get avatar image
+                    if let avatarURL = creator.avatar, downloader = DownloadContentOperation(url: avatarURL, cacheKey: creator.avatarId) {
+                        downloader.completionBlock = {
+                            if let image = downloader.image where !downloader.cancelled {
+                                // perform UI changes back on the main thread
+                                dispatch_async(dispatch_get_main_queue(), {
+                                    
+                                    // check that the cell hasn't been reused
+                                    if (cell.tag == indexPath.row) {
+                                        
+                                        // if cell in view then animate, otherwise add if in table but not visible
+                                        if tableView.visibleCells.contains(cell) {
+                                            UIView.transitionWithView(
+                                                cell.avatarImageView,
+                                                duration: 0.1,
+                                                options: UIViewAnimationOptions.TransitionCrossDissolve,
+                                                animations: {
+                                                    cell.avatarImageView.image = image
+                                                },
+                                                completion: nil
+                                            )
+<<<<<<< HEAD
+                                        }
+                                        else {
+                                            cell.avatarImageView.image = image
+                                        }
+=======
+                                        }
+                                        else {
+                                            cell.avatarImageView.image = image
+                                        }
+>>>>>>> master
+                                    }
+                                })
+                            }
+                        }                    
+                        self.downloadOperations.startDownload(indexPath, downloadContentOperation: downloader)
+                    }
+                }
+                
+            }
+        }
+        
+        return cell
+    }
+    
+    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+
+        if let sessions = self.chatSessions {
+            if (sessions.indices.contains(indexPath.row)){
+                let session = sessions[indexPath.row]
+                
+                let chatSessionVC = ChatSessionViewController.getStoryboardInstance()
+                chatSessionVC.chatSessionId = session.sessionId
+                chatSessionVC.chatName = session.chatName
+                chatSessionVC.mainDelegate = self.mainDelegate
+                chatSessionVC.parentView = self.parentView
+                
+                self.navigationController?.pushViewController(chatSessionVC, animated: true)
+            }
+        }
+        
+        return indexPath
+    }
+    
+    
+    private func loadChatSession(){
+
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+            
+            self.showLoadingMask()
+            
+            // get view size
+            TreemChatService.sharedInstance.getAvailableChatSessions(
+                CurrentTreeSettings.sharedInstance.treeSession,
+                success: {
+                    data in
+                    
+                        self.chatSessions = ChatSession.loadChatSessions(data)
+                        self.tableView.reloadData()
+                        
+                        if(self.chatSessions != nil){
+                            self.cancelLoadingMask()
+                        }
+                        else{
+                            // new chat will need to cancel the loading mask
+                            self.navigateToNewChat()
+                        }
+                },
+                failure: {
+                    error, wasHandled in
+                    
+                    self.cancelLoadingMask()
+                }
+            )
+        }
+    }
+    
+    func showLoadingMask(completion: (() -> Void)? = nil) {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.loadingMaskViewController.queueLoadingMask(self.view, loadingViewAlpha: 1.0, showCompletion: completion)
+        }
+    }
+    
+    func cancelLoadingMask(completion: (() -> Void)? = nil) {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.loadingMaskViewController.cancelLoadingMask(completion)
+        }
+    }
+    
+    private func setMainHeader(){
+        if let wrapper = self.mainDelegate {
+            wrapper.mainHeaderLabel.text = "Chats"
+            
+            wrapper.removeTargetsAndHideButtons()
+            wrapper.optionsButton.hidden = false
+            wrapper.optionsButton.addTarget(self, action: "newChatTouchUpInside:", forControlEvents: .TouchUpInside)
+        }
+    }
+    
+    func newChatTouchUpInside(sender: UIButton){
+        self.navigateToNewChat()
+    }
+    
+    func navigateToNewChat(){
+        let vc = NewChatViewController.getStoryboardInstance()
+        vc.mainDelegate = self.mainDelegate
+        vc.chatListDelegate = self
+        vc.activeChats = (self.chatSessions != nil)
+        vc.parentView = self.parentView
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func checkForExistingChat(){
+     
+        if let existingId = self.existingSessionId {            
+            let chatSessionVC = ChatSessionViewController.getStoryboardInstance()
+            chatSessionVC.chatSessionId = existingId
+            chatSessionVC.chatName = self.existingSessionName
+            chatSessionVC.initializeUserIds = self.initializeUserIds
+            chatSessionVC.mainDelegate = self.mainDelegate
+            chatSessionVC.parentView = self.parentView
+            
+            self.navigationController?.pushViewController(chatSessionVC, animated: true)
+        }
+    }
+}

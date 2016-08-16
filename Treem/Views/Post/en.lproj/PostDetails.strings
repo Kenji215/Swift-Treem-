@@ -1,0 +1,23 @@
+
+/* Class = "UILabel"; text = "[FIRSTLASTNAME]"; ObjectID = "2eB-4H-e68"; */
+"2eB-4H-e68.text" = "[FIRSTLASTNAME]";
+
+/* Class = "UIButton"; normalTitle = "Post"; ObjectID = "eX3-By-XfQ"; */
+"eX3-By-XfQ.normalTitle" = "Post";
+
+/* Class = "UILabel"; text = "[Message]"; ObjectID = "hk6-TY-BlK"; */
+"hk6-TY-BlK.text" = "[Message]";
+
+/* Class = "UILabel"; text = "[DATE]"; ObjectID = "kjH-ds-g34"; */
+"kjH-ds-g34.text" = "[DATE]";
+
+/* Class = "UILabel"; text = "Post"; ObjectID = "mlF-bT-gOW"; */
+"mlF-bT-gOW.text" = "Post";
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "rgs-8u-BZi"; */
+"rgs-8u-BZi.normalTitle" = "Close";
+
+
+
+"comment_error_title" = "Error";
+"comment_error_message" = "There was an error adding your reply. Please try again later.";

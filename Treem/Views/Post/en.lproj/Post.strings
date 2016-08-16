@@ -1,0 +1,32 @@
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "CIw-Hz-W9f"; */
+"CIw-Hz-W9f.text" = "Title";
+
+/* Class = "UISegmentedControl"; LVo-Oo-M5U.segmentTitles[0] = "Text"; ObjectID = "LVo-Oo-M5U"; */
+"LVo-Oo-M5U.segmentTitles[0]" = "Text";
+
+/* Class = "UISegmentedControl"; LVo-Oo-M5U.segmentTitles[1] = "Link"; ObjectID = "LVo-Oo-M5U"; */
+"LVo-Oo-M5U.segmentTitles[1]" = "Link";
+
+/* Class = "UISegmentedControl"; LVo-Oo-M5U.segmentTitles[2] = "Image"; ObjectID = "LVo-Oo-M5U"; */
+"LVo-Oo-M5U.segmentTitles[2]" = "Image";
+
+/* Class = "UISegmentedControl"; LVo-Oo-M5U.segmentTitles[3] = "Media"; ObjectID = "LVo-Oo-M5U"; */
+"LVo-Oo-M5U.segmentTitles[3]" = "Media";
+
+/* Class = "UIViewController"; title = "Post"; ObjectID = "N5i-4C-1DP"; */
+"N5i-4C-1DP.title" = "Post";
+
+"post_message_placeholder" = "Write a message";
+
+"post_photo_placeholder" = "Write a message and add a photo";
+
+"post_setting_one_time" = "One time view";
+
+"post_setting_expires" = "Expires";
+
+"post_setting_hide_from_others" = "Hide from other branches";
+
+"post_video_placeholder" = "Write a message and add a video";
+
+"post_web_link_placeholder" = "Write a message and add a web link";

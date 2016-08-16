@@ -1,0 +1,1106 @@
+//
+//  FeedViewController.swift
+//  Treem
+//
+//  Created by Matthew Walker on 8/10/15.
+//  Copyright © 2015 Treem LLC. All rights reserved.
+//
+
+import UIKit
+import MediaPlayer
+
+class FeedViewController : PagedTableViewController, PostDelegate, UIViewControllerTransitioningDelegate, UIPopoverPresentationControllerDelegate {
+
+    //# MARK: - Variables
+
+    /* react count size constants */
+    static  let REACT_IMAGE_SIZE    : CGFloat = 16
+    private let REACT_FONT_SIZE     : CGFloat = 12
+    private let REACT_SPACING       : CGFloat = 10
+    
+    /* change reaction view size constants */
+    private let SET_REACT_SIZE              : CGFloat = 20
+    private let SET_REACT_WIDTH_SPACER      : CGFloat = 15
+    private let SET_REACT_HEIGHT_SPACER     : CGFloat = 5
+    private let SET_REACT_HEIGHT_PADDING    : CGFloat = 5
+    
+    /* branch layout size constants */
+    private let BRANCH_COLOR_SIZE   : CGFloat = 6
+    private let BRANCH_COLOR_SPACER : CGFloat = 4
+
+    // tagging int to designate current user
+    private let SELF_USER_ID = -999
+    
+    lazy var postUsers: Dictionary<Int, User> = [:]
+    lazy private var errorViewController = ErrorViewController.getStoryboardInstance()
+    
+    // delegates
+    var delegate            : PostDetailsViewController?    = nil
+    var postDelegate        : PostDelegate?                 = nil
+    var sharePostDelegate   : PostShareDelegate?            = nil
+
+    //Used for viewing individual posts rather than the entire feed if set to a non-zero value
+    var post_id = 0
+    var singlePostLoad: Bool {
+        return self.post_id > 0
+    }
+    var feedDate: NSDate? = nil
+
+    let downloadOperations = DownloadContentOperations()
+    
+    static func getStoryboardInstance() -> FeedViewController {
+        return UIStoryboard(name: "Feed", bundle: nil).instantiateInitialViewController() as! FeedViewController
+    }
+
+    //# MARK: - View Controller Override Methods
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+       /* If a post_id is set, then we wish to view an individual post, rather than a whole feed.
+        In that case we have to do some overrides of the standard behaviors.
+        */
+        if self.singlePostLoad {
+            self.getIndividualPost(self.post_id)
+
+            self.useRefreshControl = false
+        }
+        else {
+            self.emptyText = "No posts have been added"
+            
+            self.getPosts(self.pageIndex, pageSize: self.pageSize)
+
+            self.useRefreshControl = true
+
+            self.pagedDataCall = self.getPosts
+        }
+    }
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if let post = self.items[indexPath.row] as? Post {
+            return post.cellHeightLayout
+        }
+        
+        return self.tableView.rowHeight
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if (self.delegate?.hasLoadedPost == true) {
+            var heightSum : CGFloat = 0
+
+            let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forItem: 0, inSection: 0))
+
+            heightSum += (cell?.frame.height ?? 0)
+
+            var newFrame = self.tableView.frame
+            newFrame.size.height = heightSum
+            self.tableView.frame = newFrame
+        }
+    }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//
+//        //if (self.delegate?.hasLoadedPost == true) {
+//            var heightSum : CGFloat = 0
+//
+//            // TODO: change for single post item
+//            for var i = 0; i < self.items.count; i++ {
+//                let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forItem: i, inSection: 0))
+//
+//                heightSum += (cell?.frame.height ?? 0)
+//            }
+//
+//            var newFrame = self.tableView.frame
+//            newFrame.size.height = heightSum
+//            self.tableView.frame = newFrame
+//        //}
+//    }
+
+    //# MARK: - View Animation Methods
+
+    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+
+        return AppStyles.sharedInstance.directionUpViewAnimatedTransition
+    }
+
+    //# MARK: - Table View Override Methods
+
+    // perform asynchronous calls and constraint layouts
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> FeedTableViewCell {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("FeedCell", forIndexPath: indexPath) as! FeedTableViewCell
+        
+        cell.tag = indexPath.row
+        
+        // clear changed avatar image
+        cell.avatarImageView.image = UIImage(named: "Avatar")
+        
+        // store post options that can alter layout calculations below
+        var isSharedPost        = false
+
+        // update from post data
+        if let  post = self.items[indexPath.row] as? Post,
+                user = self.postUsers[post.userId]
+        {
+<<<<<<< HEAD
+            isSharedPost = post.isSharedPost
+=======
+            isShareable         = post.shareable
+            hasTaggedMembers    = post.currentUserTagged
+            hasMessage          = post.hasMessage
+            isSharedPost        = post.isSharedPost
+            cell.messageTextLabel.text  = post.message
+            
+            // tap on avatar to view profile
+            cell.avatarImageView.tag = user.isCurrentUser ? self.SELF_USER_ID : user.id
+            cell.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("profileTouchUpInside:")))
+            
+            // tap on name label to view profile
+            cell.nameLabel.tag = user.isCurrentUser ? self.SELF_USER_ID : user.id
+            cell.nameLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("profileTouchUpInside:")))
+>>>>>>> origin/master
+            
+            // get avatar image
+            if let avatarURL = user.avatar, downloader = DownloadContentOperation(url: avatarURL) {
+                downloader.completionBlock = {
+                    if let image = downloader.image {
+                        // check if cancelled
+                        if !downloader.cancelled {
+                            // perform UI changes back on the main thread
+                            dispatch_async(dispatch_get_main_queue(), {
+                                // check that the cell hasn't been reused
+                                if (cell.tag == indexPath.row) {
+                                    UIView.transitionWithView(
+                                        cell.avatarImageView,
+                                        duration: 0.1,
+                                        options: UIViewAnimationOptions.TransitionCrossDissolve,
+                                        animations: {
+                                            cell.avatarImageView.image = image
+                                        },
+                                        completion: nil
+                                    )
+                                }
+                            })
+                        }
+                    }
+                }
+                
+                downloader.qualityOfService = .Background
+                
+                self.downloadOperations.startDownload(indexPath, downloadContentOperation: downloader)
+            }
+            
+            // get attached content items
+            if  let contentItems    = post.contentItems where post.contentItems?.count > 0,
+                let contentItem     = contentItems[0] as? ContentItemDownload,
+                let contentURL      = contentItem.contentURL
+            {
+                let contentSize = post.getContentSize(contentItem)
+
+                cell.mediaContainerViewHeightConstraint.constant = contentSize.height
+
+                // clear previously added views
+                cell.mediaContainerView.subviews.forEach({ $0.removeFromSuperview() })
+                
+                if let downloader = DownloadContentOperation(url: contentURL) {
+                    downloader.completionBlock = {
+                        // check if cancelled
+                        if downloader.cancelled {
+                            return
+                        }
+                        
+                        if let image = downloader.image {
+                            // check that cell hasn't been reused
+                            if (cell.tag == indexPath.row) {
+                            
+                                // perform UI changes back on the main thread
+                                dispatch_async(dispatch_get_main_queue(), {
+
+                                    let imageView = UIImageView(image: image)
+                                    
+                                    // if image exceeds the size of the viewing area scale it
+                                    if image.size.width > contentSize.width || image.size.height > contentSize.height {
+                                        imageView.contentMode = .ScaleAspectFit
+                                    }
+                                        // else show it centered
+                                    else {
+                                        imageView.contentMode = .Center
+                                    }
+                                    
+                                    // if imageview is a thumbnail for a video add an action
+                                    imageView.userInteractionEnabled = true
+                                    imageView.addGestureRecognizer(MediaTapGestureRecognizer(target:self
+                                        , action: Selector("mediaThumbnailTap:")
+                                        , contentURL: nil                               // not returned in the service right now
+                                        , contentID: contentItem.contentID
+                                        , contentType: contentItem.contentType))
+                                    
+                                    imageView.frame = CGRectMake(0,0,cell.mediaContainerView.bounds.width,contentSize.height)
+                                    imageView.alpha = 0
+                                    
+                                    // add image view to parent
+                                    cell.mediaContainerView.addSubview(imageView)
+                                    
+                                    UIView.transitionWithView(
+                                        cell.mediaContainerView,
+                                        duration: 0.1,
+                                        options: .TransitionCrossDissolve,
+                                        animations: {
+                                            imageView.alpha = 1.0
+                                        },
+                                        completion: nil
+                                    )
+                                })
+                            }
+                        }
+                    }
+                    
+                    downloader.qualityOfService = .Background
+                    
+                    self.downloadOperations.startDownload(indexPath, downloadContentOperation: downloader)
+                }
+            }
+
+            if let post_user = self.postUsers[post.share_user_id] where isSharedPost, let url = post_user.avatar, downloader = DownloadContentOperation(url: url) {
+                downloader.completionBlock = {
+                    // check if cancelled
+                    if downloader.cancelled {
+                        return
+                    }
+                    
+                    if let image = downloader.image {
+                        // perform UI changes back on the main thread
+                        dispatch_async(dispatch_get_main_queue(), {
+                            // check that cell hasn't been reused and is visible
+                            if (cell.tag == indexPath.row) {
+                                // apply image if provided (placeholder image already provided)
+                                cell.shareAvatarImageView.image = image
+                            }
+                        })
+                    }
+                }
+                
+                downloader.qualityOfService = .Background
+                
+                self.downloadOperations.startDownload(indexPath, downloadContentOperation: downloader)
+            }
+            
+            var branchHexColors: [String] = []
+            
+            // set color if post from current user (if made in particular branch)
+            if let color = post.color {
+                branchHexColors.append(color)
+            }
+            // set color if post from another user (user can be on multiple branches)
+            else if let colors = user.colors {
+                for color in colors {
+                    branchHexColors.append(color)
+                }
+            }
+            
+            // hide both branche containers initially
+            cell.shareBranchesContainer.hidden = true
+            cell.branchesContainer.hidden = true
+            
+            if branchHexColors.count > 0 {
+                cell.branchesContainer.subviews.forEach({ $0.removeFromSuperview() })
+                
+                var xOrigin: CGFloat    = 0
+                var frame               = CGRectMake(0,ceil(cell.branchesContainer.bounds.height / 2 - self.BRANCH_COLOR_SIZE / 2),self.BRANCH_COLOR_SIZE,self.BRANCH_COLOR_SIZE)
+                let container           = isSharedPost ? cell.shareBranchesContainer : cell.branchesContainer
+                
+                // clear show/update branches
+                container.subviews.forEach({ $0.removeFromSuperview() })
+                container.hidden = false
+                
+                for hex in branchHexColors {
+                    // adjust frame for new origin
+                    frame.origin.x = xOrigin
+                    
+                    let view = UIView(frame: frame)
+                    view.backgroundColor    = UIColor(hex: hex)
+                    view.opaque             = true
+                    
+                    container.addSubview(view)
+                    
+                    xOrigin += (self.BRANCH_COLOR_SIZE + self.BRANCH_COLOR_SPACER)
+                }
+            }
+            
+            /*
+                Height Constraint Properties
+            */
+          
+            // share layout properties
+            cell.sharePostContainerTopConstraint.constant       = post.sharePosterTopMargin
+            cell.sharePosterContainerHeightConstraint.constant  = post.sharePosterHeight
+            cell.shareMessageTopConstraint.constant             = post.shareMessageTopMargin
+            cell.shareMessageBottomConstraint.constant          = post.shareMessageBottomMargin
+
+            // regular post layout properties
+
+            // tag button
+            cell.taggedButtonTopConstraint.constant             = post.taggedTopMargin
+            cell.taggedButtonHeightShowConstraint.constant      = post.taggedHeight
+            
+            // message
+            cell.messageTextBottomConstraint.constant           = post.messageBottomMargin
+            
+            // content attachments
+            cell.mediaContainerViewHeightConstraint.constant    = post.contentHeight
+            cell.mediaContainerBottomConstraint.constant        = post.contentBottomMargin
+            
+            // reactions
+            self.checkPostReactionCounts(cell, post: post)
+            
+            // post action height
+            cell.actionViewHeightConstraint.constant            = 0 // only changed after initial load
+            post.actionViewHeight                               = 0 // only changed after initial load
+        }
+        
+        // if single post loaded call delegate
+        if ((indexPath.row == (self.items.count - 1)) && self.post_id > 0) {
+            self.delegate?.hasLoadedPost = true
+        }
+        
+        return cell
+    }
+
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        super.tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
+
+        let cell = cell as! FeedTableViewCell
+        
+        // store post options that can alter layout calculations below
+        var isShareable         = false
+        var isSharedPost        = false
+        var hasTaggedMembers    = false
+        var hasMessage          = false
+        
+        // clear/reset values
+        cell.resetActionView()
+        
+        // remove profile gestures
+        cell.avatarImageView.gestureRecognizers?.removeAll(keepCapacity: false)
+        cell.nameLabel.gestureRecognizers?.removeAll(keepCapacity: false)
+        cell.shareAvatarImageView.gestureRecognizers?.removeAll(keepCapacity: false)
+        cell.shareNameLabel.gestureRecognizers?.removeAll(keepCapacity: false)
+        
+        // clear post option targets
+        cell.postOptionsButton.removeTarget(nil, action: nil, forControlEvents: .AllEvents)
+        cell.sharePostOptionsButton.removeTarget(nil, action: nil, forControlEvents: .AllEvents)
+        
+        if let post = self.items[indexPath.row] as? Post, user = self.postUsers[post.userId] {
+            hasTaggedMembers    = post.currentUserTagged
+            hasMessage          = post.hasMessage
+            isShareable         = post.shareable
+            isSharedPost        = post.isSharedPost
+            
+            // tap on avatar to view profile
+            let profileSelector = Selector("profileTouchUpInside:")
+            let userId = user.isCurrentUser ? self.SELF_USER_ID : user.id
+            
+            cell.avatarImageView.tag = userId
+            cell.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: profileSelector))
+            
+            // tap on name label to view profile
+            cell.nameLabel.tag = userId
+            cell.nameLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: profileSelector))
+            
+            // main post details
+            cell.nameLabel.text         = user.getFullName()
+            cell.dateLabel.text         = post.postDate?.getRelativeDateFormattedString()
+            cell.messageTextLabel.text  = post.message
+            
+            // custom styles (override main appearance styles)
+            cell.postOptionsButton.tintColor = AppStyles.sharedInstance.midGrayColor
+
+            // if shared post
+            if let post_user = self.postUsers[post.share_user_id] where isSharedPost {
+                let shareUserId = post_user.isCurrentUser ? self.SELF_USER_ID : post.share_user_id
+                
+                cell.sharePostOptionsButton.tintColor   = AppStyles.sharedInstance.midGrayColor
+
+                // tap on shared avatar to view profile
+                cell.shareAvatarImageView.tag = shareUserId
+                cell.shareAvatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: profileSelector))
+                
+                // tap on shared name label to view profile
+                cell.shareNameLabel.tag = shareUserId
+                cell.shareNameLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: profileSelector))
+                
+                cell.shareNameLabel.text    = post_user.getFullName() + " shared " + user.getFullName() + "'s post"
+                cell.shareDateLabel.text    = post.share_date?.getRelativeDateFormattedString()
+                cell.shareMessage.text      = post.share_message
+            }
+
+            // update comment button
+            self.setButtonCount(cell.commentsButton, count: post.commentCount, text: "Comment")
+            
+            // if viewing from the feed, "Comments" button will pop into the individual post view screen
+            if (self.post_id == 0) {
+                cell.commentsButton.tag = indexPath.row
+                cell.commentsButton.addTarget(self, action: "commentsTouchUpInside:", forControlEvents: .TouchUpInside)
+            }
+                //if viewing an individual post already, tap the comments button to move focus into the Add Reply textbox
+            else {
+                cell.commentsButton.addTarget(self, action: "addCommentTouchUpInside:", forControlEvents: .TouchUpInside)
+                
+                UIView.performWithoutAnimation({ () -> Void in
+                    cell.commentsButton.setTitle("Add comment", forState: .Normal)
+                    cell.commentsButton.layoutIfNeeded()
+                })
+            }
+            
+            // update react button
+            cell.reactButton.tag = indexPath.row
+            cell.reactButton.addTarget(self, action: "reactTouchUpInside:", forControlEvents: .TouchUpInside)
+            
+            // update shareable button
+            if post.shareable {
+                self.setButtonCount(cell.shareButton, count: post.shareCount, text: "Share")
+                
+                // add share button handler
+                cell.shareButton.tag = indexPath.row
+                cell.shareButton.addTarget(self, action: "shareTouchUpInside:", forControlEvents: .TouchUpInside)
+            }
+            
+            // update post options button
+            if post.isSharedPost {
+                cell.sharePostOptionsButton.tag = indexPath.row
+                cell.sharePostOptionsButton.addTarget(self, action: "viewPostOptionsShared:", forControlEvents: .TouchUpInside)
+            }
+            
+            cell.postOptionsButton.tag = indexPath.row
+            cell.postOptionsButton.addTarget(self, action: "viewPostOptions:", forControlEvents: .TouchUpInside)
+
+            // if view once call services to denote it has been seen
+            if post.viewOnce && !post.wasViewed {
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                    TreemFeedService.sharedInstance.setViewPost(
+                        CurrentTreeSettings.sharedInstance.treeSession,
+                        postId: post.postId,
+                        success: {
+                            data in
+
+                            post.wasViewed = true
+                        },
+                        failure: {
+                            _ in
+
+                            // do nothing
+                        }
+                    )
+                })
+            }
+        }
+        
+        var postBackgroundColor: UIColor
+        
+        if !isSharedPost {
+            postBackgroundColor = UIColor.whiteColor()
+            
+            cell.shareMessage.text          = nil
+            cell.postView.layer.borderWidth = 0
+        }
+        else {
+            postBackgroundColor = AppStyles.sharedInstance.lightGrayColor
+            
+            cell.postView.layer.borderWidth = 1.0
+            cell.postView.layer.borderColor = AppStyles.sharedInstance.dividerColor.CGColor
+        }
+        
+        // assign background based on shared/original post
+        cell.postView.backgroundColor               = postBackgroundColor
+        cell.nameLabel.backgroundColor              = postBackgroundColor
+        cell.messageTextLabel.backgroundColor       = postBackgroundColor
+        cell.postOptionsButton.backgroundColor      = postBackgroundColor
+        cell.taggedButton.backgroundColor           = postBackgroundColor
+        cell.posterContainerView.backgroundColor    = postBackgroundColor
+        cell.dateLabel.backgroundColor              = postBackgroundColor
+        cell.branchesContainer.backgroundColor      = postBackgroundColor
+        
+        cell.messageTextLabel.hidden = !hasMessage
+
+        // share button
+        cell.shareMessage.hidden            = !isSharedPost
+        cell.sharePosterContainer.hidden    = !isSharedPost
+        
+        // show share option if post is shareable
+        cell.shareButton.hidden                     = !isShareable
+        cell.secondVerticalDividerView.hidden       = !isShareable
+        
+        if !hasMessage {
+            cell.messageTextLabel.text = nil
+        }
+        
+        cell.taggedButton.hidden = !hasTaggedMembers
+        
+        if hasTaggedMembers {
+            cell.taggedButton.tintColor = cell.taggedButton.titleColorForState(.Normal)
+        }
+    }
+    
+    override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        // check if cell at indexpath no longer visible
+        if tableView.indexPathsForVisibleRows?.indexOf(indexPath) == nil {
+
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+                #if DEBUG
+                    print("Cancel content loading for row: \(indexPath.row)")
+                #endif
+
+                // cancel the current download operations in the cell
+                self.downloadOperations.cancelDownloads(indexPath)
+            }
+        }
+    }
+
+    //# MARK: - Feed Methods
+
+    func shareTouchUpInside(sender: UIButton){
+        if sender.tag < self.items.count - 1 {
+            if let post = self.items[sender.tag] as? Post {
+                let vc = PostShareViewController.getStoryboardInstance()
+           
+                vc.post             = post
+                vc.shareDelegate    = self.sharePostDelegate
+                vc.postDelegate     = self
+           
+                self.presentViewController(vc, animated: true, completion: nil)
+            }
+        }
+    }
+
+    func viewPostOptionsShared(sender: UIButton) {
+        self.viewPostOptionsSelected(sender, sharedOptionsSelected: true)
+    }
+    
+    func viewPostOptions(sender: UIButton){
+        self.viewPostOptionsSelected(sender, sharedOptionsSelected: false)
+    }
+    
+    private func viewPostOptionsSelected(sender: UIButton, sharedOptionsSelected: Bool) {
+        if sender.tag < self.items.count - 1 {
+            if let post = self.items[sender.tag] as? Post {
+                //The size of the popover is being set when creating the instance.
+                let popover = PostOptionsViewController.getStoryboardInstance()
+                
+                popover.postForOptions      = post
+                popover.sharedSelected      = sharedOptionsSelected
+                popover.delegate            = self
+                
+                if let popoverMenuView = popover.popoverPresentationController {
+                    popoverMenuView.permittedArrowDirections    = .Up
+                    popoverMenuView.delegate                    = self
+                    popoverMenuView.sourceView                  = sender
+                    popoverMenuView.sourceRect                  = CGRect(x: sender.bounds.width * 0.5, y: sender.bounds.height * 0.5, width: 0, height: 0)
+                    popoverMenuView.backgroundColor             = UIColor.whiteColor()
+                    
+                    self.presentViewController(popover, animated: true, completion: nil)
+                }
+            }
+        }
+    }
+
+    func commentsTouchUpInside(sender: UIButton) {
+        if sender.tag < self.items.count - 1 {
+            if let post = self.items[sender.tag] as? Post {
+                let vc = PostDetailsViewController.getStoryboardInstance()
+
+                vc.postID                   = post.postId
+                vc.transitioningDelegate    = self
+                vc.inNavController          = true
+
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+    }
+
+    func addCommentTouchUpInside(sender: UIButton) {
+        self.delegate?.focusAddReplyTextField()
+    }
+    
+    private func getPosts(page: Int, pageSize: Int) {
+        self.showLoadingMask()
+        
+        var f_date: NSDate? = nil
+        
+        // if first page, generate new feed date
+        if page <= self.initialPageIndex {
+            f_date = NSDate()
+            
+            self.feedDate = f_date
+        }
+        else if let date = self.feedDate {
+            f_date = date
+        }
+
+        TreemFeedService.sharedInstance.getPosts(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            page: page,
+            pageSize: pageSize,
+            date: f_date,
+            failureCodesHandled: nil,
+            success: {
+                data in
+
+                let postData = Post.getPostsFromData(data)
+
+                self.postUsers.merge(postData.users)
+                self.setData(postData.posts)
+
+                self.cancelLoadingMask()
+            },
+            failure: {
+                error, wasHandled in
+
+                self.cancelLoadingMask()
+            }
+        )
+    }
+
+    private func getIndividualPost(post_id: Int) {
+        self.errorViewController.removeErrorView()
+
+        self.showLoadingMask()
+        
+        TreemFeedService.sharedInstance.getPostDetails(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            postID: post_id,
+            success: {
+                data in
+
+                if (data.count > 0) {
+                    let postData = Post.getPostDetailsFromData(data)
+
+                    self.postUsers = postData.users
+                    self.setData(postData.posts)
+
+                    self.cancelLoadingMask()
+                }
+                else { //The post ID passed was invalid (or we otherwise got no data), so back out of the view
+                    if (self.delegate != nil) {
+                        self.delegate?.closeDetailsView()
+                    }
+                }
+
+            },
+            failure: {
+                error, wasHandled in
+
+                self.cancelLoadingMask()
+            }
+        )
+    }
+
+    func mediaThumbnailTap(sender: MediaTapGestureRecognizer) {
+        if let cType = sender.contentType {
+            if(cType == .Video){                
+                let vc = MediaVideoViewController.getStoryboardInstance()
+                
+                vc.contentId = sender.contentID
+                
+                self.navigationController?.presentViewController(vc, animated: true, completion: nil)
+            }
+            else{
+                
+                let vc = MediaImageViewController.getStoryboardInstance()
+                
+                vc.contentId = sender.contentID
+                
+                self.navigationController?.presentViewController(vc, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func profileTouchUpInside(sender: UITapGestureRecognizer) {
+        if let tag = sender.view?.tag {
+            // assume current user
+            if tag == self.SELF_USER_ID {
+                let vc = ProfileViewController.getStoryboardInstance()
+                
+                vc.isPresenting = true
+                
+                self.presentViewController(vc, animated: true, completion: nil)
+            }
+            else {
+                let vc = MemberProfileViewController.getStoryboardInstance()
+                
+                // only one user can be send to the profile page
+                vc.userId = sender.view?.tag
+                
+                vc.friendChangeCallback = {
+                    if let refresh = self.refreshControl {
+                        refresh.beginRefreshing()
+                        self.tableView.setContentOffset(CGPointMake(0, self.tableView.contentOffset.y - refresh.frame.size.height), animated: true)
+                        refresh.sendActionsForControlEvents(.ValueChanged)
+                    }
+                }
+                
+                self.presentViewController(vc, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    private func setButtonCount(button: UIButton, count: Int, text: String) {
+        var countText: String
+
+        if(count > 0){
+            countText = "(" + count.description + ")"
+        }
+        else {
+            countText = ""
+        }
+        
+        UIView.performWithoutAnimation({
+            button.setTitle(text + countText, forState: .Normal)
+            button.layoutIfNeeded()
+        })
+    }
+    
+    private func updateCellHeight(cell: FeedTableViewCell, completion: ((Bool)->())? = nil) {
+        // update cell content layout
+        UIView.animateWithDuration(0.25, animations: {
+            cell.contentView.layoutIfNeeded()
+            },
+            completion: completion
+        )
+
+        // update table layout
+        
+        
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
+    }
+
+    //# MARK: - Post Reaction Methods
+    
+    private func checkPostReactionCounts(cell: FeedTableViewCell, post: Post) {
+        var xPos        = CGFloat(0)
+        
+        // clear existing subviews
+        cell.reactContainerView.subviews.forEach({ $0.removeFromSuperview() })
+        
+        // check for reactions
+        if let reacts = post.reactCounts {
+            let rCnt        = reacts.count
+            let labelFont   = UIFont.systemFontOfSize(self.REACT_FONT_SIZE)
+            
+            for(var x = 0; x < rCnt; ++x){
+                let reaction    = reacts[x]
+                let text        = reaction.count.description
+                
+                if (x > 0) {
+                    xPos += self.REACT_SPACING
+                }
+                
+                // add react smiley imageview
+                let reactFrame      = CGRectMake(xPos,0,FeedViewController.REACT_IMAGE_SIZE,FeedViewController.REACT_IMAGE_SIZE)
+                let reactImageView  = UIImageView(frame: reactFrame)
+                
+                reactImageView.image    = FeedViewController.getReactionImage(reaction.react)
+                reactImageView.opaque   = false
+                
+                cell.reactContainerView.addSubview(reactImageView)
+                
+                xPos += (FeedViewController.REACT_IMAGE_SIZE + 2)
+                
+                // add react smiley number count
+                let reactLabelFrame = CGRectMake(xPos, 0, text.widthWithConstrainedHeight(FeedViewController.REACT_IMAGE_SIZE, font: labelFont), FeedViewController.REACT_IMAGE_SIZE)
+                let reactLabel      = UILabel(frame: reactLabelFrame)
+                
+                reactLabel.textAlignment    = NSTextAlignment.Left
+                
+                reactLabel.text             = text
+                reactLabel.font             = labelFont
+                reactLabel.textColor        = UIColor(red: 153/255.0, green: 153/255.0, blue: 153/255.0, alpha: 1)
+                reactLabel.opaque           = false
+                reactLabel.backgroundColor  = UIColor.whiteColor()
+                
+                cell.reactContainerView.addSubview(reactLabel)
+                
+                xPos += reactLabelFrame.width
+            }
+        }
+        
+        // set react container height
+        cell.reactContainerViewTopConstraint.constant       = post.reactTopMargin
+        cell.reactContainerViewWidthConstraint.constant     = xPos
+        cell.reactContainerViewHeightConstraint.constant    = post.reactHeight
+        cell.reactContainerViewBottomConstraint.constant    = post.reactBottomMargin
+    }
+    
+    static func getReactionImage(react: Post.ReactionType) -> UIImage {
+        var name: String!
+        
+        switch(react){
+        case Post.ReactionType.Happy            : name = "Happy"
+        case Post.ReactionType.Cool             : name = "Cool"
+        case Post.ReactionType.Angry            : name = "Angry"
+        case Post.ReactionType.Sad              : name = "Sad"
+        case Post.ReactionType.Love             : name = "Love"
+        case Post.ReactionType.Silly            : name = "Silly"
+        case Post.ReactionType.Hilarious        : name = "Hilarious"
+        case Post.ReactionType.Amazed           : name = "Amazed"
+        case Post.ReactionType.Worried          : name = "Worried"
+        }
+        
+        return UIImage(named: name)!
+    }
+    
+    func reactTouchUpInside(sender: UIButton){
+        if sender.tag < self.items.count - 1 {
+            let indexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
+            
+            if let post = self.items[sender.tag] as? Post, cell = self.tableView.cellForRowAtIndexPath(indexPath) as? FeedTableViewCell {
+                
+                // show/hide action view
+                self.toggleReactionSetView(post, cell: cell, indexPath: indexPath)
+            }
+        }
+    }
+    
+    func toggleReactionSetView(post: Post, cell: FeedTableViewCell, indexPath: NSIndexPath) {
+        var actionViewHeight: CGFloat = 0
+        
+        // show react action items
+        if post.actionViewHeight < 1 {
+            // action view references
+            let actionViewWidth         : CGFloat = cell.actionView.frame.width
+            
+            var xPos: CGFloat = 0
+            var yPos: CGFloat = self.SET_REACT_HEIGHT_PADDING
+            
+            cell.actionView.backgroundColor = AppStyles.sharedInstance.darkGrayColor
+            cell.reactButton.setTitleColor(AppStyles.sharedInstance.darkGrayColor, forState: .Normal)
+            
+            cell.actionView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // add none label first
+            let noneButton = ReactionButton()
+            
+            // set properties
+            noneButton.tag          = indexPath.row
+            noneButton.reaction     = nil
+            noneButton.tintColor    = UIColor.whiteColor()
+            noneButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+            noneButton.setTitle("None", forState: .Normal)
+            noneButton.titleLabel?.font     = UIFont.systemFontOfSize(cell.actionViewFontSize)
+            noneButton.contentEdgeInsets    = UIEdgeInsetsMake(self.SET_REACT_HEIGHT_SPACER, self.SET_REACT_WIDTH_SPACER, self.SET_REACT_HEIGHT_SPACER, self.SET_REACT_WIDTH_SPACER)
+            noneButton.addTarget(self, action: "reactionTypeTouchUpInside:", forControlEvents: .TouchUpInside)
+            
+            // size button frame to fit text
+            noneButton.sizeToFit()
+            
+            noneButton.frame = CGRectMake(xPos, yPos, noneButton.frame.width, self.SET_REACT_HEIGHT_SPACER * 2 + self.SET_REACT_SIZE)
+
+            // size label prior to animation
+            noneButton.layoutIfNeeded()
+            
+            xPos += noneButton.frame.width
+            
+            cell.actionView.addSubview(noneButton)
+            
+            var rows: CGFloat = 1
+            
+            // precalculate some of the values used in each loop iteration
+            let doubleHeightSpacer  = self.SET_REACT_HEIGHT_SPACER * 2
+            let halfWidthSpacer     = self.SET_REACT_WIDTH_SPACER * 0.5
+            let widthPerButton      = self.SET_REACT_SIZE + self.SET_REACT_WIDTH_SPACER
+            let heightPerButton     = self.SET_REACT_SIZE + doubleHeightSpacer
+            let reactFrame          = CGRectMake(halfWidthSpacer,self.SET_REACT_HEIGHT_SPACER,self.SET_REACT_SIZE,self.SET_REACT_SIZE)
+            
+            // add each reaction type image, check for additional rows as needed
+            for reaction in Post.ReactionType.allOrderedValues {
+                
+                // check if moving to next row
+                if (xPos + widthPerButton) > actionViewWidth - self.SET_REACT_HEIGHT_SPACER {
+                    yPos += heightPerButton
+                    xPos = noneButton.frame.width
+                    
+                    ++rows
+                }
+                // else adding to same row
+                
+                let reactButton         = ReactionButton()
+                reactButton.frame       = CGRectMake(xPos, yPos, widthPerButton, heightPerButton)
+                reactButton.reaction    = reaction
+                reactButton.tag         = indexPath.row
+                
+                // check if previously selected
+                if reaction == post.selfReact {
+                    reactButton.selected        = true
+                    cell.selectedReactionButton = reactButton
+                }
+                
+                reactButton.addTarget(self, action: "reactionTypeTouchUpInside:", forControlEvents: .TouchUpInside)
+                
+                let reactImageView      = UIImageView(frame: reactFrame)
+                reactImageView.image    = FeedViewController.getReactionImage(reaction)
+                
+                reactButton.addSubview(reactImageView)
+                
+                cell.actionView.addSubview(reactButton)
+                
+                xPos += widthPerButton
+            }
+
+            actionViewHeight = self.SET_REACT_HEIGHT_PADDING + self.SET_REACT_HEIGHT_SPACER + (rows * heightPerButton)
+        }
+            // hide react action items
+        else {
+            cell.resetActionView()
+        }
+        
+        // update height
+        post.actionViewHeight                       = actionViewHeight
+        cell.actionViewHeightConstraint.constant    = actionViewHeight
+        
+        self.updateCellHeight(cell)
+    }
+    
+    // touch on emoji to react to post
+    func reactionTypeTouchUpInside(sender: ReactionButton) {
+        // get post/cell for index
+        let indexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
+        
+        if let cell = self.tableView.cellForRowAtIndexPath(indexPath) as? FeedTableViewCell, post = self.items[sender.tag] as? Post
+        {
+            // ignore if selecting the already selected reaction
+            if sender.reaction != cell.selectedReactionButton?.reaction {
+                // deselect other button if selected
+                if let previousReaction = cell.selectedReactionButton {
+                    previousReaction.selected = false
+                }
+                
+                // select current button
+                sender.selected = true
+                
+                // assign new selected button
+                cell.selectedReactionButton = sender
+                
+                // if removing any post reaction
+                if sender.reaction == nil {
+                    self.removeReaction(cell, post: post, indexPath: indexPath)
+                }
+                    // else if setting/changing post reaction
+                else {
+                    self.setReaction(cell, post: post, indexPath: indexPath, reaction: sender.reaction!)
+                }
+            }
+            // reaction is same and no reaction entered
+            else if sender.reaction == nil {
+                sender.selected = true
+                
+                cell.resetActionView()
+                cell.actionViewHeightConstraint.constant = 0
+                post.actionViewHeight = 0
+                
+                // close reaction view (no service calls needed)
+                self.updateCellHeight(cell, completion: {
+                    _ in
+                    sender.selected = false
+                })
+            }
+        }
+    }
+    
+    private func removeReaction(cell: FeedTableViewCell, post: Post, indexPath: NSIndexPath) {
+        let loadMaskVC = LoadingMaskViewController.getStoryboardInstance()
+        
+        loadMaskVC.queueLoadingMask(cell.actionView, timeBeforeShowingMask: 0.1, showCompletion: nil)
+        loadMaskVC.view.backgroundColor = AppStyles.sharedInstance.darkGrayColor
+        loadMaskVC.activityColor        = AppStyles.sharedInstance.midGrayColor
+
+        TreemFeedService.sharedInstance.removePostReaction(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            postID: post.postId,
+            success: {
+                data in
+
+                // update reaction counts in post
+                post.changeSelfReaction(nil)
+
+                cell.resetActionView()
+                cell.actionViewHeightConstraint.constant = 0
+                post.actionViewHeight = 0
+                
+                // check that cell hasn't been reused
+                if (cell.tag == indexPath.row) {
+                    self.checkPostReactionCounts(cell, post: post)
+                    
+                    self.updateCellHeight(cell)
+                }
+            },
+            failure: {
+                error, wasHandled in
+
+                if !wasHandled {
+                    // cancel loading mask and return to view with alert
+                    loadMaskVC.cancelLoadingMask({
+                        CustomAlertViews.showGeneralErrorAlertView()
+                    })
+                }
+            }
+        )
+    }
+    
+    private func setReaction(cell: FeedTableViewCell, post: Post, indexPath: NSIndexPath, reaction: Post.ReactionType) {
+        let loadMaskVC = LoadingMaskViewController.getStoryboardInstance()
+
+        loadMaskVC.queueLoadingMask(cell.actionView, timeBeforeShowingMask: 0.1, showCompletion: nil)
+        loadMaskVC.view.backgroundColor = AppStyles.sharedInstance.darkGrayColor
+        loadMaskVC.activityColor        = AppStyles.sharedInstance.midGrayColor
+        
+        TreemFeedService.sharedInstance.setPostReaction (
+            CurrentTreeSettings.sharedInstance.treeSession,
+            postID: post.postId,
+            reaction: reaction,
+            success: {
+                data in
+                
+                // update reaction counts in post
+                post.changeSelfReaction(reaction)
+                
+                cell.resetActionView()
+                cell.actionViewHeightConstraint.constant = 0
+                post.actionViewHeight = 0
+                
+                // check that cell hasn't been reused
+                if (cell.tag == indexPath.row) {
+                    self.checkPostReactionCounts(cell, post: post)
+                    
+                    self.updateCellHeight(cell)
+                }
+            },
+            failure: {
+                error, wasHandled in
+                
+                if !wasHandled {
+                    // cancel loading mask and return to view with alert
+                    loadMaskVC.cancelLoadingMask({
+                        CustomAlertViews.showGeneralErrorAlertView()
+                    })
+                }
+            }
+        )
+    }
+    
+    //# MARK: - Post Delegate Methods
+    
+    func postWasDeleted(postID: Int) {
+        self.postDelegate?.postWasDeleted(postID)
+    }
+    
+    func postWasUpdated(post: Post) {
+        self.postDelegate?.postWasUpdated(post)
+    }
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .None
+    }
+}

@@ -1,0 +1,14 @@
+
+/* Class = "UIButton"; normalTitle = "Answer Different Question"; ObjectID = "Eoj-o7-UEg"; */
+"Eoj-o7-UEg.normalTitle" = "Answer Different Question";
+
+/* Class = "UITextView"; text = "Select the correct answer to prove you are human."; ObjectID = "MIM-g2-6R2"; */
+"MIM-g2-6R2.text" = "Select the correct answer to prove you are human.";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "eOM-bn-RWV"; */
+"eOM-bn-RWV.text" = "Title";
+
+"incorrect_answer_title" = "Incorrect Answer";
+"incorrect_answer_message" = "The answer selected is incorrect. A new question will be loaded.";
+"question_expired_title" = "Question Expired";
+"question_expired_message" = "Current question has expired, a new one will be loaded.";

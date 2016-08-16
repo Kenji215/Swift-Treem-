@@ -1,0 +1,294 @@
+//
+//  MainViewController.swift
+//  Treem
+//
+//  Created by Matthew Walker on 8/11/15.
+//  Copyright © 2015 Treem LLC. All rights reserved.
+//
+
+import UIKit
+
+class MainViewController: UIViewController, UINavigationControllerDelegate, UITabBarDelegate, EquityRewardsDelegate {
+    
+    @IBOutlet weak var homeBackgroundImageView: UIImageView!
+    
+    @IBOutlet weak var mainTabBar           : UITabBar!
+    @IBOutlet weak var treeTabBarButton     : UITabBarItem!
+    @IBOutlet weak var equityTabBarButton   : UITabBarItem!
+    @IBOutlet weak var alertsTabBarItem     : UITabBarItem!
+    @IBOutlet weak var settingsTabBarItem   : UITabBarItem!
+    
+    @IBOutlet weak var mainTabBarHeightConstraint   : NSLayoutConstraint!
+    private weak var embeddedNavigationController   : UINavigationController!
+    private weak var embeddedTreeViewController     : TreeViewController!
+    
+    private var lastSelectedTag: Int = 0
+    
+    private var initialTabBarHeightConstraint: CGFloat = 0
+    
+    var alertsData : (alerts: OrderedSet<Alert>, users: Dictionary<Int,User>)? = nil
+    
+    // don't allow this view to rotate
+    override func shouldAutorotate() -> Bool { return false }
+    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask { return [UIInterfaceOrientationMask.Portrait] }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        AppStyles.sharedInstance.setMainTabBarAppearance()
+        
+        // set self as delegate for the tab bar
+        self.mainTabBar.delegate              = self
+        
+        // set default tab option
+        self.mainTabBar.selectedItem = self.mainTabBar.items?.first
+        
+        self.initialTabBarHeightConstraint = self.mainTabBarHeightConstraint.constant
+        
+        self.getAlerts()
+        
+        // add swipe left/right to general view
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: "leftRightSwipeGesture:")
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(swipeLeft)
+        
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: "leftRightSwipeGesture:")
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return false
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "EmbedTreeGridSegue" {
+            // store nav controller and set self as delegate for views in child container
+            if let embedNavC = segue.destinationViewController as? UINavigationController {
+                self.embeddedNavigationController           = embedNavC
+                self.embeddedNavigationController.delegate  = self
+                
+                self.embeddedTreeViewController = embedNavC.viewControllers.first as! TreeViewController
+                self.embeddedTreeViewController.delegate = self
+                
+            }
+        }
+    }
+    
+    func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        
+        // Adding sub view to navigation controller
+        if (operation == .Push) {
+            // branch (likely most common use case)
+            if(toVC.isKindOfClass(BranchViewController)) {
+                self.mainTabBarHeightConstraint.constant = 0
+                self.mainTabBar.hidden = true
+                
+                return AppStyles.sharedInstance.directionUpViewAnimatedTransition
+            }
+                // secret tree login
+            else if(toVC.isKindOfClass(SecretTreeLoginViewController)) {
+                return AppStyles.sharedInstance.directionUpViewAnimatedTransition
+            }
+                // secret tree signup
+            else if(toVC.isKindOfClass(SecretTreeSignupViewController)) {
+                return AppStyles.sharedInstance.directionLeftViewAnimatedTransition
+            }
+                // trunk
+            else if(toVC.isKindOfClass(TrunkMembersViewController)) {
+                return AppStyles.sharedInstance.directionUpViewAnimatedTransition
+            }
+            else {
+                let currentIndex    = self.lastSelectedTag
+                let newIndex        = self.mainTabBar.selectedItem?.tag ?? 0
+                
+                if(newIndex < currentIndex) {
+                    return AppStyles.sharedInstance.directionRightViewAnimatedTransition
+                }
+                else if (newIndex == currentIndex) {
+                    return AppStyles.sharedInstance.fadeInViewAnimationTransition
+                }
+                else {
+                    return AppStyles.sharedInstance.directionLeftViewAnimatedTransition
+                }
+            }
+        }
+            // Removing top view controller from navigation controller
+        else if (operation == .Pop) {
+            // branch
+            if(fromVC.isKindOfClass(BranchViewController)) {
+                self.mainTabBarHeightConstraint.constant = self.initialTabBarHeightConstraint
+                self.mainTabBar.hidden = false
+                
+                return AppStyles.sharedInstance.directionDownViewAnimatedTransition
+            }
+                // secret tree login
+            else if(fromVC.isKindOfClass(SecretTreeLoginViewController)) {
+                return AppStyles.sharedInstance.directionDownViewAnimatedTransition
+            }
+                // secret tree signup
+            else if(fromVC.isKindOfClass(SecretTreeSignupViewController)) {
+                return AppStyles.sharedInstance.directionRightViewAnimatedTransition
+            }
+                // trunk
+            else if(fromVC.isKindOfClass(TrunkMembersViewController)) {
+                return AppStyles.sharedInstance.directionDownViewAnimatedTransition
+            }
+            else {
+                return AppStyles.sharedInstance.directionRightViewAnimatedTransition
+            }
+        }
+        
+        return nil
+    }
+    
+    private func showTopBarViewController(viewController: UIViewController, viewControllerClass: AnyClass) {
+        // make sure not already open
+        if !self.embeddedNavigationController.topViewController!.isKindOfClass(viewControllerClass) {
+            
+            //            // clear prior view controller (if any)
+            //            self.embeddedNavigationController.popToRootViewControllerAnimated(true)
+            
+            self.embeddedNavigationController.pushViewController(viewController, animated: true)
+        }
+    }
+    
+    func showAddMembers() {
+        self.embeddedTreeViewController.forceShowAllMembersView()
+    }
+    
+    //Some users are not allowed to earn equity. In that case, hide and disable the button that goes to the equity screen
+    func showHideEquityButton(bEnable: Bool) {
+        self.equityTabBarButton.enabled = bEnable
+        
+        if (bEnable) {
+            self.equityTabBarButton.image = UIImage(named: "Equity")
+            self.equityTabBarButton.title = "Equity"
+        }
+        else {
+            self.equityTabBarButton.image = nil
+            self.equityTabBarButton.title = nil
+        }
+    }
+    
+    func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem) {
+<<<<<<< HEAD
+=======
+        
+>>>>>>> master
+        switch(item) {
+            
+        case self.equityTabBarButton:
+            let vc = EquityRewardsViewController.getStoryboardInstance()
+            
+            vc.delegate = self
+            
+            self.showTopBarViewController(vc, viewControllerClass: EquityRewardsViewController.self)
+            
+        case self.alertsTabBarItem:
+            let vc = AlertsViewController.getStoryboardInstance()
+            
+            vc.delegate = self
+            vc.alertDelegate = self.embeddedTreeViewController
+            
+            self.showTopBarViewController(vc, viewControllerClass: AlertsViewController.self)
+            
+        case self.settingsTabBarItem:
+            self.showTopBarViewController(SettingsViewController.getStoryboardInstance(), viewControllerClass: SettingsViewController.self)
+            
+        default: // tree
+            
+            // if already on tree
+            if self.lastSelectedTag == item.tag {
+                if let treeVC = self.embeddedNavigationController.viewControllers.first as? TreeViewController {
+                    treeVC.reloadTree()
+                }
+            }
+            else {
+                self.embeddedNavigationController.popToRootViewControllerAnimated(true)
+            }
+        }
+        
+        self.lastSelectedTag = item.tag
+    }
+    
+    //Get the first page of alerts, to check if there are any unread, as well as to pre-load the Alerts view
+    func getAlerts() {
+        
+        let currentTreeSession = CurrentTreeSettings.sharedInstance.treeSession
+        
+        currentTreeSession.treeID = TreeViewController.mainTreeID // alerts only from initial tree
+        
+        TreemAlertService.sharedInstance.getAlerts(
+            currentTreeSession,
+            page: 0,
+            pageSize: 20,
+            failureCodesHandled: nil,
+            success: {
+                data in
+                
+                //Store the first page of alerts so that the Alerts view can be pre-loaded
+                self.alertsData = Alert.getAlertsFromData(data)
+                
+                //Check if there are any unread alerts in that bunch
+                let alerts = self.alertsData!.alerts
+                let unreadCount = alerts.reduce(0) {
+                    return $0 + Int(!($1.alert_viewed!))
+                }
+                
+                //If so, add a badge indicating the count of unread alerts
+                if (unreadCount > 0) {
+                    self.alertsTabBarItem.badgeValue = String(unreadCount)
+                }
+                
+            },
+            failure: {
+                error, wasHandled in
+            }
+        )
+    }
+    
+    func leftRightSwipeGesture(gesture: UIGestureRecognizer) {
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            if var selectTag = self.mainTabBar.selectedItem?.tag {
+                let lastIndex = self.mainTabBar.items!.count - 1
+                
+                switch swipeGesture.direction {
+                case UISwipeGestureRecognizerDirection.Right:
+                    
+                    if selectTag == 0 {
+                        selectTag = lastIndex
+                    }
+                    else {
+                        --selectTag
+                    }
+                    
+                    let selectedItem = self.mainTabBar.items![selectTag]
+                    
+                    self.mainTabBar.selectedItem = selectedItem
+                    self.tabBar(self.mainTabBar, didSelectItem: selectedItem)
+                    
+                case UISwipeGestureRecognizerDirection.Left:
+                    if selectTag == lastIndex {
+                        selectTag = 0
+                    }
+                    else {
+                        ++selectTag
+                    }
+                    
+                    let selectedItem = self.mainTabBar.items![selectTag]
+                    
+                    self.mainTabBar.selectedItem = selectedItem
+                    self.tabBar(self.mainTabBar, didSelectItem: selectedItem)
+                    
+                default:
+                    break
+                }
+            }
+        }
+    }
+}

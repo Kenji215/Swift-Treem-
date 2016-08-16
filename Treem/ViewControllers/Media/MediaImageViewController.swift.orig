@@ -1,0 +1,99 @@
+//
+//  MediaImageViewController.swift
+//  Treem
+//
+//  Created by Daniel Sorrell on 1/18/16.
+//  Copyright © 2016 Treem LLC. All rights reserved.
+//
+
+import UIKit
+import SwiftyJSON
+
+class MediaImageViewController: UIViewController, UIScrollViewDelegate {
+
+    var contentId              : Int? = nil
+    var contentUrl             : NSURL? = nil
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var imageView: UIImageView!    
+    @IBOutlet weak var closeButton: UIButton!
+    
+    @IBAction func closeButtonTouchUpInside(sender: AnyObject) {
+        self.dismissView()
+    }
+    
+    static func getStoryboardInstance() -> MediaImageViewController {
+        return UIStoryboard(name: "MediaImage", bundle: nil).instantiateInitialViewController() as! MediaImageViewController
+    }
+    
+    override func prefersStatusBarHidden() -> Bool { return true }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.scrollView.minimumZoomScale = 1.0          // can't be smaller than the original
+        self.scrollView.maximumZoomScale = 10.0          // up to 10x the original
+
+        // set the traditional "close" button styles
+        AppStyles.sharedInstance.setFloatingCloseButtonStyles(self.closeButton)
+
+        if let url = self.contentUrl{
+            self.loadImageWithUrl(url)
+        }
+        else if let cId = contentId {
+            TreemContentService.sharedInstance.getImageDetails(
+                cId
+                , treeSession: CurrentTreeSettings.sharedInstance.treeSession
+                , success:
+                {
+                    (data:JSON) in
+                    
+                    let iData : ContentItemDownloadImage = ContentItemDownloadImage(data: data)
+                    
+<<<<<<< HEAD
+                    if let url = iData.fullURL{
+=======
+                    if let url = iData.url{
+>>>>>>> master
+                        self.loadImageWithUrl(url)
+                    }
+                    else {
+                        self.dismissView()
+                    }
+                }
+                , failure: {
+                    (error, wasHandled) -> Void in
+                    
+                    if(!wasHandled){
+                        CustomAlertViews.showGeneralErrorAlertView()
+                    }
+                    
+                    self.dismissView()
+                }
+            )
+        }
+        else { self.dismissView() } // no content to show
+    }
+    
+    private func loadImageWithUrl(url: NSURL){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+            TreemContentService.sharedInstance.getContentRepositoryFile(url, success: {
+                (image) -> () in
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    _ in
+                    
+                    self.imageView.image = image
+                })
+            })
+        })
+    }
+    
+    private func dismissView(){
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+        return self.imageView
+    }
+}

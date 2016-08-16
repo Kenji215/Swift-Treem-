@@ -1,0 +1,45 @@
+
+/* Class = "UILabel"; text = "Last Name"; ObjectID = "4An-aC-h97"; */
+"4An-aC-h97.text" = "Last Name";
+
+/* Class = "UILabel"; text = "Friends"; ObjectID = "8mM-M1-eQa"; */
+"8mM-M1-eQa.text" = "Friends";
+
+/* Class = "UILabel"; text = "Matching"; ObjectID = "BXg-ok-Hq5"; */
+"BXg-ok-Hq5.text" = "Matching";
+
+/* Class = "UIButton"; normalTitle = "Set Default Settings"; ObjectID = "Hwp-xg-XEG"; */
+"Hwp-xg-XEG.normalTitle" = "Set Default Settings";
+
+/* Class = "UILabel"; text = "Not Friends"; ObjectID = "MGX-zf-KNq"; */
+"MGX-zf-KNq.text" = "Not Friends";
+
+/* Class = "UILabel"; text = "Relationship"; ObjectID = "Ouu-eq-WhV"; */
+"Ouu-eq-WhV.text" = "Relationship";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "QSj-D0-vYb"; */
+"QSj-D0-vYb.normalTitle" = "Done";
+
+/* Class = "UILabel"; text = "Pending"; ObjectID = "SmF-75-NNU"; */
+"SmF-75-NNU.text" = "Pending";
+
+/* Class = "UILabel"; text = "Phone"; ObjectID = "Tzy-5R-Ndf"; */
+"Tzy-5R-Ndf.text" = "Phone";
+
+/* Class = "UILabel"; text = "Username"; ObjectID = "eMd-d2-cR3"; */
+"eMd-d2-cR3.text" = "Username";
+
+/* Class = "UILabel"; text = "First Name"; ObjectID = "geL-Yn-daP"; */
+"geL-Yn-daP.text" = "First Name";
+
+/* Class = "UIButton"; normalTitle = "Search Contacts"; ObjectID = "loP-XO-JWa"; */
+"loP-XO-JWa.normalTitle" = "Search Contacts";
+
+/* Class = "UILabel"; text = "Search Options"; ObjectID = "nFh-LK-eVu"; */
+"nFh-LK-eVu.text" = "Search Options";
+
+/* Class = "UILabel"; text = "Invited"; ObjectID = "thF-4a-Nsf"; */
+"thF-4a-Nsf.text" = "Invited";
+
+"contacts_prompt_title" = "Search Contacts?";
+"contacts_prompt_message" = "This will search your contacts list, and allow you to add those who use Treem as friends, or to invite others to join Treem. We will not automatically add or invite anybody.";

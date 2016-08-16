@@ -1,0 +1,63 @@
+
+/* Class = "UILabel"; text = "[USERNAME]"; ObjectID = "2Qo-08-3E8"; */
+"2Qo-08-3E8.text" = "[USERNAME]";
+
+/* Class = "UILabel"; text = "[BRANCHPATH]"; ObjectID = "5fW-5j-C16"; */
+"5fW-5j-C16.text" = "[BRANCHPATH]";
+
+/* Class = "UILabel"; text = "[STATUS]"; ObjectID = "99g-PS-VKV"; */
+"99g-PS-VKV.text" = "[STATUS]";
+
+/* Class = "UILabel"; text = "[RESIDESSTATE]"; ObjectID = "QT0-Xf-2oG"; */
+"QT0-Xf-2oG.text" = "[RESIDESSTATE]";
+
+/* Class = "UILabel"; text = "[RESIDESCITY]"; ObjectID = "TqN-RO-44R"; */
+"TqN-RO-44R.text" = "[RESIDESCITY]";
+
+/* Class = "UILabel"; text = "Status: "; ObjectID = "U8o-vT-2OE"; */
+"U8o-vT-2OE.text" = "Estado: ";
+
+/* Class = "UILabel"; text = "City:"; ObjectID = "Uqj-gH-n0N"; */
+"Uqj-gH-n0N.text" = "Ciudad:";
+
+/* Class = "UILabel"; text = "Branches:"; ObjectID = "aAD-3O-sAE"; */
+"aAD-3O-sAE.text" = "Ramas:";
+
+/* Class = "UILabel"; text = "[RESIDESSTATE]"; ObjectID = "bF2-dd-pqt"; */
+"bF2-dd-pqt.text" = "[RESIDESSTATE]";
+
+/* Class = "UILabel"; text = "State:"; ObjectID = "bIN-Xr-pAw"; */
+"bIN-Xr-pAw.text" = "Estado:";
+
+/* Class = "UIButton"; normalTitle = "Action"; ObjectID = "fbM-fp-cLm"; */
+"fbM-fp-cLm.normalTitle" = "";
+
+/* Class = "UILabel"; text = "Resides:"; ObjectID = "gJi-9c-s3n"; */
+"gJi-9c-s3n.text" = "País:";
+
+/* Class = "UILabel"; text = "[FIRSTLASTNAME]"; ObjectID = "riF-Gp-uLy"; */
+"riF-Gp-uLy.text" = "[FIRSTLASTNAME]";
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "vsU-GL-utW"; */
+"vsU-GL-utW.normalTitle" = "Cerca";
+
+/* Class = "UILabel"; text = "Profile"; ObjectID = "zct-DK-2BN"; */
+"zct-DK-2BN.text" = "Perfil";
+
+"remove_confirm_title" = "Confirmación";
+"remove_confirm_message_pending" = "¿Seguro que desea cancelar su solicitud de amistad pendiente?";
+"remove_confirm_message_friends" = "¿Seguro que deseas Unfriend esta persona?";
+"friend_status_friends" = "Amigos";
+"friend_status_pending" = "Pendiente Amigos";
+"friend_status_not_friends" = "No Amigos";
+"action_unfriend" = "cancelar";
+"action_cancel" = "cancelar";
+
+"options_tab_bar_0" = "Noticias";
+"options_tab_bar_1" = "Foto / Vídeo";
+"options_tab_bar_2" = "Chat";
+
+"chat_confirm_title" = "Iniciar Chat";
+"chat_confirm_message" = "¿Le gustaría iniciar un nuevo chat?";
+"chat_name" = "Chat Rápido";
+

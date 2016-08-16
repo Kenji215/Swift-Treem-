@@ -1,0 +1,9 @@
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "7Zc-WI-K93"; */
+"7Zc-WI-K93.normalTitle" = "Cancelar";
+
+/* Class = "UILabel"; text = "Branch Title"; ObjectID = "RRx-6N-14g"; */
+"RRx-6N-14g.text" = "Rama Título";
+
+/* Class = "UILabel"; text = "Move Branch"; ObjectID = "SCX-De-AMU"; */
+"SCX-De-AMU.text" = "Rama Move";

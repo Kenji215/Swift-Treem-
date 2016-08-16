@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="hac-Wz-TBT">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--New Chat View Controller-->
+        <scene sceneID="PeE-zE-yNn">
+            <objects>
+                <viewController storyboardIdentifier="NewChat" useStoryboardIdentifierAsRestorationIdentifier="YES" id="hac-Wz-TBT" customClass="NewChatViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="U9h-E0-dlS"/>
+                        <viewControllerLayoutGuide type="bottom" id="DGO-1Z-HkF"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8t9-sg-H2b">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QpF-mT-5II">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <connections>
+                                    <segue destination="e4A-Dl-GCX" kind="embed" identifier="embedSeedingSearchNavigationController" id="2lV-lk-Nvm"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="QpF-mT-5II" secondAttribute="trailing" id="IMk-BN-gIf"/>
+                            <constraint firstItem="DGO-1Z-HkF" firstAttribute="top" secondItem="QpF-mT-5II" secondAttribute="bottom" id="lFx-6s-Vbc"/>
+                            <constraint firstItem="QpF-mT-5II" firstAttribute="leading" secondItem="8t9-sg-H2b" secondAttribute="leading" id="spL-FR-aZX"/>
+                            <constraint firstItem="QpF-mT-5II" firstAttribute="top" secondItem="8t9-sg-H2b" secondAttribute="top" id="xQD-CJ-BFn"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dYQ-kA-d8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="427" y="399"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="0hb-le-S0R">
+            <objects>
+                <navigationController navigationBarHidden="YES" id="e4A-Dl-GCX" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="7Fp-EE-cY0">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6gI-lN-kzs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1148" y="399"/>
+        </scene>
+    </scenes>
+</document>

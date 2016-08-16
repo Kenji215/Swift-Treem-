@@ -1,0 +1,1197 @@
+//
+//  PostViewController.swift
+//  Treem
+//
+//  Created by Matthew Walker on 8/4/15.
+//  Copyright © 2015 Treem LLC. All rights reserved.
+//
+
+import AssetsLibrary
+import AVFoundation
+import KMPlaceholderTextView
+import MobileCoreServices
+import UIKit
+import CLImageEditor
+
+class PostViewController : UIViewController, UITextViewDelegate, SeedingMembersTableViewDelegate, CLImageEditorDelegate, UIViewControllerTransitioningDelegate, UIPopoverPresentationControllerDelegate, MediaPickerDelegate {
+    
+    //# MARK: - View Outlet Views
+    
+    @IBOutlet weak var actionButtonContainerView        : UIView!
+    @IBOutlet weak var cameraButton                     : UIButton!
+    @IBOutlet weak var deleteButton                     : UIButton!
+    @IBOutlet weak var divider2                         : UIView!
+    @IBOutlet weak var divider3                         : UIView!
+    @IBOutlet weak var divider4                         : UIView!
+    @IBOutlet weak var expiresDatePicker                : UIDatePicker!
+    @IBOutlet weak var expiresOptionsView               : UIView!
+    @IBOutlet weak var oneTimeViewSwitch                : UISwitch!
+    @IBOutlet weak var imageAttachedView                : UIView!
+    
+    @IBOutlet weak var PostUrlPreviewView               : UIView!
+    @IBOutlet weak var postButton                       : UIButton!
+    @IBOutlet weak var postTextView                     : KMPlaceholderTextView!
+    @IBOutlet weak var postMaskView                     : UIView!
+    @IBOutlet weak var scrollContentView                : UIView!
+    @IBOutlet weak var scrollView                       : UIScrollView!
+    @IBOutlet weak var shareableSwitch                  : UISwitch!
+    @IBOutlet weak var tagButton                        : UIButton!
+    @IBOutlet weak var taggedMembersView                : UIView!
+    @IBOutlet weak var expiresSwitch                    : UISwitch!
+
+    //# MARK: - View Outlet View Consraints
+
+    @IBOutlet weak var deleteButtonTopConstraint        : NSLayoutConstraint!
+    @IBOutlet weak var deleteButtonWidthConstraint      : NSLayoutConstraint!
+    @IBOutlet weak var deleteButtonBottomConstraint     : NSLayoutConstraint!
+    @IBOutlet weak var deleteButtonLeadingConstraint    : NSLayoutConstraint!
+    @IBOutlet weak var postButtonLeadingConstraint      : NSLayoutConstraint!
+    @IBOutlet weak var actionContainerBottomConstraint  : NSLayoutConstraint!
+    @IBOutlet weak var scrollContentViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var divider2HeightConstraint         : NSLayoutConstraint!
+    @IBOutlet weak var divider3HeightConstraint         : NSLayoutConstraint!
+    @IBOutlet weak var divider4HeightConstraint         : NSLayoutConstraint!
+    @IBOutlet weak var expiresOptionsHeightConstraint   : NSLayoutConstraint!
+    @IBOutlet weak var imageAttachedViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var taggedMembersViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var PostUrlPreviewViewHeightConstraint: NSLayoutConstraint!
+
+    //# MARK: - View Outlet Events
+    
+    @IBAction func addMediaTouchUpInside(sender: UIButton) {
+        
+        let mediaPicker = MediaAddOptionsViewController.getStoryboardInstance()
+
+        mediaPicker.delegate                = self
+        mediaPicker.transitioningDelegate   = AppStyles.sharedInstance.fadeInViewAnimationTransition
+        mediaPicker.referringButton         = sender
+        
+        self.isShowingMediaPicker = true
+        
+        self.presentViewController(mediaPicker, animated: true, completion: nil)
+    }
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .None
+    }
+    
+    @IBAction func deleteButtonTouchUpInside(sender: AnyObject) {
+        CustomAlertViews.showCustomConfirmView(
+            title: "Delete Post?",
+            message: "Deleting the post will also remove all comments, shares, and reactions made on the post. Are you sure you want to delete it?",
+            fromViewController: self,
+            yesHandler: {
+                _ in
+                
+                self.loadingDataViewChanges()
+
+                self.deletePost()
+            },
+            noHandler: nil
+        )
+    }
+    
+    @IBAction func expiresSwitchValueChanged(sender: UISwitch) {
+        self.toggleExpiresDatePicker(sender.on, showAnimation: true)
+    }
+    
+    @IBAction func switchTouchUpInside(sender: AnyObject) {
+        // ios bug? doesn't dismiss keyboard on switch tap
+        self.dismissKeyboard()
+    }
+    
+    
+    @IBAction func postButtonTouchUpInside(sender: AnyObject) {
+        self.loadingDataViewChanges(true)
+        
+        let existingPost = (self.editPostId > 0)
+        let post = self.editPost ?? Post()
+        
+        let message = (self.postTextView.text ?? "").trim()
+        
+        if message.characters.count > 0 {
+            post.message = message
+        }
+        
+        var isNewImage = true
+        
+        // this will be hit when the post has been edited and we are changing images
+        if post.contentItems != nil && self.attachedItems?.count > 0 {
+            isNewImage = (self.attachedItems![0].contentID != postOriginalContentId)
+        }
+        else {
+            isNewImage = true
+        }
+        
+        post.branchID    = CurrentTreeSettings.sharedInstance.currentBranchID
+        post.viewOnce    = self.oneTimeViewSwitch.on
+        post.shareable   = self.shareableSwitch.on
+        
+        if self.expiresSwitch.on {
+            post.expires = expiresDatePicker.date
+        }
+        
+        post.postUrlData = postData
+        self.editPost?.postUrlData = postData
+        
+        // disable fields
+        self.postTextView.editable = false
+        
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: false, withAnimation: false, showDisabledOutline: false)
+
+        post.taggedUsers = self.taggedIDs
+        
+        
+        if self.selectedImage != nil {
+            
+            if (self.imageEdited == true) {
+                let assetsLibrary = ALAssetsLibrary()
+                
+                assetsLibrary.writeImageToSavedPhotosAlbum(self.selectedImage!.CGImage!, orientation: ALAssetOrientation(rawValue: self.selectedImage!.imageOrientation.rawValue)!,
+                    completionBlock: { (referenceUrl, error) -> Void in
+                        
+                        #if DEBUG
+                            print("photo saved to asset")
+                            print(referenceUrl)   // assets-library://asset/asset.JPG?id=CCC70B9F-748A-43F2-AC61-8755C974EE15&ext=JPG
+                        #endif
+                        
+                        assetsLibrary.assetForURL(referenceUrl,
+                            
+                            resultBlock: {
+                                asset in
+                                
+                                let fileName = asset.defaultRepresentation().filename()
+                                
+                                #if DEBUG
+                                    print("Selected file:\(fileName)")
+                                #endif
+                                
+                                
+                                let fileExtension = TreemContentService.ContentFileExtensions.fromString(fileName.getPathNameExtension())
+                                
+                                // single select for the time being
+                                self.attachedItems = [ContentItemUploadImage(fileExtension: fileExtension, image: self.selectedImage!)!]
+                                
+                                // if adding new content
+                                if self.attachedItems?.count > 0 {
+                                    // need to upload contentfirst
+                                    if let contentItemUpload = self.attachedItems![0] as? ContentItemUpload {
+                                        let contentType = contentItemUpload.contentType
+                                        
+                                        let contentUploadManager = TreemContentServiceUploadManager(
+                                            treeSession         : CurrentTreeSettings.sharedInstance.treeSession,
+                                            contentItemUpload   : contentItemUpload,
+                                            success : {
+                                                (data) in
+                                                
+                                                var contentItem: ContentItemDownload
+                                                
+                                                if contentType == .Video {
+                                                    contentItem = ContentItemDownloadVideo(data: data)
+                                                    contentItem.contentType = .Video // not passed back explicitly in response
+                                                }
+                                                else if contentType == .Image {
+                                                    contentItem = ContentItemDownloadImage(data: data)
+                                                    contentItem.contentType = .Image // not passed back explicitly in response
+                                                }
+                                                else {
+                                                    contentItem = ContentItemDownload(data: data)
+                                                }
+                                                
+                                                post.contentItems = [contentItem]
+                                                
+                                                self.setPost(existingPost, post: post)
+                                            },
+                                            failure : {
+                                                (error, wasHandled) in
+                                                
+                                                // unsupported content type
+                                                if error == TreemServiceResponseCode.GenericResponseCode2 {
+                                                    self.showUnsupportedTypeAlert()
+                                                }
+                                                    // attachment too large
+                                                else if error == TreemServiceResponseCode.GenericResponseCode3 {
+                                                    CustomAlertViews.showCustomAlertView(title: "File too large", message: "Maximum upload size is " + String(TreemContentServiceUploadManager.maxContentGigaBytes) + " gb.")
+                                                }
+                                                else if !wasHandled {
+                                                    CustomAlertViews.showGeneralErrorAlertView(self, willDismiss: nil)
+                                                }
+                                                
+                                                self.cancelLoadingDataViewChanges()
+                                            },
+                                            progress : {
+                                                // TODO: show progress bar over upload item
+                                                (percentComplete, wasCancelled) in
+                                                
+                                                // update the progress mask
+                                                self.loadingMaskViewController.updateProgress(percentComplete)
+                                            }
+                                        )
+                                        
+                                        contentUploadManager.startUpload()
+                                    }
+                                }
+                            },
+                            failureBlock: {
+                                _ in
+                                
+                                self.dismissViewControllerAnimated(true, completion: nil)
+                        })
+                        if let error = error { print(error.description) }
+                })
+            }
+            else {
+                // if adding new content
+                if self.attachedItems?.count > 0 {
+                    if (isNewImage) {
+                        // need to upload contentfirst
+                        if let contentItemUpload = self.attachedItems![0] as? ContentItemUpload {
+                            let contentType = contentItemUpload.contentType
+                            
+                            let contentUploadManager = TreemContentServiceUploadManager(
+                                treeSession         : CurrentTreeSettings.sharedInstance.treeSession,
+                                contentItemUpload   : contentItemUpload,
+                                success : {
+                                    (data) in
+                                    
+                                    var contentItem: ContentItemDownload
+                                    
+                                    if contentType == .Video {
+                                        contentItem = ContentItemDownloadVideo(data: data)
+                                        contentItem.contentType = .Video // not passed back explicitly in response
+                                    }
+                                    else if contentType == .Image {
+                                        contentItem = ContentItemDownloadImage(data: data)
+                                        contentItem.contentType = .Image // not passed back explicitly in response
+                                    }
+                                    else {
+                                        contentItem = ContentItemDownload(data: data)
+                                    }
+                                    
+                                    post.contentItems = [contentItem]
+                                    
+                                    self.setPost(existingPost, post: post)
+                                },
+                                failure : {
+                                    (error, wasHandled) in
+                                    
+                                    // unsupported content type
+                                    if error == TreemServiceResponseCode.GenericResponseCode2 {
+                                        self.showUnsupportedTypeAlert()
+                                    }
+                                        // attachment too large
+                                    else if error == TreemServiceResponseCode.GenericResponseCode3 {
+                                        CustomAlertViews.showCustomAlertView(title: "File too large", message: "Maximum upload size is " + String(TreemContentServiceUploadManager.maxContentGigaBytes) + " gb.")
+                                    }
+                                    else if !wasHandled {
+                                        CustomAlertViews.showGeneralErrorAlertView(self, willDismiss: nil)
+                                    }
+                                    
+                                    self.cancelLoadingDataViewChanges()
+                                },
+                                progress : {
+                                    // TODO: show progress bar over upload item
+                                    (percentComplete, wasCancelled) in
+                                    
+                                    // update the progress mask
+                                    self.loadingMaskViewController.updateProgress(percentComplete)
+                                }
+                            )
+                            
+                            contentUploadManager.startUpload()
+                        }
+                    }
+                    else {
+                        self.setPost(existingPost, post: post)
+                    }
+                }
+                else {
+                    self.setPost(existingPost, post: post)
+                }
+            }
+            
+        }
+            // else just add post
+        else {
+            self.setPost(existingPost, post: post)
+        }
+
+    }
+
+    
+    @IBAction func tagMembersButtonTouchUpInside(sender: AnyObject) {
+        let tagVC = PostTagViewController.getStoryboardInstance()
+        tagVC.delegate = self
+        
+        self.presentViewController(tagVC, animated: true, completion: nil)
+    }
+    
+    //# MARK: - View Controller Variables
+    
+    private let loadingMaskViewController           = LoadingMaskViewController.getStoryboardInstance()
+    private let loadingMaskOverlayViewController    = LoadingMaskViewController.getStoryboardInstance()
+    private let errorViewController                 = ErrorViewController.getStoryboardInstance()
+    
+    private var imagePickerController: ImagePickerController!
+    
+    private var timer : NSTimer? = nil
+    
+    private var attachedItems: [ContentItemDelegate]? = nil
+    
+    private var initialExpiresOptionHeight: CGFloat = 0
+
+    private var editPost: Post? = nil
+
+    private var imageEditor : CLImageEditor?
+    
+    private var postImageView : UIImageView?
+    private var selectedImage : UIImage?
+    private var imageEdited : Bool? = false
+    
+    // this needs to be stored because once the photo is removed from the post, the ID is set to zero.
+    private var postOriginalContentId : Int?
+    
+    private var isShowingMediaPicker : Bool = false
+    
+    var editPostId      : Int = 0
+    var delegate        : PostDelegate?    = nil
+    var parentView      : UIView?          = nil
+    var shareLink       : String? = nil
+    
+    var taggedIDs       : [Int] = []
+    
+    var postTextTimer             : NSTimer?
+    var postTextTimerDelay        : NSTimeInterval = 1
+    var postUrl                   : String = ""
+    var postData                  = WebPageData()
+    var PostUrlPreviewController  : UrlPreviewViewController? = nil
+    var checkUrlData              : Bool = true
+    
+    
+    @IBOutlet weak var PostUrlPreviewHeightConstraint: NSLayoutConstraint!
+    
+        //# MARK: - View Controller Override Methods
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+    
+    // clear open keyboards on tap
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.view.endEditing(true)
+        self.dismissKeyboard()
+        super.touchesBegan(touches, withEvent: event)
+    }
+    
+    // handle moving elements when keyboard is pulled up
+    func keyboardWillShow(notification: NSNotification){
+        self.moveContainer(notification, opening: true)
+    }
+
+    // handle moving elements when keyboard is hidden
+    func keyboardWillHide(notification: NSNotification){
+        self.moveContainer(notification, opening: false)
+    }
+
+    func moveContainer(notification: NSNotification, opening: Bool) {
+        var info                   = notification.userInfo!
+        let keyboardFrame: CGRect  = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let toolbarHeight: CGFloat = self.delegate!.getToolbarHeight() * 1.14
+
+        let duration                = info[UIKeyboardAnimationDurationUserInfoKey] as! Double
+        let curve                   = info[UIKeyboardAnimationCurveUserInfoKey] as! UInt
+
+        self.actionContainerBottomConstraint.constant = opening ? (keyboardFrame.size.height - toolbarHeight) : 0
+
+        UIView.animateWithDuration(
+            duration,
+            delay: 0,
+            options: UIViewAnimationOptions(rawValue: curve),
+            animations: {
+                () -> Void in
+
+                self.actionButtonContainerView.layoutIfNeeded()
+
+            },
+            completion: nil
+        )
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    
+        // add observers to listen for the keyboard to be pulled up or hidden
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name:UIKeyboardWillShowNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name:UIKeyboardWillHideNotification, object: nil);
+    
+        
+        self.postTextView.delegate = self
+        self.postTextView.textContainer.lineFragmentPadding = 0
+        self.postTextView.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10)
+
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        
+        if CurrentTreeSettings.sharedInstance.currentBranchID < 1 {
+            self.postTextView.placeholder = "Write to all members in the tree"
+        }
+        else {
+            self.postTextView.placeholder = "Write to all members in this branch"
+        }
+        
+        // disable post button initially
+        AppStyles.sharedInstance.setButtonDefaultStyles(self.postButton)
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: false, showDisabledOutline: false)
+        
+        // set divider colors
+        divider2.backgroundColor = AppStyles.sharedInstance.dividerColor
+        divider3.backgroundColor = AppStyles.sharedInstance.dividerColor
+        divider4.backgroundColor = AppStyles.sharedInstance.dividerColor
+        
+        // expires options not shown initially
+        self.initialExpiresOptionHeight = self.expiresOptionsHeightConstraint.constant
+        self.expiresOptionsHeightConstraint.constant = 0
+        
+        // tagged, attachments and post URL items not showing initially
+        self.imageAttachedViewHeightConstraint.constant = 0
+        self.PostUrlPreviewViewHeightConstraint.constant = 0
+        
+        self.taggedMembersViewHeightConstraint.constant = 0
+        
+        // fractional heights not allowed to be set in storyboard
+        self.divider2HeightConstraint.constant = 0.5
+        self.divider3HeightConstraint.constant = 0.5
+        self.divider4HeightConstraint.constant = 0.5
+        
+        // if editing an existing post
+        if (self.editPostId > 0) {
+            self.loadingMaskViewController.queueLoadingMask(self.view, loadingViewAlpha: 1.0, showCompletion: {
+                TreemFeedService.sharedInstance.getPostDetails(
+                    CurrentTreeSettings.sharedInstance.treeSession,
+                    postID: self.editPostId,
+                    success: {
+                        data in
+
+                        self.editPost = Post(data: data, postId: self.editPostId)
+                        
+                        if self.editPost?.postUrlData != nil {
+                            self.checkUrlData = false
+                            self.shareLink = self.editPost?.postUrlData?.linkUrl
+                        }
+                        
+                        self.loadPost(self.editPost!)
+                    },
+                    failure: {
+                        error, wasHandled in
+                        
+                        self.errorViewController.showErrorMessageView(self.view, text: "An error occurred while loading the post.")
+                        
+                        self.loadingMaskViewController.cancelLoadingMask(nil)
+                    }
+                )
+            })
+        }
+        else {
+            
+            // TODO: instead of just adding this to the text field, it will need to make a request and build our the external link
+            if let share = self.shareLink {
+                self.postUrl = share
+                self.parseUrl()
+                self.checkPostButtonEnabled()
+            }
+            
+            self.hideDeleteButton()
+        }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // set expiration date defaults
+        self.setDatePickerDefaults()
+        
+        // in case reopening app from background
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("setDatePickerDefaults"), name:UIApplicationDidBecomeActiveNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationDidBecomeActiveNotification, object: nil)
+        
+        // dismiss presented post options view if feed view gone
+        if self.isShowingMediaPicker {
+            self.dismissViewControllerAnimated(false, completion: nil)
+            self.isShowingMediaPicker = false
+        }
+    }
+
+    static func getStoryboardInstance() -> PostViewController {
+        return UIStoryboard(name: "Post", bundle: nil).instantiateInitialViewController() as! PostViewController
+    }
+    
+    // ---------------------------------------- //
+    //# Mark: Media Picker Delegate Functions
+    // ---------------------------------------- //
+    
+    func mediaPickerWillDismiss(contentType: TreemContentService.ContentTypes) {
+        self.isShowingMediaPicker = false
+        
+        // remove presented media options menu from view
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    func imageSelected(image: UIImage, fileExtension: TreemContentService.ContentFileExtensions, addOptionsVC: MediaAddOptionsViewController) {
+        self.selectedImage = image
+        
+        // single select for the time being
+        self.attachedItems = [ContentItemUploadImage(fileExtension: fileExtension, image: image)!]
+        
+        self.loadPostImage(image)
+        
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: true, withAnimation: true, showDisabledOutline: false)
+    }
+    
+    func videoSelected(fileURL: NSURL, orientation: ContentItemOrientation, fileExtension: TreemContentService.ContentFileExtensions, addOptionsVC: MediaAddOptionsViewController) {
+        
+        // single select for the time being
+        let itemUpload = ContentItemUpload(fileExtension: fileExtension, fileURL: fileURL)
+        
+        itemUpload.contentType = .Video
+        itemUpload.orientation = orientation
+        
+        self.attachedItems = [itemUpload]
+        
+        // generate thumbnail from video file URL
+        let asset           = AVURLAsset(URL: fileURL, options: nil)
+        let imgGenerator    = AVAssetImageGenerator(asset: asset)
+        
+        imgGenerator.appliesPreferredTrackTransform = true  // create the thumbnail using the video's orientation
+        
+        do {
+            let cgImage = try imgGenerator.copyCGImageAtTime(CMTimeMake(0, 1), actualTime: nil)
+            
+            self.loadPostImage(UIImage(CGImage: cgImage), isVideoThumbnail: true)
+        }
+        catch {
+            // create blank image just to show something if thumbnail could not be created
+            self.loadPostImage(UIImage().getImageWithColor(UIColor.whiteColor()), isVideoThumbnail: true)
+        }
+        
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: true, withAnimation: true, showDisabledOutline: false)
+    }
+    
+    //# MARK: - View Helper Methods
+    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        
+        return AppStyles.sharedInstance.directionUpViewAnimatedTransition
+    }
+    
+    // view changes that occur when a service call is loading/performing
+    private func cancelLoadingDataViewChanges() {
+        self.loadingMaskViewController.cancelLoadingMask(nil)
+        self.loadingMaskOverlayViewController.cancelLoadingMask(nil)
+        
+        if let parentVC = self.parentViewController as? PostEditViewController {
+            parentVC.closeButton.enabled = true
+        }
+    }
+    
+    private func cancelTimer() {
+        if let timer = self.timer {
+            timer.invalidate()
+            self.timer = nil
+        }
+    }
+    
+    private func checkPostButtonEnabled() {
+        var enabled = false
+        
+        // if at least one image attached
+        if self.attachedItems?.count > 0 {
+            enabled = true
+        }
+        else if (self.postTextView.text ?? "").trim().characters.count > 0 {
+            // check if message entered
+            enabled = true
+        }
+        
+        else if !((self.postUrl ?? "").isEmpty) {
+            enabled = true
+        }
+        
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: enabled, withAnimation: true, showDisabledOutline: false)
+    }
+    
+    func dismissEditPost() {
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    // clear open keyboards on tap
+    func dismissKeyboard() {
+        self.view.endEditing(true)
+        self.postTextView.resignFirstResponder()
+    }
+
+    func dismissNewPostSuccessMessage() {
+        self.delegate?.postWasAdded()
+    }
+    
+    private func hideDeleteButton() {
+        // hide delete button and resize the post button
+        let screenWidth: CGFloat                      = UIScreen.mainScreen().bounds.width
+        self.postButtonLeadingConstraint.constant    -= screenWidth
+        self.deleteButtonTopConstraint.constant       = 0
+        self.deleteButtonWidthConstraint.constant     = 0
+        self.deleteButtonBottomConstraint.constant    = 0
+        self.deleteButtonLeadingConstraint.constant   = 0
+        self.deleteButton.hidden                      = true
+    }
+    
+<<<<<<< Updated upstream
+    // ------------------------------- //
+    // Media Picker Delegates
+    // ------------------------------- //
+    
+    func imageSelected(image: UIImage, fileExtension: TreemContentService.ContentFileExtensions, picker: MediaPickerPopoverController) {
+        
+        picker.dismissView({
+            self.selectedImage = image
+            
+            // single select for the time being
+            self.attachedItems = [ContentItemUploadImage(fileExtension: fileExtension, image: image)!]
+            
+            self.loadPostImage(image)
+            
+            AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: true, withAnimation: true, showDisabledOutline: false)
+        })
+    }
+    
+    func videoSelected(fileURL: NSURL, orientation: ContentItemOrientation, fileExtension: TreemContentService.ContentFileExtensions, picker: MediaPickerPopoverController) {
+        
+        picker.dismissView({
+            
+            // single select for the time being
+            let itemUpload = ContentItemUpload(fileExtension: fileExtension, fileURL: fileURL)
+            itemUpload.contentType = .Video
+            itemUpload.orientation = orientation
+            
+            self.attachedItems = [itemUpload]
+            
+            // generate thumbnail from video file URL
+            let asset           = AVURLAsset(URL: fileURL, options: nil)
+            let imgGenerator    = AVAssetImageGenerator(asset: asset)
+            imgGenerator.appliesPreferredTrackTransform = true  // create the thumbnail using the video's orientation
+            
+            do {
+                let cgImage = try imgGenerator.copyCGImageAtTime(CMTimeMake(0, 1), actualTime: nil)
+                
+                // this is only being set at this time to allow the image upload functionality to proceed.
+                self.selectedImage = ImageConversionHelpers.convertCGImageToUIImage(cgImage)
+                
+                self.loadPostImage(UIImage(CGImage: cgImage), isVideoThumbnail: true)
+            }
+            catch {
+                // create blank image just to show something if thumbnail could not be created
+                self.loadPostImage(UIImage().getImageWithColor(UIColor.whiteColor()), isVideoThumbnail: true)
+            }
+            
+            AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: true, withAnimation: true, showDisabledOutline: false)
+        })
+    }
+    
+    // ------------------------------- //
+    
+=======
+>>>>>>> Stashed changes
+    private func loadPost(post: Post) {
+        let expires = post.expires != nil
+        
+        self.postTextView.text      = post.message ?? ""
+        self.oneTimeViewSwitch.on   = post.viewOnce
+        self.expiresSwitch.on       = expires
+        self.shareableSwitch.on     = post.shareable
+        
+        // show expires date picker as needed
+        self.toggleExpiresDatePicker(expires, showAnimation: false)
+        
+        // set expires date
+        if expires {
+            self.expiresDatePicker.setDate(post.expires!, animated: false)
+        }
+        
+        // change post button to reflect editing
+        UIView.performWithoutAnimation({
+            self.postButton.setTitle("Save", forState: .Normal)
+            self.postButton.layoutIfNeeded()
+        })
+        
+        // load the URL data that we already have
+        if post.containsUrl {
+            self.postData           = post.postUrlData!
+            checkUrlData            = false
+            self.LayoutPostUrlPreview(self.postData)
+        }
+        
+        // check if there is any content
+        if let contentItems = post.contentItems {
+            if let item = contentItems[0] as? ContentItemDownload, contentURL = item.contentURL {
+                // retrieve and load image
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {
+                    TreemContentService.sharedInstance.getContentRepositoryFile(contentURL, success: {
+                        (image) -> () in
+                        
+                        dispatch_async(dispatch_get_main_queue(), {
+                            _ in
+                            
+                            if let image = image {
+                                
+                                if item.contentType != .Video {
+                                    self.selectedImage = image
+                                }
+                                self.loadPostImage(image, isVideoThumbnail: item.contentType == .Video)
+                            }
+                            
+                            self.loadingMaskViewController.cancelLoadingMask(nil)
+                        })
+                    })
+                })
+            }
+            else {
+                self.loadingMaskViewController.cancelLoadingMask(nil)
+            }
+        }
+        else {
+            self.loadingMaskViewController.cancelLoadingMask(nil)
+        }
+
+        if (post.taggedUsers.count > 0) {
+            self.taggedIDs = post.taggedUsers
+        }
+
+        
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: true, withAnimation: false, showDisabledOutline: false)
+    }
+    
+    private func loadPostImage(image: UIImage, isVideoThumbnail: Bool = false) {
+        // scale the image to fit the view
+        let size = UIImage.getResizeImageScaleSize(CGSize(width: self.view.frame.width, height: 400), oldSize: image.size)
+        
+        postImageView = UIImageView(image: image)
+        postImageView!.contentMode   = .ScaleAspectFit
+        postImageView!.frame         = CGRectMake(0, 0, size.width, size.height)
+        
+        // add delete button in image
+        let deleteButton = UIButton()
+        
+        deleteButton.setTitle(" X ", forState: .Normal)
+        deleteButton.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+        deleteButton.titleLabel?.font = UIFont.systemFontOfSize(20.0, weight: 0.8)
+        deleteButton.setTitleColor(AppStyles.sharedInstance.darkGrayColor, forState: .Normal)
+        deleteButton.sizeToFit()
+        deleteButton.frame.origin = CGPoint(x: postImageView!.frame.width - deleteButton.frame.width, y: 0)
+        
+        // add delete image button target action
+        deleteButton.addTarget(self, action: Selector("removeImageFromPostView:"), forControlEvents: .TouchUpInside)
+        if !isVideoThumbnail {
+        
+            let editImageButton = UIButton()
+        
+            editImageButton.setTitle("Edit", forState: .Normal)
+            editImageButton.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
+            editImageButton.titleLabel?.font = UIFont.systemFontOfSize(20.0, weight: 0.8)
+            editImageButton.setTitleColor(AppStyles.sharedInstance.darkGrayColor, forState: .Normal)
+            editImageButton.sizeToFit()
+            editImageButton.frame.origin = CGPoint(x: postImageView!.frame.width - editImageButton.frame.width, y: postImageView!.frame.height - editImageButton.frame.height)
+            
+            editImageButton.addTarget(self, action: Selector("editImageOnPost:"), forControlEvents: .TouchUpInside)
+            postImageView!.addSubview(editImageButton)
+        }
+        
+        // if a thumbnail add the video icon overlay to indicate so
+        if isVideoThumbnail {
+            let image                   = UIImage(named: "Video")
+
+            let videoOverlayImageView   = UIImageView(image: image)
+
+            videoOverlayImageView.contentMode       = .ScaleAspectFit
+            videoOverlayImageView.tintColor         = UIColor.whiteColor().colorWithAlphaComponent(0.25)
+            videoOverlayImageView.backgroundColor   = UIColor.darkGrayColor().colorWithAlphaComponent(0.5)
+            videoOverlayImageView.frame             = CGRectMake(0,0,size.width,size.height)
+            
+            postImageView!.addSubview(videoOverlayImageView)
+        }
+        
+        postImageView!.userInteractionEnabled = true // imageView has disabled by default
+        postImageView!.addSubview(deleteButton)
+        
+        
+        
+        // add imageview
+        self.imageAttachedViewHeightConstraint.constant = size.height
+        
+        self.imageAttachedView.addSubview(postImageView!)
+        
+        self.view.layoutIfNeeded()
+    }
+    
+    // view changes that occur when a service call is loading/performing
+    private func loadingDataViewChanges(showProgress: Bool=false) {
+        if self.editPostId > 0 {
+            if let parentVC = self.parentViewController as? PostEditViewController {
+                parentVC.closeButton.enabled = false
+            }
+        }
+        
+
+        
+        if(showProgress){
+            var viewToMask = self.view
+            if (self.parentView != nil) { viewToMask = self.parentView! }            
+            self.loadingMaskViewController.queueProgressMask(viewToMask, showCompletion: nil)
+        }
+        else{
+            self.loadingMaskOverlayViewController.showMaskOnly(self.postMaskView, showCompletion: nil)
+            self.loadingMaskViewController.queueLoadingMask(self.actionButtonContainerView, loadingViewAlpha: 1.0, showCompletion: nil)
+        }
+    }
+    
+    func removeImageFromPostView(sender: UIButton) {
+        // get imageview in parent
+        if let superview = sender.superview {
+            // adjust height constraint of attachments (currently only one attachment allowed)
+            self.imageAttachedViewHeightConstraint.constant = 0
+            
+            UIView.animateWithDuration(
+                AppStyles.sharedInstance.viewAnimationDuration,
+                animations: {
+                    () -> Void in
+                    
+                    self.imageAttachedView.layoutIfNeeded()
+                    self.scrollContentView.layoutIfNeeded()
+                    self.scrollView.layoutIfNeeded()
+                },
+                completion: {
+                    (Bool) -> Void in
+                    
+                    // remove image from superview
+                    superview.removeFromSuperview()
+                    
+                    self.postOriginalContentId = self.editPost?.contentItems?.first?.contentID
+                    self.attachedItems          = []    // clear attached item (single for now)
+                    self.editPost?.contentItems?.first?.contentID = 0   //set the ID = 0 to clear the contents in the db
+                    self.editPost?.contentItems?.first?.contentType = nil
+                    self.selectedImage = nil
+                }
+            )
+        }
+    }
+    
+    func editImageOnPost(sender: UIButton) {
+        
+        self.imageEditor = CLImageEditor(image: self.selectedImage!.rotateCameraImageToOrientation(self.selectedImage!, maxResolution: AppSettings.sharedInstance.max_post_image_resolution), delegate: self)
+        
+        self.imageEditor?.theme.backgroundColor = UIColor.blackColor()
+        
+        self.presentViewController(imageEditor!, animated: true, completion: nil)
+    }
+    
+    func imageEditor(editor: CLImageEditor!, didFinishEdittingWithImage image: UIImage!){
+<<<<<<< Updated upstream
+
+       for view in imageAttachedView.subviews {
+        view.removeFromSuperview()
+       }
+=======
+        
+        for view in imageAttachedView.subviews {
+            view.removeFromSuperview()
+        }
+        
+        self.selectedImage = image
+>>>>>>> Stashed changes
+            
+        var tempImage = image
+        
+        tempImage = image.rotateCameraImageToOrientation(image, maxResolution: AppSettings.sharedInstance.max_post_image_resolution)
+
+        self.loadPostImage(tempImage)
+        self.selectedImage = tempImage
+        self.imageEdited = true
+        
+        AppStyles.sharedInstance.setButtonEnabledAndAjustStyles(self.postButton, enabled: true, withAnimation: true, showDisabledOutline: false)
+        
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    private func toggleExpiresDatePicker(show: Bool, showAnimation: Bool) {
+        self.expiresOptionsHeightConstraint.constant = show ? self.initialExpiresOptionHeight : 0
+        
+        if showAnimation {
+            UIView.animateWithDuration(0.25,
+                animations: {
+                    self.expiresOptionsView.layoutIfNeeded()
+                    self.expiresDatePicker.hidden = !show
+                }
+            )
+        }
+    }
+
+
+    func initiallyHighlighted(user: User) -> Bool {
+        return self.taggedIDs.contains(user.id)
+    }
+    
+    func selectedUsersUpdated(users: OrderedSet<User>) {
+        for user in users {
+            if (!self.taggedIDs.contains(user.id)) {
+                self.taggedIDs.append(user.id)
+            }
+        }
+    }
+
+    func deselectedUsersUpdated(users: OrderedSet<User>) {
+        for user in users {
+            if let userIndex = self.taggedIDs.indexOf(user.id) {
+                self.taggedIDs.removeAtIndex(userIndex)
+            }
+        }
+    }
+
+    /* Get the branch on which the Post either was made, or is about to be made.
+        There are cases in which you can edit a post from a  different branch than it was initially made (e.g. make it in Coworkers->Treem, but then edit it in just the Coworkers top-level branch). 
+        In situations like that, you need information about the branch it was made on ("Treem"), not really the branch you're coming from ("Coworkers")
+    */
+    func getBranchID() -> Int {
+        
+        if (self.editPost != nil && self.editPost!.branchID != 0) {
+            return self.editPost!.branchID
+        }
+        else {
+            return CurrentTreeSettings.sharedInstance.currentBranchID
+        }
+
+    }
+    
+    func setDatePickerDefaults() {
+        // set minimum date
+        let calendar = NSCalendar.currentCalendar()
+        let date = NSDate()
+        
+        self.expiresDatePicker.minimumDate = calendar.dateByAddingUnit(.Minute, value: 15, toDate: date, options: [])
+        
+        // set maximum date
+        self.expiresDatePicker.maximumDate = calendar.dateByAddingUnit(.Year, value: 1, toDate: date, options: [])
+    }
+    
+    func textViewDidChange(textView: UITextView) {
+        self.postButton.setTitle(self.editPostId > 0 ? "Save" : "Post", forState: .Normal)
+        
+        self.checkPostButtonEnabled()
+    }
+    
+    //# MARK: - Service Methods
+    
+    private func deletePost() {
+        TreemFeedService.sharedInstance.removePost(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            postID: self.editPostId,
+            success: {
+                data in
+
+                self.errorViewController.showErrorMessageView(self.actionButtonContainerView, text: "✓ Post Deleted")
+                
+                self.loadingMaskViewController.cancelLoadingMask(nil)
+                
+                if self.editPostId > 0 {
+                    self.delegate?.postWasDeleted(self.editPostId)
+                    
+                    self.cancelTimer()
+                    
+                    self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: Selector("dismissEditPost"), userInfo: nil, repeats: false)
+                }
+            },
+            failure: {
+                error, wasHandled in
+                
+                if !wasHandled {
+                    CustomAlertViews.showGeneralErrorAlertView(self, willDismiss: nil)
+                }
+
+                self.errorViewController.removeErrorView()
+                self.cancelLoadingDataViewChanges()
+            }
+        )
+    }
+    
+    private func showUnsupportedTypeAlert() {
+        var typesList = ""
+        
+        for type in TreemContentService.ContentFileExtensions.cases {
+            typesList += "-" + type
+        }
+        
+        CustomAlertViews.showCustomAlertView(title: "Unsupported type", message: "Image/video uploaded is not a supported type. Supported types include:" + typesList)
+    }
+    
+    private func setPost(existingPost: Bool, post: Post) {
+        let isPostEdit = self.editPostId > 0
+        
+        TreemFeedService.sharedInstance.setPost(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            post: post,
+            success: {
+                data in
+
+                self.errorViewController.showErrorMessageView(self.actionButtonContainerView, text: "✓ Post " + (existingPost ? "Changed" : "Added"))
+                
+                self.loadingMaskViewController.cancelLoadingMask(nil)
+                
+                self.delegate?.postWasUpdated(post)
+                
+                let selector: Selector
+                
+                if isPostEdit {
+                    self.cancelTimer()
+                    
+                    selector = Selector("dismissEditPost")
+                }
+                else {
+                    selector = Selector("dismissNewPostSuccessMessage")
+                }
+                
+                self.timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: selector, userInfo: nil, repeats: false)
+            },
+            failure: {
+                error, wasHandled in
+                
+                if (error == TreemServiceResponseCode.GenericResponseCode4) {
+                    // past date
+                    CustomAlertViews.showCustomAlertView(title: "Past Expiration Date", message: "Expiration date cannot be in the past")
+                }
+                
+                self.cancelLoadingDataViewChanges()
+            }
+        )
+    }
+    
+    func textViewDidChangeSelection(textView: UITextView) {
+        
+        if let timer = self.postTextTimer {
+                timer.invalidate()
+        }
+        
+        let tempUrl = textView.text.parseForUrl()
+        
+        if tempUrl != "" {
+                
+            if postUrl != tempUrl && self.shareLink == nil {
+                for view in PostUrlPreviewView.subviews {
+                    view.removeFromSuperview()
+                }
+                self.postData = WebPageData()
+                PostUrlPreviewHeightConstraint.constant = 1
+                self.checkUrlData = true
+            }
+            
+            postUrl = tempUrl
+            
+            if checkUrlData {
+                
+                if self.postData.linkUrl == nil {
+                    self.postTextTimer = NSTimer.scheduledTimerWithTimeInterval(postTextView.text.isEmpty ? 0 : self.postTextTimerDelay,
+                        target: self,
+                        selector: Selector("parseUrl"),
+                        userInfo: nil,
+                        repeats: false)
+                    
+                }
+            }
+        }
+        
+            //Clean the view because the user has deleted the URL.  We want to make sure that they had previously entered a valid url though.
+        else if self.postData.linkUrl != nil && self.shareLink == nil {
+            
+            for view in PostUrlPreviewView.subviews {
+                view.removeFromSuperview()
+            }
+            self.postData = WebPageData()
+            PostUrlPreviewHeightConstraint.constant = 1
+            self.checkUrlData = true
+            self.postUrl = ""
+            PostUrlPreviewController = nil
+        }
+    }
+    func parseUrl() {
+        //This should load the view for a url thumbnail.  
+        
+        TreemFeedService.sharedInstance.getUrlParse(CurrentTreeSettings.sharedInstance.treeSession, postUrl: postUrl, success: {
+            data in
+            let urlData = WebPageData.init(data: data)
+            
+            if urlData.linkUrl != nil {
+                self.postData = urlData
+                self.LayoutPostUrlPreview(urlData)
+            }
+            
+            }, failure: {
+                error, wasHandled in
+        })
+    }
+    
+    func LayoutPostUrlPreview(pageData: WebPageData) {
+        
+        PostUrlPreviewController = UrlPreviewViewController.getStoryboardInstance()
+        
+        PostUrlPreviewView.contentMode = .Center
+        PostUrlPreviewController!.displayControllerDelegate = self
+        PostUrlPreviewController!.parentHeightConstraint = PostUrlPreviewHeightConstraint
+        PostUrlPreviewController!.displayView = self.PostUrlPreviewView
+        PostUrlPreviewController!.viewWidthOffset = 0
+            
+        PostUrlPreviewController!.view.frame = CGRectMake(0, 0, PostUrlPreviewView.frame.size.width, PostUrlPreviewView.frame.size.height);
+        
+        if self.editPost != nil || self.shareLink != nil {
+            PostUrlPreviewController!.postViewController = self
+            PostUrlPreviewController!.allowRemovePreview = true
+        }
+        
+        PostUrlPreviewController!.LayoutPostUrlPreview(pageData)
+        
+        self.scrollContentView.layoutIfNeeded()
+    }
+    
+    func removeLinkFromPostView(sender: UIButton) {
+        // get imageview in parent
+        if let _ = sender.superview {
+            // adjust height constraint of the Url Preview (currently only one url preview allowed)
+            self.PostUrlPreviewHeightConstraint.constant = 0
+            
+            UIView.animateWithDuration(
+                AppStyles.sharedInstance.viewAnimationDuration,
+                animations: {
+                    () -> Void in
+                    
+                    self.PostUrlPreviewView.layoutIfNeeded()
+                    self.scrollContentView.layoutIfNeeded()
+                    self.scrollView.layoutIfNeeded()
+                },
+                completion: {
+                    (Bool) -> Void in
+                    
+                    // remove image from superview
+                    
+                    self.PostUrlPreviewView!.subviews.forEach({ $0.removeFromSuperview() })
+                    
+                    if self.editPost != nil {
+                        self.editPost?.postUrlData = WebPageData()
+                    }
+                    
+                    self.postUrl          = ""    // clear the post url item (single for now)
+                    self.postData         = WebPageData()
+                    self.PostUrlPreviewController = nil
+                    self.checkUrlData = true
+                    self.checkPostButtonEnabled()
+                }
+            )
+        }
+    }
+}

@@ -1,0 +1,36 @@
+/* 
+  Common.strings
+  Treem
+
+  Created by Matthew Walker on 10/16/15.
+  Copyright © 2015 Treem LLC. All rights reserved.
+*/
+
+"add" = "Añadir";
+"back" = "Atrás";
+"cancel" = "Cancelar";
+"device_connection_error" = "Dispositivo Error de conexión";
+"device_connection_error_message" = "Hay un problema de conexión con el dispositivo actual. Por favor inscribirse de nuevo para tratar de resolver el problema. Si el problema persiste, póngase en contacto con el soporte.";
+"device_connection_reinstall_error_message" = "Hay un problema de conexión con el dispositivo actual. Prueba a desinstalar y donwloading la última versión de la aplicación para resolver el problema. Si el problema persiste, póngase en contacto con el soporte.";
+"device_disabled" = "Dispositivo para minusválidos";
+"device_disabled_message" = "Su dispositivo se ha desactivado el acceso a Treem. Póngase en contacto con soporte si necesita ayuda.";
+"device_signature_error" = "Ha ocurrido un error";
+"device_signature_error_message" = "Se produjo un error al acceder a los datos de su dispositivo. Si el problema persiste, intente lo siguiente: cerrar la sesión y abrir una sesión, asegúrese de que la aplicación está al día , vuelva a instalar la aplicación, o el apoyo de contacto.";
+"error" = "Error";
+"error_general" = "Se produjo un error al realizar la acción.";
+"locked_out" = "Bloqueado";
+"locked_out_message" = "Su dispositivo se ha bloqueado debido a demasiadas solicitudes en un período corto. Por favor, espere 60 minutos antes de solicitar de nuevo.";
+"logout" = "Cerrar sesion";
+"logout_confirm_title" = "¿Salir?";
+"logout_confirm_message" = "Si cerrar la sesión, tendrá que pasar por el proceso de registro de nuevo para acceder Treem.";
+"logout_message" = "Su sesión ha caducado. Por favor vuelva a entrar.";
+"no" = "No";
+"no_network_title" = "No se Detecta la Red";
+"no_network_message" = "Asegúrese de que su dispositivo está conectado a internet.";
+"ok" = "OK";
+"remove" = "Retirar";
+"save" = "Guardar";
+"save_error" = "Guardar Error";
+"select" = "Seleccionar";
+"share" = "Compartir";
+"yes" = "Sí";

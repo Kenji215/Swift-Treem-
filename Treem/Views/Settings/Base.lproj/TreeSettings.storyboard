@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--TreeSettings-->
+        <scene sceneID="Gbb-PS-DFg">
+            <objects>
+                <viewController storyboardIdentifier="TreeSettings" title="TreeSettings" id="Tgb-Zd-BHL" customClass="TreeSettingsController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="R3L-Nd-oQb"/>
+                        <viewControllerLayoutGuide type="bottom" id="CPK-6g-Jg8"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="LLd-qS-mbQ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bbs-QJ-p1t" userLabel="Scoll Content View">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="52"/>
+                                <subviews>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0J-zN-DZf">
+                                        <rect key="frame" x="541" y="10" width="51" height="31"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="31" id="mhJ-vf-RdQ"/>
+                                        </constraints>
+                                        <connections>
+                                            <action selector="notificationSwitchChange:" destination="Tgb-Zd-BHL" eventType="valueChanged" id="pYi-rn-0Pz"/>
+                                        </connections>
+                                    </switch>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zeY-Qb-hP7">
+                                        <rect key="frame" x="10" y="10" width="118" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enable notifications for the current tree." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Okk-GJ-Fk8">
+                                        <rect key="frame" x="10" y="28" width="526" height="14"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                        <color key="textColor" red="0.73725490199999999" green="0.73725490199999999" blue="0.73725490199999999" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="2ah-4m-aKP"/>
+                                    <constraint firstItem="Okk-GJ-Fk8" firstAttribute="leading" secondItem="Bbs-QJ-p1t" secondAttribute="leading" constant="10" id="CCm-Rc-ybk"/>
+                                    <constraint firstItem="zeY-Qb-hP7" firstAttribute="top" secondItem="Bbs-QJ-p1t" secondAttribute="top" constant="10" id="FKq-kf-fwQ"/>
+                                    <constraint firstItem="H0J-zN-DZf" firstAttribute="top" secondItem="Bbs-QJ-p1t" secondAttribute="top" constant="10" id="NBc-J0-adQ"/>
+                                    <constraint firstItem="zeY-Qb-hP7" firstAttribute="leading" secondItem="Bbs-QJ-p1t" secondAttribute="leading" constant="10" id="NQy-HE-bGa"/>
+                                    <constraint firstAttribute="trailing" secondItem="H0J-zN-DZf" secondAttribute="trailing" constant="10" id="PA5-rd-7z9"/>
+                                    <constraint firstItem="H0J-zN-DZf" firstAttribute="centerY" secondItem="Bbs-QJ-p1t" secondAttribute="centerY" id="chY-Gq-46s"/>
+                                    <constraint firstItem="zeY-Qb-hP7" firstAttribute="centerY" secondItem="Bbs-QJ-p1t" secondAttribute="centerY" id="dSz-CS-PIE"/>
+                                    <constraint firstAttribute="bottom" secondItem="Okk-GJ-Fk8" secondAttribute="bottom" constant="10" id="gel-xq-mzy"/>
+                                    <constraint firstAttribute="bottom" secondItem="H0J-zN-DZf" secondAttribute="bottom" constant="10" id="iY7-HN-Tdw"/>
+                                    <constraint firstItem="H0J-zN-DZf" firstAttribute="leading" secondItem="Okk-GJ-Fk8" secondAttribute="trailing" constant="5" id="jw2-Bs-auB"/>
+                                    <constraint firstItem="Okk-GJ-Fk8" firstAttribute="top" secondItem="zeY-Qb-hP7" secondAttribute="bottom" constant="1" id="xcl-Qt-GhT"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="2ah-4m-aKP"/>
+                                        <exclude reference="dSz-CS-PIE"/>
+                                        <exclude reference="chY-Gq-46s"/>
+                                        <exclude reference="iY7-HN-Tdw"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="Bbs-QJ-p1t" firstAttribute="leading" secondItem="LLd-qS-mbQ" secondAttribute="leading" id="6QT-vf-hBG"/>
+                            <constraint firstItem="Bbs-QJ-p1t" firstAttribute="top" secondItem="LLd-qS-mbQ" secondAttribute="top" id="7wd-3m-nkJ"/>
+                            <constraint firstAttribute="trailing" secondItem="Bbs-QJ-p1t" secondAttribute="trailing" id="uYU-Ou-g4K"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="notificationsSwitch" destination="H0J-zN-DZf" id="F3V-W2-zk3"/>
+                        <outlet property="scrollContentView" destination="Bbs-QJ-p1t" id="XeV-Tl-p49"/>
+                        <outlet property="scrollView" destination="LLd-qS-mbQ" id="d9b-Dw-cN7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hLz-ZG-VK4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1568" y="144"/>
+        </scene>
+    </scenes>
+</document>

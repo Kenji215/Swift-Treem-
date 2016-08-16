@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="VTc-FI-fDx">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <scenes>
+        <!--Seeding Selected View Controller-->
+        <scene sceneID="HDa-Tx-HVu">
+            <objects>
+                <viewController storyboardIdentifier="seedingSelected" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VTc-FI-fDx" customClass="SeedingSelectedViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="X35-fk-dec"/>
+                        <viewControllerLayoutGuide type="bottom" id="qIg-5I-Owu"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="UAm-cJ-EpX">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rhd-9K-DB8">
+                                <rect key="frame" x="0.0" y="560" width="600" height="40"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8aD-gY-iCr">
+                                        <rect key="frame" x="484" y="0.0" width="116" height="40"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="10" maxY="0.0"/>
+                                        <state key="normal" title="Clear Selected"/>
+                                        <connections>
+                                            <action selector="clearSelectedButtonTouchUpInside:" destination="VTc-FI-fDx" eventType="touchUpInside" id="kTs-Ye-c4m"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="giL-Ch-1hd">
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="80" id="aZa-eF-MLa"/>
+                                        </constraints>
+                                        <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <inset key="titleEdgeInsets" minX="4" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="Close"/>
+                                        <connections>
+                                            <segue destination="xl9-f7-hEy" kind="unwind" unwindAction="unwindToSeedSearch:" id="Tmr-cp-G9o"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Etr-OO-h4l"/>
+                                    <constraint firstAttribute="bottom" secondItem="giL-Ch-1hd" secondAttribute="bottom" id="Sgh-Ks-o38"/>
+                                    <constraint firstAttribute="trailing" secondItem="8aD-gY-iCr" secondAttribute="trailing" id="c1a-g1-WxY"/>
+                                    <constraint firstItem="8aD-gY-iCr" firstAttribute="top" secondItem="rhd-9K-DB8" secondAttribute="top" id="cEi-MP-eld"/>
+                                    <constraint firstItem="giL-Ch-1hd" firstAttribute="leading" secondItem="rhd-9K-DB8" secondAttribute="leading" id="fKX-cb-OG3"/>
+                                    <constraint firstAttribute="bottom" secondItem="8aD-gY-iCr" secondAttribute="bottom" id="g9W-pf-j48"/>
+                                    <constraint firstItem="giL-Ch-1hd" firstAttribute="top" secondItem="rhd-9K-DB8" secondAttribute="top" id="kCm-xr-1PS"/>
+                                </constraints>
+                            </view>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lvJ-sR-EjW">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="560"/>
+                                <connections>
+                                    <segue destination="ouY-Gd-dHC" kind="embed" identifier="embedSelectedMembersTable" id="oCw-0U-vbQ"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="qIg-5I-Owu" firstAttribute="top" secondItem="rhd-9K-DB8" secondAttribute="bottom" id="EY4-04-C3y"/>
+                            <constraint firstItem="lvJ-sR-EjW" firstAttribute="leading" secondItem="UAm-cJ-EpX" secondAttribute="leading" id="FUA-Mc-AhI"/>
+                            <constraint firstItem="rhd-9K-DB8" firstAttribute="top" secondItem="lvJ-sR-EjW" secondAttribute="bottom" id="M8G-sp-GgB"/>
+                            <constraint firstAttribute="trailing" secondItem="rhd-9K-DB8" secondAttribute="trailing" id="NR5-ne-LAi"/>
+                            <constraint firstItem="rhd-9K-DB8" firstAttribute="leading" secondItem="UAm-cJ-EpX" secondAttribute="leading" id="gRs-3c-wXf"/>
+                            <constraint firstAttribute="trailing" secondItem="lvJ-sR-EjW" secondAttribute="trailing" id="t7F-jK-hLV"/>
+                            <constraint firstItem="lvJ-sR-EjW" firstAttribute="top" secondItem="X35-fk-dec" secondAttribute="bottom" id="uTB-FJ-0HV"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="clearAllSelectedButton" destination="8aD-gY-iCr" id="jyp-Au-Jl5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ntj-ee-rsc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="xl9-f7-hEy" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="123" y="496"/>
+        </scene>
+        <!--SeedingMembersTable-->
+        <scene sceneID="cyD-7s-kiE">
+            <objects>
+                <viewControllerPlaceholder storyboardName="SeedingMembersTable" id="ouY-Gd-dHC" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gbh-u1-mlf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="586" y="496"/>
+        </scene>
+    </scenes>
+</document>

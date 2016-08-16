@@ -1,0 +1,41 @@
+
+/* Class = "UITextField"; placeholder = "Enter code"; ObjectID = "3iO-nT-md6"; */
+"3iO-nT-md6.placeholder" = "Introduzca el código";
+
+/* Class = "UILabel"; text = "Signup Code"; ObjectID = "43e-J5-jOX"; */
+"43e-J5-jOX.text" = "Código Inscripción";
+
+/* Class = "UILabel"; text = "New code requested"; ObjectID = "Aut-bI-Z7n"; */
+"Aut-bI-Z7n.text" = "Nuevo código solicitado";
+
+/* Class = "UIButton"; normalTitle = "Edit"; ObjectID = "Bvq-LR-oYD"; */
+"Bvq-LR-oYD.normalTitle" = "Editar";
+
+/* Class = "UIButton"; normalTitle = "Send New Signup Code"; ObjectID = "HLk-ec-pSP"; */
+"HLk-ec-pSP.normalTitle" = "Enviar Nuevo Código Inscripción";
+
+/* Class = "UITextView"; text = "If a signup code has not been received at this number, try sending a new signup code."; ObjectID = "Hkk-9p-PYf"; */
+"Hkk-9p-PYf.text" = "Si un código de registro no se ha recibido en este número , intente enviar un nuevo código de registro.";
+
+/* Class = "UILabel"; text = "0000000000"; ObjectID = "NEi-hF-ckQ"; */
+"NEi-hF-ckQ.text" = "0000000000";
+
+/* Class = "UILabel"; text = "Phone Number:"; ObjectID = "aiE-Hf-NF2"; */
+"aiE-Hf-NF2.text" = "Número de teléfono:";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "cO8-5m-4bG"; */
+"cO8-5m-4bG.normalTitle" = "Siguiente";
+
+"invalid_code_message" = "Compruebe que ha introducido el código correcto. Si usted solicitó un nuevo código, asegúrese de que está entrando en la última uno recibió.";
+"invalid_code_title" = "Inválido Código Inscripción";
+"invalid_user_message" = "Código no pudo ser verificada";
+"invalid_user_title" = "Código inválido";
+"last_requested_at" = "Última solicitado en";
+"unverified_user_title" = "Código Inscripción Discrepancia";
+"unverified_user_message" = "Código de Inscripción no coincide con el número proporcionado . Un nuevo código de registro ha sido enviado. Utilice el código enviado para obtener acceso.";
+"close_button" = "Cerca";
+"verification_title" = "Código de verificación";
+"verification_message" = "Si un código de verificación no se ha recibido en este número , intente enviar un nuevo código de verificación.";
+"verification_send_new" = "Enviar Nuevo Código de verificación";
+"phone_changed_title" = "Número de Teléfono ha Cambiado";
+"phone_changed_message" = "Número de teléfono fue cambiado con éxito.";

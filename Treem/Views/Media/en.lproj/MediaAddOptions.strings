@@ -1,0 +1,9 @@
+
+/* Class = "UIButton"; normalTitle = "Camera"; ObjectID = "VzJ-Fi-dqY"; */
+"VzJ-Fi-dqY.normalTitle" = "Camera";
+
+/* Class = "UIButton"; normalTitle = "Albums"; ObjectID = "gon-fP-GWx"; */
+"gon-fP-GWx.normalTitle" = "Albums";
+
+"no_camera" = "No Camera";
+"no_camera_message" = "Sorry, this device does not have a camera.";

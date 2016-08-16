@@ -1,0 +1,14 @@
+
+/* Class = "UIButton"; normalTitle = "Clear Selected"; ObjectID = "8aD-gY-iCr"; */
+"8aD-gY-iCr.normalTitle" = "Clear Selected";
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "giL-Ch-1hd"; */
+"giL-Ch-1hd.normalTitle" = "Close";
+
+
+"removal_warning_title" = "miembros Eliminación de una rama";
+"removal_warning_message" = "De-seleccionar a los miembros de esta lista significa que van a quedar eliminado de la rama al chocar contra 'Guardar'.";
+
+
+"unfriending_warning_title" = "Usarios Unfriending";
+"unfriending_warning_message" = "De-seleccionar a los miembros de esta lista les UnFriend al chocar en 'Guardar'";

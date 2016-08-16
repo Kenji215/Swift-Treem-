@@ -1,0 +1,40 @@
+
+/* Class = "UILabel"; text = "Add Branch"; ObjectID = "F1t-qA-OIc"; */
+"F1t-qA-OIc.text" = "Añadir Branch";
+
+/* Class = "UITextField"; placeholder = "Enter branch name"; ObjectID = "fw6-oB-JJK"; */
+"fw6-oB-JJK.placeholder" = "Ingresa una rama";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "gMb-4c-rJS"; */
+"gMb-4c-rJS.normalTitle" = "Cancelar";
+
+/* Class = "UIButton"; normalTitle = "Save"; ObjectID = "t2M-1R-9PR"; */
+"t2M-1R-9PR.normalTitle" = "Salvar";
+
+"edit_branch" = "Editar Branch";
+
+"options_segmented_control_0" = "Búsqueda Árbol";
+"options_segmented_control_1" = "Crear Branch";
+
+"explore_type_placeholder" = "Selecciona una categoría";
+
+"explore_type" = "- Todas -";
+"explore_type_0" = "Noticias";
+"explore_type_1" = "Deportes";
+"explore_type_2" = "Negocio";
+"explore_type_3" = "Vídeo";
+"explore_type_4" = "Música";
+"explore_type_5" = "Medio Social";
+"explore_type_6" = "Compras";
+"explore_type_7" = "Comentario";
+"explore_type_8" = "Buscar";
+"explore_type_9" = "Referencia";
+"explore_type_10" = "Entretenimiento";
+"explore_type_11" = "Tecnología";
+"explore_type_12" = "Ciencia";
+"explore_type_13" = "Viajar";
+"explore_type_14" = "Clima";
+"explore_type_15" = "Reclutamiento";
+"explore_type_16" = "Bienes raíces";
+
+"no_search_results" = "No hay resultados encontrados";

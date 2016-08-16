@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="qFy-FK-rHf">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Chat Options View Controller-->
+        <scene sceneID="Dln-EX-uuK">
+            <objects>
+                <viewController storyboardIdentifier="ChatOptions" modalPresentationStyle="overFullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="qFy-FK-rHf" customClass="ChatOptionsViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="uYn-Vl-CNA"/>
+                        <viewControllerLayoutGuide type="bottom" id="fPM-60-Re3"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="YLo-cP-xHg">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fzd-gF-V0h" userLabel="ViewingArea">
+                                <rect key="frame" x="422" y="40" width="178" height="144"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iyv-gg-EeC" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="178" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="h3j-7w-mSa"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="0.0" maxY="8"/>
+                                        <state key="normal" title="Participants" image="Members"/>
+                                        <connections>
+                                            <action selector="participantsButtonTouchUpInside:" destination="qFy-FK-rHf" eventType="touchUpInside" id="4SE-HM-bZL"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4qo-Oi-x9B" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="96" width="178" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="QfN-I0-Uwl"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="0.0" maxY="8"/>
+                                        <state key="normal" title="Leave Chat" image="Exit"/>
+                                        <connections>
+                                            <action selector="leaveChatTouchUpInside:" destination="qFy-FK-rHf" eventType="touchUpInside" id="aeq-GO-DgN"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R9c-yz-G5Y" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="48" width="178" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="mBx-hQ-G94"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="0.0" maxY="8"/>
+                                        <state key="normal" title="End Chat" image="Trash"/>
+                                        <connections>
+                                            <action selector="endChatTouchUpInside:" destination="qFy-FK-rHf" eventType="touchUpInside" id="dQl-IE-gps"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Iyv-gg-EeC" firstAttribute="leading" secondItem="Fzd-gF-V0h" secondAttribute="leading" id="5eA-1C-cx7"/>
+                                    <constraint firstAttribute="trailing" secondItem="R9c-yz-G5Y" secondAttribute="trailing" id="7LH-da-xML"/>
+                                    <constraint firstAttribute="trailing" secondItem="Iyv-gg-EeC" secondAttribute="trailing" id="KVy-qW-6U9"/>
+                                    <constraint firstItem="R9c-yz-G5Y" firstAttribute="top" secondItem="Iyv-gg-EeC" secondAttribute="bottom" id="SG6-BF-e0H"/>
+                                    <constraint firstAttribute="trailing" secondItem="4qo-Oi-x9B" secondAttribute="trailing" id="Uyy-AZ-G9F"/>
+                                    <constraint firstAttribute="width" constant="178" id="VpB-XR-Nlv"/>
+                                    <constraint firstAttribute="bottom" secondItem="4qo-Oi-x9B" secondAttribute="bottom" id="YaI-A3-HUA"/>
+                                    <constraint firstItem="R9c-yz-G5Y" firstAttribute="leading" secondItem="Fzd-gF-V0h" secondAttribute="leading" id="ZfO-vI-nMh"/>
+                                    <constraint firstItem="4qo-Oi-x9B" firstAttribute="leading" secondItem="Fzd-gF-V0h" secondAttribute="leading" id="hSy-Iq-smX"/>
+                                    <constraint firstItem="4qo-Oi-x9B" firstAttribute="top" secondItem="R9c-yz-G5Y" secondAttribute="bottom" id="i6Y-C5-pO0"/>
+                                    <constraint firstAttribute="height" constant="127" id="qEg-af-V43"/>
+                                    <constraint firstItem="Iyv-gg-EeC" firstAttribute="top" secondItem="Fzd-gF-V0h" secondAttribute="top" id="zou-me-z5C"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="qEg-af-V43"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="Fzd-gF-V0h" firstAttribute="top" secondItem="uYn-Vl-CNA" secondAttribute="bottom" constant="40" id="LJX-g1-yUz"/>
+                            <constraint firstAttribute="trailing" secondItem="Fzd-gF-V0h" secondAttribute="trailing" id="Yp0-po-q0F"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="displayView" destination="Fzd-gF-V0h" id="9K1-xh-Gpo"/>
+                        <outlet property="displayViewHeightConstraint" destination="qEg-af-V43" id="cfh-wZ-nMK"/>
+                        <outlet property="displayViewWidthConstraint" destination="VpB-XR-Nlv" id="ZyH-TU-BlC"/>
+                        <outlet property="endChatButton" destination="R9c-yz-G5Y" id="Q6P-xv-kTx"/>
+                        <outlet property="endChatHeightConstraint" destination="mBx-hQ-G94" id="e1y-SQ-kLG"/>
+                        <outlet property="endChatTopConstraint" destination="SG6-BF-e0H" id="ERI-ig-Wlc"/>
+                        <outlet property="leaveChatButton" destination="4qo-Oi-x9B" id="Sqd-vf-m5y"/>
+                        <outlet property="leaveChatHeightConstraint" destination="QfN-I0-Uwl" id="gwS-Dp-2yQ"/>
+                        <outlet property="leaveChatTopConstraint" destination="i6Y-C5-pO0" id="DRr-2A-hd6"/>
+                        <outlet property="participantsButton" destination="Iyv-gg-EeC" id="h2I-HG-dEv"/>
+                        <outlet property="viewAreaTopConstraint" destination="LJX-g1-yUz" id="zp0-mP-kbv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YAX-3f-BQg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="146" y="327"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Exit" width="36" height="36"/>
+        <image name="Members" width="27" height="25"/>
+        <image name="Trash" width="20" height="25"/>
+    </resources>
+</document>

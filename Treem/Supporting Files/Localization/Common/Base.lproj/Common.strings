@@ -1,0 +1,36 @@
+/* 
+  Common.strings
+  Treem
+
+  Created by Matthew Walker on 10/16/15.
+  Copyright © 2015 Treem LLC. All rights reserved.
+*/
+
+"add" = "Add";
+"back" = "Back";
+"cancel" = "Cancel";
+"device_connection_error" = "Device Connection Error";
+"device_connection_error_message" = "There is an issue connecting with the current device. Please sign up again to try to resolve the issue. If the issue persists please contact support.";
+"device_connection_reinstall_error_message" = "There is an issue connecting with the current device. Try uninstalling and donwloading the latest version of app to resolve the issue. If the issue persists please contact support.";
+"device_disabled" = "Device Disabled";
+"device_disabled_message" = "Your device has been disabled from accessing Treem. Contact support if you need assistance.";
+"device_signature_error" = "Error Occurred";
+"device_signature_error_message" = "An error occurred while accessing data from your device. If the problem persists try the following: log out and sign in, make sure the app is up to date, reinstall the application, or contact support.";
+"error" = "Error";
+"error_general" = "An error occurred while performing the action.";
+"locked_out" = "Locked Out";
+"locked_out_message" = "Your device has been locked out due to too many requests in a short period. Please wait 60 minutes before requesting again.";
+"logout" = "Logout";
+"logout_confirm_title" = "Logout?";
+"logout_confirm_message" = "Logout? If you logout, you will need to go through the signup process again in order to access Treem.";
+"logout_message" = "Your session has expired. Please log back in.";
+"no" = "No";
+"no_network_title" = "No Network Detected";
+"no_network_message" = "Make sure your device is connected to the internet.";
+"ok" = "OK";
+"remove" = "Remove";
+"save" = "Save";
+"save_error" = "Save Error";
+"select" = "Select";
+"share" = "Share";
+"yes" = "Yes";

@@ -1,0 +1,51 @@
+
+/* Class = "UILabel"; text = "First Name"; ObjectID = "7Go-sM-Iku"; */
+"7Go-sM-Iku.text" = "First Name";
+
+/* Class = "UILabel"; text = "XXX-XXX-XXXX"; ObjectID = "BeG-oU-JNw"; */
+"BeG-oU-JNw.text" = "XXX-XXX-XXXX";
+
+/* Class = "UILabel"; text = "Phone Number"; ObjectID = "EUR-iK-cku"; */
+"EUR-iK-cku.text" = "Phone Number";
+
+/* Class = "UITextField"; placeholder = "Enter your last name"; ObjectID = "ING-PU-GcV"; */
+"ING-PU-GcV.placeholder" = "Enter your last name";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "MBf-fe-RaE"; */
+"MBf-fe-RaE.normalTitle" = "Next";
+
+/* Class = "UILabel"; text = "⚠ Letters and numbers only"; ObjectID = "SZh-Ad-sZX"; */
+"SZh-Ad-sZX.text" = "⚠ Letters and numbers only";
+
+/* Class = "UILabel"; text = "Last Name"; ObjectID = "Y2o-xb-5c9"; */
+"Y2o-xb-5c9.text" = "Last Name";
+
+/* Class = "UILabel"; text = "⚠ Letters and punctuation only"; ObjectID = "bch-Vy-6Ly"; */
+"bch-Vy-6Ly.text" = "⚠ Letters and punctuation only";
+
+/* Class = "UITextField"; placeholder = "Enter a unique username"; ObjectID = "c61-fY-QT9"; */
+"c61-fY-QT9.placeholder" = "Enter a unique username";
+
+/* Class = "UITextField"; placeholder = "Enter your birthdate"; ObjectID = "nou-T8-01X"; */
+"nou-T8-01X.placeholder" = "Enter your birthdate";
+
+/* Class = "UILabel"; text = "Birthdate"; ObjectID = "rU4-Ox-dsf"; */
+"rU4-Ox-dsf.text" = "Birthdate";
+
+/* Class = "UITextField"; placeholder = "Enter your first name"; ObjectID = "sen-Sh-m5l"; */
+"sen-Sh-m5l.placeholder" = "Enter your first name";
+
+/* Class = "UILabel"; text = "⚠ Letters and punctuation only"; ObjectID = "sv2-fs-Dut"; */
+"sv2-fs-Dut.text" = "⚠ Letters and punctuation only";
+
+/* Class = "UILabel"; text = "Username"; ObjectID = "vg9-ku-X5v"; */
+"vg9-ku-X5v.text" = "Username";
+
+/* Class = "UIButton"; normalTitle = "Edit"; ObjectID = "yzK-UH-2CB"; */
+"yzK-UH-2CB.normalTitle" = "Edit";
+
+"username_exists" = "Username Exists";
+
+"username_exists_message" = "Please enter a different username.";
+
+"username_already_taken" = "⚠ Username already taken";

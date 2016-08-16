@@ -1,0 +1,14 @@
+
+/* Class = "UIButton"; normalTitle = "Retry"; ObjectID = "K93-0F-GnH"; */
+"K93-0F-GnH.normalTitle" = "Reintente";
+
+/* Class = "UILabel"; text = "No network connection detected."; ObjectID = "aDN-9l-NDg"; */
+"aDN-9l-NDg.text" = "Sin conexión de red detectada.";
+
+"device_disabled" = "El dispositivo ha sido desactivado.";
+
+"device_error" = "Error de conexión de dispositivos.";
+
+"locked_out" = "El dispositivo ha sido bloqueada.";
+
+"no_simulator_support" = "App no se puede utilizar en el simulador.";

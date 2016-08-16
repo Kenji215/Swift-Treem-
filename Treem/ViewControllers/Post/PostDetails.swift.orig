@@ -1,0 +1,345 @@
+//
+//  PostDetailsViewController.swift
+//  Treem
+//
+//  Created by Kevin Novak on 1/4/16.
+//  Copyright © 2016 Treem LLC. All rights reserved.
+//
+
+import UIKit
+import KMPlaceholderTextView
+
+<<<<<<< HEAD
+class PostDetailsViewController : UIViewController, UITableViewDataSource {
+=======
+class PostDetailsViewController : UIViewController, UITableViewDataSource, UITextViewDelegate {
+>>>>>>> master
+
+    var postID : Int = 0
+    var replies : OrderedSet<Reply>? = nil
+    var replyUsers : Dictionary<Int, User> = [:]
+
+    var hasLoadedPost : Bool = false {
+        didSet { self.checkLoaded() }
+    }
+    var hasLoadedReplies : Bool = false {
+        didSet { self.checkLoaded() }
+    }
+
+<<<<<<< HEAD
+=======
+
+    @IBOutlet weak var postScrollView: UIScrollView!
+
+>>>>>>> master
+    @IBOutlet weak var postView: UIView!
+    @IBOutlet weak var postViewHeightConstraint: NSLayoutConstraint!
+
+    @IBOutlet weak var repliesTable: UITableView!
+    @IBOutlet weak var repliesTableHeightConstraint: NSLayoutConstraint!
+
+    @IBOutlet weak var addReplyTextField: KMPlaceholderTextView!
+    @IBOutlet weak var addReplyButton: UIButton!
+
+<<<<<<< HEAD
+=======
+
+    private let loadingMaskViewController = LoadingMaskViewController.getStoryboardInstance()
+
+
+>>>>>>> master
+    static func getStoryboardInstance() -> PostDetailsViewController {
+        return UIStoryboard(name: "PostDetails", bundle: nil).instantiateInitialViewController() as! PostDetailsViewController
+    }
+
+    override func viewDidLoad() {
+<<<<<<< HEAD
+        super.viewDidLoad()
+
+        self.repliesTable.estimatedRowHeight = self.repliesTable.rowHeight
+        self.repliesTable.rowHeight = UITableViewAutomaticDimension
+
+//        self.view.setNeedsLayout()
+
+        self.repliesTable.dataSource = self
+
+        //If we were given a post number, go grab the info
+        if (self.postID > 0) {
+            self.displayPost(self.postID)
+            self.loadComments(self.postID)
+        }
+        // If not, we can't show this page, so back out.
+        else {
+            self.closeDetailsView()
+        }
+    }
+
+
+=======
+
+        super.viewDidLoad()
+
+        if (self.postID == 0) {
+            self.closeDetailsView()
+        }
+        else {
+
+            self.repliesTable.estimatedRowHeight = self.repliesTable.rowHeight
+            self.repliesTable.rowHeight = UITableViewAutomaticDimension
+            self.repliesTable.dataSource = self
+
+
+            self.addReplyTextField.delegate = self
+            self.addReplyTextField.textContainer.lineFragmentPadding = 0
+            self.addReplyTextField.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10)
+
+            self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+            
+            self.displayPost(self.postID)
+            self.loadComments(self.postID)
+
+        }
+    }
+
+    //Display the post in the container at the top
+>>>>>>> master
+    func displayPost(postID: Int) {
+        self.hasLoadedPost = false
+
+        let vc = FeedViewController.getStoryboardInstance()
+
+        vc.post_id = postID
+        vc.delegate = self
+
+        self.view.layoutIfNeeded()
+
+        self.postView.addSubview(vc.view)
+    }
+
+<<<<<<< HEAD
+    func loadComments (postID: Int) {
+        self.hasLoadedReplies = false
+=======
+
+    //Grab the comments for the given post and display them.
+    func loadComments (postID: Int) {
+
+        self.hasLoadedReplies = false
+
+        self.loadingMaskViewController.queueLoadingMask(self.repliesTable, loadingViewAlpha: 1.0, showCompletion: nil)
+
+
+>>>>>>> master
+        TreemFeedService.sharedInstance.getPostComments(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            postID: postID,
+            failureCodesHandled: nil,
+            success: {
+                data in
+
+<<<<<<< HEAD
+                let replyData =  Reply.getRepliesFromData(data)
+
+
+                self.replies = replyData.replies
+                self.replyUsers.merge(replyData.users)
+
+                self.repliesTable.reloadData()
+
+                if (self.replies!.count == 0) {
+                    self.hasLoadedReplies = true
+                }
+=======
+                self.loadingMaskViewController.cancelLoadingMask({
+
+                    let replyData =  Reply.getRepliesFromData(data)
+
+                    self.replies = replyData.replies
+                    self.replyUsers.merge(replyData.users)
+
+                    self.repliesTable.reloadData()
+
+                    self.hasLoadedReplies = true
+                })
+>>>>>>> master
+            },
+            failure: {
+                error, wasHandled in
+            }
+        )
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
+        self.checkLoaded()
+    }
+
+    @IBAction func closeButtonTouchUpInside(sender: AnyObject) {
+        self.closeDetailsView()
+    }
+
+<<<<<<< HEAD
+=======
+
+    //Tapping the "Post" button for adding a reply - attempt to add the reply.
+    //On success, reload the replies table. On error, leave the message there and alert that something went wrong
+>>>>>>> master
+    @IBAction func postReplyTouchUpInside(sender: AnyObject) {
+
+        let comment = (self.addReplyTextField.text ?? "").trim()
+
+        if (comment.characters.count > 0) {
+
+<<<<<<< HEAD
+            self.addReplyButton.enabled = false
+
+            let reply = Reply()
+=======
+            self.dismissKeyboard()
+            self.addReplyButton.enabled = false
+
+            var reply = Reply()
+>>>>>>> master
+            reply.comment = comment
+
+            TreemFeedService.sharedInstance.setReply(
+                CurrentTreeSettings.sharedInstance.treeSession,
+                postID: self.postID,
+                reply: reply,
+                failureCodesHandled: nil,
+                success: {
+                    data in
+
+                    //Alert that the reply was successful
+                    
+
+                    //Clear the textbox
+                    self.addReplyTextField.text = ""
+                    self.addReplyButton.enabled = true
+
+                    //Reload comments
+                    self.loadComments(self.postID)
+<<<<<<< HEAD
+=======
+
+                    
+>>>>>>> master
+                },
+                failure: {
+                    error, wasHandled in
+
+<<<<<<< HEAD
+=======
+                    // show alert
+                    CustomAlertViews.showCustomAlertView(
+                        title: Localization.sharedInstance.getLocalizedString("comment_error_title", table: "PostDetails")
+                        , message: Localization.sharedInstance.getLocalizedString("comment_error_message", table: "PostDetails")
+                        , fromViewController: self
+                    )
+>>>>>>> master
+                    //Alert that there was a failure
+
+                    //Re-enable commenting
+                    self.addReplyButton.enabled = true
+                }
+            )
+        }
+    }
+
+
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.replies?.count ?? 0
+    }
+
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("ReplyCell") as! ReplyTableViewCell
+
+        if let reply : Reply = self.replies![indexPath.row], user : User = self.replyUsers[reply.userId] {
+            cell.nameLabel.text = user.getFullName()
+            cell.replyTextLabel.text = reply.comment
+            cell.dateLabel.text = reply.replyDate?.getRelativeDateFormattedString()
+<<<<<<< HEAD
+
+
+            if (indexPath.row == (self.replies!.count - 1)) {
+                hasLoadedReplies = true
+            }
+        }
+
+        
+        return cell
+    }
+
+=======
+        }
+
+        return cell
+    }
+
+    //Make sure that both the post and replies have been loaded before trying to manipulate their appearances
+>>>>>>> master
+    func checkLoaded() {
+        if (self.hasLoadedPost && self.hasLoadedReplies) {
+            self.resetContainers()
+        }
+    }
+
+    func resetContainers() {
+<<<<<<< HEAD
+
+        //Resize the post details
+        var heightSum : CGFloat = self.postView.subviews.reduce(0, combine: {$0 + $1.frame.height})
+
+        if (heightSum > 0) {
+            self.postViewHeightConstraint.constant = heightSum
+        }
+
+        //Resize the table of replies
+        heightSum = 0
+
+        for var i = 0; i < self.replies?.count; i++ {
+            let cell = self.repliesTable.cellForRowAtIndexPath(NSIndexPath(forItem: i, inSection: 0))
+
+            print ("KN: Cell height of " + String(cell?.frame.height ?? 0))
+            heightSum += (cell?.frame.height ?? 0)
+        }
+
+        if (heightSum > 0 || self.replies?.count == 0) {
+            self.repliesTableHeightConstraint.constant = heightSum
+        }
+=======
+        //Resize the post details
+        self.postViewHeightConstraint.constant = self.postView.subviews.reduce(0, combine: {$0 + $1.frame.height})
+
+        //Resize the replies table
+        self.repliesTableHeightConstraint.constant = self.repliesTable.contentSize.height
+>>>>>>> master
+    }
+
+    func closeDetailsView() {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+<<<<<<< HEAD
+
+=======
+    func dismissKeyboard() {
+        self.view.endEditing(true)
+        self.addReplyTextField.resignFirstResponder()
+    }
+
+    // Upon tapping the "Add comment" button, scroll down to the textfield and focus on it (bringing up the keyboard).
+>>>>>>> master
+    func focusAddReplyTextField() {
+        self.addReplyTextField.becomeFirstResponder()
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return false
+    }
+    
+}

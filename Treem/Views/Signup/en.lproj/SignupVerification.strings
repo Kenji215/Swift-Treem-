@@ -1,0 +1,42 @@
+
+/* Class = "UITextField"; placeholder = "Enter code"; ObjectID = "3iO-nT-md6"; */
+"3iO-nT-md6.placeholder" = "Enter code";
+
+/* Class = "UILabel"; text = "Signup Code"; ObjectID = "43e-J5-jOX"; */
+"43e-J5-jOX.text" = "Signup Code";
+
+/* Class = "UILabel"; text = "New code requested"; ObjectID = "Aut-bI-Z7n"; */
+"Aut-bI-Z7n.text" = "New code requested";
+
+/* Class = "UIButton"; normalTitle = "Edit"; ObjectID = "Bvq-LR-oYD"; */
+"Bvq-LR-oYD.normalTitle" = "Edit";
+
+/* Class = "UIButton"; normalTitle = "Send New Signup Code"; ObjectID = "HLk-ec-pSP"; */
+"HLk-ec-pSP.normalTitle" = "Send New Signup Code";
+
+/* Class = "UITextView"; text = "If a signup code has not been received at this number, try sending a new signup code."; ObjectID = "Hkk-9p-PYf"; */
+"Hkk-9p-PYf.text" = "If a signup code has not been received at this number, try sending a new signup code.";
+
+/* Class = "UILabel"; text = "0000000000"; ObjectID = "NEi-hF-ckQ"; */
+"NEi-hF-ckQ.text" = "0000000000";
+
+/* Class = "UILabel"; text = "Phone Number:"; ObjectID = "aiE-Hf-NF2"; */
+"aiE-Hf-NF2.text" = "Phone Number:";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "cO8-5m-4bG"; */
+"cO8-5m-4bG.normalTitle" = "Next";
+
+
+"invalid_code_message" = "Check that the correct code was entered. If you requested a new code, make sure you are entering the latest one received.";
+"invalid_code_title" = "Invalid Signup Code";
+"invalid_user_message" = "Code could not be verified";
+"invalid_user_title" = "Invalid Code";
+"last_requested_at" = "Last requested at";
+"unverified_user_title" = "Signup Code Mismatch";
+"unverified_user_message" = "Signup code did not match the provided number. A new signup code has been sent. Please use the sent code to gain access.";
+"close_button" = "Close";
+"verification_title" = "Verification Code";
+"verification_message" = "If a verification code has not been received at this number, try sending a new verification code.";
+"verification_send_new" = "Send New Verification Code";
+"phone_changed_title" = "Phone Number Changed";
+"phone_changed_message" = "Phone number was changed successfully.";

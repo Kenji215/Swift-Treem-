@@ -1,0 +1,115 @@
+
+/* Class = "UILabel"; text = "⚠ Letters and punctuation only"; ObjectID = "0Ny-4F-yx4"; */
+"0Ny-4F-yx4.text" = "⚠ Letters and punctuation only";
+
+/* Class = "UILabel"; text = "Birthdate"; ObjectID = "1fj-9s-W5u"; */
+"1fj-9s-W5u.text" = "Birthdate";
+
+/* Class = "UILabel"; text = "Last Name"; ObjectID = "1jE-K3-BdV"; */
+"1jE-K3-BdV.text" = "Last Name";
+
+/* Class = "UILabel"; text = "City"; ObjectID = "1w3-Pb-she"; */
+"1w3-Pb-she.text" = "City";
+
+/* Class = "UITextField"; placeholder = "Enter state"; ObjectID = "2Su-O9-WI4"; */
+"2Su-O9-WI4.placeholder" = "Enter state";
+
+/* Class = "UILabel"; text = "Country"; ObjectID = "5vY-gT-nPG"; */
+"5vY-gT-nPG.text" = "Country";
+
+/* Class = "UILabel"; text = "First Name"; ObjectID = "B7M-1t-in2"; */
+"B7M-1t-in2.text" = "First Name";
+
+/* Class = "UITextField"; placeholder = "Enter country"; ObjectID = "BR2-kb-8mc"; */
+"BR2-kb-8mc.placeholder" = "Enter country";
+
+/* Class = "UITextField"; placeholder = "Enter username"; ObjectID = "C2u-KE-A4A"; */
+"C2u-KE-A4A.placeholder" = "Enter username";
+
+/* Class = "UILabel"; text = "⚠ Letters and punctuation only"; ObjectID = "CUF-OK-IFi"; */
+"CUF-OK-IFi.text" = "⚠ Letters and punctuation only";
+
+/* Class = "UILabel"; text = "⚠ Letters and numbers only"; ObjectID = "CrA-Wg-CE8"; */
+"CrA-Wg-CE8.text" = "⚠ Letters and numbers only";
+
+/* Class = "UILabel"; text = "Shared"; ObjectID = "Fdx-mS-HLy"; */
+"Fdx-mS-HLy.text" = "Shared";
+
+/* Class = "UILabel"; text = "Show Shared Info to Non-friends"; ObjectID = "G7S-bf-zaC"; */
+"G7S-bf-zaC.text" = "Show Shared Info to Non-friends";
+
+/* Class = "UILabel"; text = "⚠ Can't be future date"; ObjectID = "HYJ-ug-z1g"; */
+"HYJ-ug-z1g.text" = "⚠ Can't be a future date";
+
+/* Class = "UILabel"; text = "XXX-XXX-XXXX"; ObjectID = "Hcb-b0-P72"; */
+"Hcb-b0-P72.text" = "XXX-XXX-XXXX";
+
+/* Class = "UILabel"; text = "⚠ Letters and numbers only"; ObjectID = "IEp-pl-Ss4"; */
+"IEp-pl-Ss4.text" = "⚠ Letters and numbers only";
+
+/* Class = "UILabel"; text = "Email"; ObjectID = "J1m-Ef-emC"; */
+"J1m-Ef-emC.text" = "Email";
+
+/* Class = "UITextField"; placeholder = "Enter email"; ObjectID = "NuF-la-QXa"; */
+"NuF-la-QXa.placeholder" = "Enter email";
+
+/* Class = "UITextField"; placeholder = "Enter last name"; ObjectID = "TQI-8H-y80"; */
+"TQI-8H-y80.placeholder" = "Enter last name";
+
+/* Class = "UIButton"; normalTitle = "Save"; ObjectID = "Udb-tq-vgS"; */
+"Udb-tq-vgS.normalTitle" = "Save";
+
+/* Class = "UITextField"; placeholder = "Enter your birthdate"; ObjectID = "VN7-zz-guv"; */
+"VN7-zz-guv.placeholder" = "Enter your birthdate";
+
+/* Class = "UITextField"; placeholder = "Enter city"; ObjectID = "XQx-gy-ZVa"; */
+"XQx-gy-ZVa.placeholder" = "Enter city";
+
+/* Class = "UILabel"; text = "⚠ Letters and numbers only"; ObjectID = "bqN-bg-ngJ"; */
+"bqN-bg-ngJ.text" = "⚠ Letters and numbers only";
+
+/* Class = "UITextField"; placeholder = "Enter first name"; ObjectID = "dJH-pK-sUh"; */
+"dJH-pK-sUh.placeholder" = "Enter first name";
+
+/* Class = "UILabel"; text = "⚠ Invalid email address"; ObjectID = "jmm-BG-E1Z"; */
+"jmm-BG-E1Z.text" = "⚠ Invalid email address";
+
+/* Class = "UILabel"; text = "State"; ObjectID = "lV5-Ox-bJc"; */
+"lV5-Ox-bJc.text" = "State";
+
+/* Class = "UIButton"; normalTitle = "Change"; ObjectID = "luX-Ip-57R"; */
+"luX-Ip-57R.normalTitle" = "Cambio";
+
+/* Class = "UILabel"; text = "Phone Number"; ObjectID = "nYp-Cd-RfR"; */
+"nYp-Cd-RfR.text" = "Phone Number";
+
+/* Class = "UILabel"; text = "Username"; ObjectID = "pfG-ay-GVO"; */
+"pfG-ay-GVO.text" = "Username";
+
+/* Class = "UILabel"; text = "⚠ Letters and numbers only"; ObjectID = "uig-Bk-gZd"; */
+"uig-Bk-gZd.text" = "⚠ Letters and numbers only";
+
+/* Class = "UILabel"; text = "✓ Profile Saved"; ObjectID = "vXM-oq-QrR"; */
+"vXM-oq-QrR.text" = "✓ Profile Saved";
+
+/* Class = "UIButton"; normalTitle = "Change"; ObjectID = "wdV-jD-dZx"; */
+"wdV-jD-dZx.normalTitle" = "Change";
+
+/* Class = "UILabel"; text = "Personal"; ObjectID = "xeY-cU-BYQ"; */
+"xeY-cU-BYQ.text" = "Personal";
+
+"error_letters_punc_only" = "⚠ Letters and punctuation only";
+"error_letters_numbers_only" = "⚠ Letters and numbers only";
+"error_invalid_email" = "⚠ Invalid email address";
+"error_future_date" = "⚠ Can't be future date";
+"error_past_date" = "⚠ Too far in the past";
+"error_under_13" = "⚠ Must be at least 13 to use Treem";
+"username_exists" = "Username Exists";
+"username_exists_message" = "Please enter a different username.";
+"username_already_taken" = "⚠ Username already taken";
+"email_exists" = "Email Exists";
+"email_exists_message" = "Please enter a different email address.";
+"email_already_taken" = "⚠ Email already taken";
+"email_invalid" = "Email Invalid";
+"email_invalid_message" = "Email was not formatted correctly.";
+"phone_not_set" = "No se establece";

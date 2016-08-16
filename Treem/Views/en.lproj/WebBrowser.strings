@@ -1,0 +1,18 @@
+
+/* Class = "UIButton"; normalTitle = " Close"; ObjectID = "7AC-Ig-9dl"; */
+"7AC-Ig-9dl.normalTitle" = " Close";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "8SW-ra-IgO"; */
+"8SW-ra-IgO.text" = "Title";
+
+/* Class = "UIViewController"; title = "WebBrowser"; ObjectID = "9MV-U4-82G"; */
+"9MV-U4-82G.title" = "Web browser";
+
+/* Class = "UIButton"; normalTitle = "Back"; ObjectID = "HEF-kF-4wp"; */
+"HEF-kF-4wp.normalTitle" = "Back";
+
+/* Class = "UIButton"; normalTitle = "Forward"; ObjectID = "XfU-6a-Wyd"; */
+"XfU-6a-Wyd.normalTitle" = "Forward";
+
+/* Class = "UIButton"; normalTitle = "Share"; ObjectID = "fGB-cg-7Bt"; */
+"fGB-cg-7Bt.normalTitle" = "Share";

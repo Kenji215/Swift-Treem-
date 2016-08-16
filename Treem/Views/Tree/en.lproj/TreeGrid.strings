@@ -1,0 +1,58 @@
+
+/* Class = "UILabel"; text = "0%"; ObjectID = "O88-ZY-EyQ"; */
+"O88-ZY-EyQ.text" = "0%";
+
+/* Class = "UIViewController"; title = "TreeGrid"; ObjectID = "XGr-Xz-pft"; */
+"XGr-Xz-pft.title" = "TreeGrid";
+
+/* Class = "UINavigationController"; title = "MainNavigationController"; ObjectID = "Yxs-rL-8d2"; */
+"Yxs-rL-8d2.title" = "MainNavigationController";
+
+/* Class = "UILabel"; text = "0.0%"; ObjectID = "nb9-vw-JgS"; */
+"nb9-vw-JgS.text" = "0.0%";
+
+"main_branch_name" = "All";
+
+"feed" = "Feed";
+
+"branch_add" = "New Branch";
+
+"branch_delete_confirm_title" = "Delete Branch?";
+
+"branch_delete_confirm" = "Deleting will also remove any nested branches and members tied to those branches. Are you sure you want to delete?";
+
+"branch_error_no_color_selected" = "Branch color not selected";
+
+"branch_error_no_name" = "Branch name not given";
+
+"branch_error_no_link_id" = "Public link not selected";
+
+"branch_error_add" = "An error occurred while adding the branch";
+
+"branch_error_delete" = "An error occurred while deleting the branch";
+
+"branch_error_edit" = "An error occurred while editing the branch";
+
+"branch_error_move" = "An error occurred while moving the branch";
+
+"branch_error_too_many_levels" = "Branch has too many sublevels to fit here";
+
+"branch_move" = "Move\nHere";
+
+"branch_place" = "Place\nHere";
+
+"chat" = "Chat";
+
+"exit" = "Exit";
+
+"members" = "Members";
+
+"post" = "Post";
+
+"explore" = "Explore";
+
+"trending" = "Trending";
+
+"trunk_name" = "All";
+
+"share_link" = "Share Link";

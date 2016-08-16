@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ikG-ep-wxc">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--New Chat Name View Controller-->
+        <scene sceneID="U9r-E8-vBE">
+            <objects>
+                <viewController storyboardIdentifier="NewChatName" modalPresentationStyle="overFullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ikG-ep-wxc" customClass="NewChatNameViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="w1x-pq-4rb"/>
+                        <viewControllerLayoutGuide type="bottom" id="gCB-Fl-2CE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="cEb-A4-mqp">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ANX-B1-01C" userLabel="ShowView">
+                                <rect key="frame" x="0.0" y="560" width="600" height="40"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y91-Nr-J2A" userLabel="Name View">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="40"/>
+                                        <subviews>
+                                            <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mq8-g2-tP3" userLabel="Start Chat Button">
+                                                <rect key="frame" x="500" y="0.0" width="100" height="40"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="100" id="c67-BQ-Jj9"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                                <state key="normal" title="Start"/>
+                                                <connections>
+                                                    <action selector="startChatButtonTouchUpInside:" destination="ikG-ep-wxc" eventType="touchUpInside" id="QUp-Am-69u"/>
+                                                </connections>
+                                            </button>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" delaysContentTouches="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5bO-7X-Ndu" userLabel="Chat Name Text Box" customClass="KMPlaceholderTextView" customModule="KMPlaceholderTextView">
+                                                <rect key="frame" x="0.0" y="0.0" width="499" height="40"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Enter chat name"/>
+                                                </userDefinedRuntimeAttributes>
+                                            </textView>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.84313725490000002" green="0.84313725490000002" blue="0.84313725490000002" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="mq8-g2-tP3" firstAttribute="leading" secondItem="5bO-7X-Ndu" secondAttribute="trailing" constant="1" id="EI2-QA-p0v"/>
+                                            <constraint firstItem="5bO-7X-Ndu" firstAttribute="top" secondItem="Y91-Nr-J2A" secondAttribute="top" id="KtG-XG-WYf"/>
+                                            <constraint firstAttribute="height" relation="lessThanOrEqual" constant="160" id="Le8-gD-bIf"/>
+                                            <constraint firstItem="5bO-7X-Ndu" firstAttribute="leading" secondItem="Y91-Nr-J2A" secondAttribute="leading" id="UsX-tK-vwV"/>
+                                            <constraint firstItem="mq8-g2-tP3" firstAttribute="height" secondItem="5bO-7X-Ndu" secondAttribute="height" id="Vk3-BK-pVE"/>
+                                            <constraint firstItem="mq8-g2-tP3" firstAttribute="top" secondItem="Y91-Nr-J2A" secondAttribute="top" id="YbY-s8-b5x"/>
+                                            <constraint firstAttribute="trailing" secondItem="mq8-g2-tP3" secondAttribute="trailing" id="aXH-5G-Zri"/>
+                                            <constraint firstAttribute="bottom" secondItem="5bO-7X-Ndu" secondAttribute="bottom" id="aqp-Wo-pQd"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="fQC-eu-KCK"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="Y91-Nr-J2A" secondAttribute="bottom" id="PGD-kt-vje"/>
+                                    <constraint firstItem="Y91-Nr-J2A" firstAttribute="top" secondItem="ANX-B1-01C" secondAttribute="top" id="def-bY-Dje"/>
+                                    <constraint firstAttribute="trailing" secondItem="Y91-Nr-J2A" secondAttribute="trailing" id="ime-tn-Xg9"/>
+                                    <constraint firstItem="Y91-Nr-J2A" firstAttribute="leading" secondItem="ANX-B1-01C" secondAttribute="leading" id="v9l-d3-uG8"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OJZ-6w-IOV">
+                                <rect key="frame" x="500" y="516" width="100" height="29"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="4my-rx-S9v"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="Cancel"/>
+                                <connections>
+                                    <action selector="cancelButtonTouchUpInside:" destination="ikG-ep-wxc" eventType="touchUpInside" id="U2g-ce-3UP"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="OJZ-6w-IOV" secondAttribute="trailing" id="BQV-e4-BbN"/>
+                            <constraint firstItem="ANX-B1-01C" firstAttribute="top" secondItem="OJZ-6w-IOV" secondAttribute="bottom" constant="15" id="GNI-sR-lbJ"/>
+                            <constraint firstItem="ANX-B1-01C" firstAttribute="leading" secondItem="cEb-A4-mqp" secondAttribute="leading" id="Hri-bf-oEs"/>
+                            <constraint firstAttribute="trailing" secondItem="ANX-B1-01C" secondAttribute="trailing" id="Law-dU-0IR"/>
+                            <constraint firstItem="gCB-Fl-2CE" firstAttribute="top" secondItem="ANX-B1-01C" secondAttribute="bottom" id="ynf-Mn-iaA"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="cancelButton" destination="OJZ-6w-IOV" id="VbW-d9-7bE"/>
+                        <outlet property="chatNameTextView" destination="5bO-7X-Ndu" id="Lkm-YL-B3L"/>
+                        <outlet property="showView" destination="ANX-B1-01C" id="SoT-PH-1b5"/>
+                        <outlet property="showViewBottomConstraint" destination="ynf-Mn-iaA" id="9ut-rp-xQF"/>
+                        <outlet property="startChatButton" destination="mq8-g2-tP3" id="Cxw-lb-u7o"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xBR-V2-lCr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="440" y="41"/>
+        </scene>
+    </scenes>
+</document>

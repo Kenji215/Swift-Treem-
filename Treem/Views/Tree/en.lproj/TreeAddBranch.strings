@@ -1,0 +1,47 @@
+
+/* Class = "UILabel"; text = "Add Branch"; ObjectID = "F1t-qA-OIc"; */
+"F1t-qA-OIc.text" = "Add Branch";
+
+/* Class = "UITextField"; placeholder = "Enter branch name"; ObjectID = "fw6-oB-JJK"; */
+"fw6-oB-JJK.placeholder" = "Enter branch name";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "gMb-4c-rJS"; */
+"gMb-4c-rJS.normalTitle" = "Cancel";
+
+/* Class = "UIButton"; normalTitle = "Save"; ObjectID = "t2M-1R-9PR"; */
+"t2M-1R-9PR.normalTitle" = "Save";
+
+"edit_branch" = "Edit Branch";
+
+"options_segmented_control_0" = "Search Tree";
+"options_segmented_control_1" = "Add New URL";
+"options_segmented_control_2" = "Create Branch";
+//"options_segmented_control_1" = "Create Branch";
+
+
+"search_public_placeholder" = "Search public tree";
+"add_new_URL_placeholder"   = "Enter Website URL";
+"new_URL_name_placeholder"  = "Enter Website Name";
+
+"explore_type_placeholder" = "Select category";
+
+"explore_type" = "- All -";
+"explore_type_0" = "News";
+"explore_type_1" = "Sports";
+"explore_type_2" = "Business";
+"explore_type_3" = "Video";
+"explore_type_4" = "Music";
+"explore_type_5" = "Social Media";
+"explore_type_6" = "Shopping";
+"explore_type_7" = "Commentary";
+"explore_type_8" = "Search";
+"explore_type_9" = "Reference";
+"explore_type_10" = "Entertainment";
+"explore_type_11" = "Technology";
+"explore_type_12" = "Science";
+"explore_type_13" = "Travel";
+"explore_type_14" = "Weather";
+"explore_type_15" = "Recruiting";
+"explore_type_16" = "Real Estate";
+
+"no_search_results" = "No Search Results Found";

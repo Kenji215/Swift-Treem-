@@ -1,0 +1,46 @@
+
+/* Class = "UIViewController"; title = "EquityRewards"; ObjectID = "Alk-ir-pTE"; */
+"Alk-ir-pTE.title" = "EquityRewards";
+
+/* Class = "UILabel"; text = "▲10"; ObjectID = "Fkd-OW-sN7"; */
+"Fkd-OW-sN7.text" = "▲10";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "Fvi-pX-9Pl"; */
+"Fvi-pX-9Pl.normalTitle" = "Hecho";
+
+/* Class = "UILabel"; text = "Rewards"; ObjectID = "LCy-07-42n"; */
+"LCy-07-42n.text" = "recompensas";
+
+/* Class = "UILabel"; text = "60.8%"; ObjectID = "QGH-S9-tMn"; */
+"QGH-S9-tMn.text" = "60.8%";
+
+/* Class = "UIButton"; normalTitle = "Add Friends"; ObjectID = "VR8-34-F96"; */
+"VR8-34-F96.normalTitle" = "Agregar amigos";
+
+/* Class = "UILabel"; text = "My Percentile"; ObjectID = "Y65-zO-eXD"; */
+"Y65-zO-eXD.text" = "Mi Percentil";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "bFd-Fy-dQ9"; */
+"bFd-Fy-dQ9.text" = "Título";
+
+/* Class = "UILabel"; text = "My Points"; ObjectID = "bgE-dR-Gi7"; */
+"bgE-dR-Gi7.text" = "Mis puntos";
+
+/* Class = "UILabel"; text = "120"; ObjectID = "f0f-EW-X1B"; */
+"f0f-EW-X1B.text" = "120";
+
+/* Class = "UILabel"; text = "▲"; ObjectID = "oaJ-b0-ZpG"; */
+"oaJ-b0-ZpG.text" = "▲";
+
+/* Class = "UILabel"; text = "Top Friends"; ObjectID = "sMs-cd-c8B"; */
+"sMs-cd-c8B.text" = "Mejores amigos";
+
+/* Class = "UILabel"; text = "Percent"; ObjectID = "ujW-mg-ceZ"; */
+"ujW-mg-ceZ.text" = "Porcentaje";
+
+/* Class = "UILabel"; text = "None of your friends have earned points yet" ObjectID = "zc1-pE-hBE" */
+"zc1-pE-hBE.text" = "Ninguno de sus amigos se han ganado puntos todavía";
+
+"myPercentLow" = "Usted está en el porcentaje % .1f más baja de todos los miembros en treem . Para ganar recompensas financieras , sin embargo, debe estar en el percentil 80 superior. Continuar para ganar más puntos durante el uso de Treem para aumentar su posición!";
+"myPercentHighNonEquity" = "Gran trabajo , estás en el por ciento de todos los miembros de la treem % superior .1f . Con el fin de obtener recompensas financieras , sin embargo, debe estar en el percentil 80 superior. Seguir consiguiendo puntos , mientras que utilizando Treem y hacer su camino a la cima!";
+"myPercentHighEquity" = "¡Felicitaciones! Estás en tanto por ciento de todos los miembros de la treem % superior .1f y actualmente reúne los requisitos para ganar recompensas financieras . Continuar para ganar más puntos durante el uso de Treem para mantener su posición !";

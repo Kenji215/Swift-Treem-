@@ -1,0 +1,20 @@
+
+/* Class = "UILabel"; text = "Select Branch"; ObjectID = "FFv-mW-Y2I"; */
+"FFv-mW-Y2I.text" = "Select Branch";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "oun-He-tAl"; */
+"oun-He-tAl.normalTitle" = "Cancel";
+
+/* Class = "UILabel"; text = "Branch Title"; ObjectID = "s0s-Mi-WRk"; */
+"s0s-Mi-WRk.text" = "Branch Title";
+
+
+"success_prompt_title" = "Addition Successful";
+"success_prompt_details" = "User(s) successfully added to %@. Stay in the tree view, or return to your previous screen?";
+"success_stay" = "Stay";
+"success_return" = "Return";
+
+
+"failure_prompt_title" = "Addition Unsuccessful";
+"failure_prompt_details" = "An error occurred while adding user(s) to %@. Please try again later.";
+"failure_return" = "Return to alerts";

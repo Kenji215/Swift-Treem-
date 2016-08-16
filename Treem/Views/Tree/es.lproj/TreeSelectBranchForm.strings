@@ -1,0 +1,20 @@
+
+/* Class = "UILabel"; text = "Select Branch"; ObjectID = "FFv-mW-Y2I"; */
+"FFv-mW-Y2I.text" = "Seleccione la rama";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "oun-He-tAl"; */
+"oun-He-tAl.normalTitle" = "Cancelar";
+
+/* Class = "UILabel"; text = "Branch Title"; ObjectID = "s0s-Mi-WRk"; */
+"s0s-Mi-WRk.text" = "Título de la rama";
+
+
+"success_prompt_title" = "Adición de Éxito";
+"success_prompt_details" = "Usuario(s) añadido al %@. Permanecer en la vista de árbol, o volver a la pantalla anterior?";
+"success_stay" = "Permanecer";
+"success_return" = "Volver";
+
+
+"failure_prompt_title" = "Adición sin Éxito";
+"failure_prompt_details" = "Se produjo un error al agregar usuario (s) a %@. Por favor, inténtelo de nuevo más tarde.";
+"failure_return" = "Retorno a las alertas";

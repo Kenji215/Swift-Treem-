@@ -1,0 +1,51 @@
+
+/* Class = "UIViewController"; title = "EquityRewards"; ObjectID = "Alk-ir-pTE"; */
+"Alk-ir-pTE.title" = "EquityRewards";
+
+/* Class = "UILabel"; text = "▲10"; ObjectID = "Fkd-OW-sN7"; */
+"Fkd-OW-sN7.text" = "▲10";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "Fvi-pX-9Pl"; */
+"Fvi-pX-9Pl.normalTitle" = "Done";
+
+/* Class = "UILabel"; text = "Rewards"; ObjectID = "LCy-07-42n"; */
+"LCy-07-42n.text" = "Rewards";
+
+/* Class = "UILabel"; text = "60.8%"; ObjectID = "QGH-S9-tMn"; */
+"QGH-S9-tMn.text" = "60.8%";
+
+/* Class = "UIButton"; normalTitle = "Add Friends"; ObjectID = "VR8-34-F96"; */
+"VR8-34-F96.normalTitle" = "Add Friends";
+
+/* Class = "UILabel"; text = "My Percentile"; ObjectID = "Y65-zO-eXD"; */
+"Y65-zO-eXD.text" = "My Percentile";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "bFd-Fy-dQ9"; */
+"bFd-Fy-dQ9.text" = "Title";
+
+/* Class = "UILabel"; text = "My Points"; ObjectID = "bgE-dR-Gi7"; */
+"bgE-dR-Gi7.text" = "My Points";
+
+/* Class = "UILabel"; text = "120"; ObjectID = "f0f-EW-X1B"; */
+"f0f-EW-X1B.text" = "120";
+
+/* Class = "UILabel"; text = "▲"; ObjectID = "oaJ-b0-ZpG"; */
+"oaJ-b0-ZpG.text" = "▲";
+
+/* Class = "UILabel"; text = "Top Friends"; ObjectID = "sMs-cd-c8B"; */
+"sMs-cd-c8B.text" = "Top Friends";
+
+/* Class = "UILabel"; text = "Percent"; ObjectID = "ujW-mg-ceZ"; */
+"ujW-mg-ceZ.text" = "Percent";
+
+/* Class = "UITextView"; text = "None of your friends have earned points yet" ObjectID = "zc1-pE-hBE" */
+"zc1-pE-hBE.text" = "Ninguno de sus amigos se han ganado puntos todavía";
+
+"percentageTextStart" = "Only the top 20%% of Treem members are eligible to earn financial rewards. ";
+"percentageTextEnd" = " Remember that only those in the top 80th percentile are rewarded when Treem goes public.";
+
+
+"myPercentLow" = "Unfortunately, you are not “in the money” at %.0f%%. Get working, invite new friends, post more, maybe invite your mom to join (ok now we are getting crazy). ";
+"myPercentHighNonEquity" = " You are not “in the money” at %.0f%%, but getting close. Have a plan, invite more friends, maybe aunt Edna and her cat group can push you over the top.";
+"myPercentHighEquity" = "You are “in the money” at %.0f%%. OK let’s not get cocky, keep up the good work, add friends, create work or school branches, just don’t let it slip away!!";
+

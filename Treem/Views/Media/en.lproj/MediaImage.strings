@@ -1,0 +1,6 @@
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "PLr-PU-9mW"; */
+"PLr-PU-9mW.normalTitle" = "Close";
+
+"delete_confirm_title" = "Are You Sure?";
+"delete_confirm_message" = "Deleting this image will remove any posts or chats it was associated with. Would you like to still delete it?";

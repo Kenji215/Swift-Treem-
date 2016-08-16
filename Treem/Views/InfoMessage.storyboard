@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="MLj-VR-hCa">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Info Message View Controller-->
+        <scene sceneID="his-d5-YdJ">
+            <objects>
+                <viewController storyboardIdentifier="InfoMessage" modalPresentationStyle="overFullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="MLj-VR-hCa" customClass="InfoMessageViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="MZa-h0-fKt"/>
+                        <viewControllerLayoutGuide type="bottom" id="CoN-Nl-znx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="z03-TA-ebV">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iZT-NV-lpE">
+                                <rect key="frame" x="0.0" y="40" width="600" height="45"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Info" translatesAutoresizingMaskIntoConstraints="NO" id="IdM-ES-whX">
+                                        <rect key="frame" x="10" y="10" width="25" height="25"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="56o-jG-vp7"/>
+                                            <constraint firstAttribute="width" constant="25" id="EwX-gs-Ycd"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Info Message" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IyX-3f-eKQ">
+                                        <rect key="frame" x="45" y="10" width="545" height="25"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="fNS-4k-RUr"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="IyX-3f-eKQ" secondAttribute="trailing" constant="10" id="BFY-0e-RfT"/>
+                                    <constraint firstAttribute="bottom" secondItem="IyX-3f-eKQ" secondAttribute="bottom" constant="10" id="OEJ-Hs-r2D"/>
+                                    <constraint firstItem="IdM-ES-whX" firstAttribute="top" secondItem="iZT-NV-lpE" secondAttribute="top" constant="10" id="SpU-dW-Zwi"/>
+                                    <constraint firstItem="IdM-ES-whX" firstAttribute="leading" secondItem="iZT-NV-lpE" secondAttribute="leading" constant="10" id="gMs-6x-GO7"/>
+                                    <constraint firstItem="IyX-3f-eKQ" firstAttribute="leading" secondItem="IdM-ES-whX" secondAttribute="trailing" constant="10" id="hbj-Cd-Cc2"/>
+                                    <constraint firstItem="IyX-3f-eKQ" firstAttribute="top" secondItem="iZT-NV-lpE" secondAttribute="top" constant="10" id="kPi-F9-H8f"/>
+                                    <constraint firstAttribute="height" constant="90" id="yS3-rN-TuK"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="yS3-rN-TuK"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="iZT-NV-lpE" secondAttribute="trailing" id="Iy1-dR-bXs"/>
+                            <constraint firstItem="iZT-NV-lpE" firstAttribute="top" secondItem="MZa-h0-fKt" secondAttribute="bottom" constant="40" id="Mch-0c-Xfl"/>
+                            <constraint firstItem="iZT-NV-lpE" firstAttribute="leading" secondItem="z03-TA-ebV" secondAttribute="leading" id="YtX-JJ-Eft"/>
+                            <constraint firstItem="iZT-NV-lpE" firstAttribute="top" secondItem="z03-TA-ebV" secondAttribute="top" id="Z1a-jd-AEz"/>
+                            <constraint firstItem="iZT-NV-lpE" firstAttribute="leading" secondItem="z03-TA-ebV" secondAttribute="leading" id="i8J-tq-90m"/>
+                            <constraint firstAttribute="trailing" secondItem="iZT-NV-lpE" secondAttribute="trailing" id="wVf-po-Du2"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="Z1a-jd-AEz"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <connections>
+                        <outlet property="infoIcon" destination="IdM-ES-whX" id="gDL-t9-MfZ"/>
+                        <outlet property="infoIconLeftConstraint" destination="gMs-6x-GO7" id="kyS-Ip-Qma"/>
+                        <outlet property="infoIconRightConstraint" destination="hbj-Cd-Cc2" id="qcc-cR-r8s"/>
+                        <outlet property="infoIconWidthConstraint" destination="EwX-gs-Ycd" id="wIv-hi-hfY"/>
+                        <outlet property="infoMessageLabel" destination="IyX-3f-eKQ" id="k0L-q6-X5p"/>
+                        <outlet property="infoMessageLabelHeightConstraint" destination="fNS-4k-RUr" id="ngw-SY-uRS"/>
+                        <outlet property="infoMessageLabelRightConstraint" destination="BFY-0e-RfT" id="zcN-Kf-HWJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="25v-Ck-xPL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="386" y="260"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Info" width="36" height="36"/>
+    </resources>
+</document>

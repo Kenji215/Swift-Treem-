@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Mv3-At-max">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Media Image View Controller-->
+        <scene sceneID="9Eu-Wh-c1Q">
+            <objects>
+                <viewController storyboardIdentifier="MediaImage" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Mv3-At-max" customClass="MediaImageViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="mnA-41-HQH"/>
+                        <viewControllerLayoutGuide type="bottom" id="4k4-xS-07I"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8hi-nI-mhS">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" delaysContentTouches="NO" maximumZoomScale="10" translatesAutoresizingMaskIntoConstraints="NO" id="1jx-Vb-fg0">
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="oYe-1y-9GX">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="580"/>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="oYe-1y-9GX" secondAttribute="trailing" id="2aI-Kq-bBQ"/>
+                                    <constraint firstItem="oYe-1y-9GX" firstAttribute="leading" secondItem="1jx-Vb-fg0" secondAttribute="leading" id="5gW-Br-xxN"/>
+                                    <constraint firstItem="oYe-1y-9GX" firstAttribute="top" secondItem="1jx-Vb-fg0" secondAttribute="top" id="l8t-zS-ldS"/>
+                                    <constraint firstItem="oYe-1y-9GX" firstAttribute="centerY" secondItem="1jx-Vb-fg0" secondAttribute="centerY" id="nld-4k-3I1"/>
+                                    <constraint firstItem="oYe-1y-9GX" firstAttribute="centerX" secondItem="1jx-Vb-fg0" secondAttribute="centerX" id="uKG-gh-dGd"/>
+                                    <constraint firstAttribute="bottom" secondItem="oYe-1y-9GX" secondAttribute="bottom" id="wDg-ha-oBc"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="Mv3-At-max" id="Kcg-yF-2Fx"/>
+                                </connections>
+                            </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CF0-an-AgS" userLabel="Trash">
+                                <rect key="frame" x="540" y="560" width="60" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="JPE-9P-Br6"/>
+                                    <constraint firstAttribute="width" constant="60" id="vzy-EA-jKk"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <inset key="contentEdgeInsets" minX="25" minY="8" maxX="15" maxY="10"/>
+                                <state key="normal" image="Trash"/>
+                                <connections>
+                                    <action selector="trashButtonTouchUpInside:" destination="Mv3-At-max" eventType="touchUpInside" id="A3B-E5-hVY"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PLr-PU-9mW">
+                                <rect key="frame" x="540" y="20" width="60" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="60" id="0CS-Lm-d83"/>
+                                    <constraint firstAttribute="height" constant="40" id="VGi-C0-5dS"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <inset key="contentEdgeInsets" minX="28" minY="13" maxX="17" maxY="13"/>
+                                <state key="normal" image="Close"/>
+                                <connections>
+                                    <action selector="closeButtonTouchUpInside:" destination="Mv3-At-max" eventType="touchUpInside" id="xIu-bt-knE"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="1jx-Vb-fg0" firstAttribute="top" secondItem="mnA-41-HQH" secondAttribute="bottom" id="9yB-7h-bI8"/>
+                            <constraint firstItem="PLr-PU-9mW" firstAttribute="top" secondItem="mnA-41-HQH" secondAttribute="bottom" id="MnG-yo-xA2"/>
+                            <constraint firstItem="1jx-Vb-fg0" firstAttribute="leading" secondItem="8hi-nI-mhS" secondAttribute="leading" id="P7z-MA-Jl1"/>
+                            <constraint firstItem="1jx-Vb-fg0" firstAttribute="bottom" secondItem="4k4-xS-07I" secondAttribute="top" id="PI8-ci-j63"/>
+                            <constraint firstAttribute="trailing" secondItem="CF0-an-AgS" secondAttribute="trailing" id="WWm-Dz-taw"/>
+                            <constraint firstAttribute="trailing" secondItem="PLr-PU-9mW" secondAttribute="trailing" id="x2F-XG-6Wr"/>
+                            <constraint firstItem="4k4-xS-07I" firstAttribute="top" secondItem="CF0-an-AgS" secondAttribute="bottom" id="yld-k5-Npo"/>
+                            <constraint firstAttribute="trailing" secondItem="1jx-Vb-fg0" secondAttribute="trailing" id="zVt-Pt-U7a"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="closeButton" destination="PLr-PU-9mW" id="GlJ-t4-V7r"/>
+                        <outlet property="imageView" destination="oYe-1y-9GX" id="YuM-et-BJf"/>
+                        <outlet property="scrollView" destination="1jx-Vb-fg0" id="VhD-ak-CVH"/>
+                        <outlet property="trashButton" destination="CF0-an-AgS" id="ga9-KY-0eM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7d1-wR-cG4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="563" y="748"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Close" width="25" height="25"/>
+        <image name="Trash" width="20" height="25"/>
+    </resources>
+</document>

@@ -1,0 +1,24 @@
+
+/* Class = "UILabel"; text = "Branch"; ObjectID = "0P3-aS-Jk4"; */
+"0P3-aS-Jk4.text" = "Rama";
+
+/* Class = "UIViewController"; title = "Branch Container"; ObjectID = "8AA-4Q-yg6"; */
+"8AA-4Q-yg6.title" = "Rama de contenedores";
+
+/* Class = "UITabBarItem"; title = "Post"; ObjectID = "9nr-Mq-ZvZ"; */
+"9nr-Mq-ZvZ.title" = "Publicar";
+
+/* Class = "UINavigationController"; title = "BranchNavigationController"; ObjectID = "JP8-Zi-XQw"; */
+"JP8-Zi-XQw.title" = "BranchNavigationController";
+
+/* Class = "UITabBarItem"; title = "Back"; ObjectID = "Mml-aY-4xc"; */
+"Mml-aY-4xc.title" = "Atrás";
+
+/* Class = "UITabBarItem"; title = "Chat"; ObjectID = "S4v-A3-Ncj"; */
+"S4v-A3-Ncj.title" = "Charlar";
+
+/* Class = "UITabBarItem"; title = "Members"; ObjectID = "bTU-gX-ttM"; */
+"bTU-gX-ttM.title" = "Miembros";
+
+/* Class = "UITabBarItem"; title = "Feed"; ObjectID = "fVu-PH-OEO"; */
+"fVu-PH-OEO.title" = "Alimentación";

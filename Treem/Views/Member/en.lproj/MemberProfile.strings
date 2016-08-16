@@ -1,0 +1,64 @@
+
+/* Class = "UILabel"; text = "[USERNAME]"; ObjectID = "2Qo-08-3E8"; */
+"2Qo-08-3E8.text" = "[USERNAME]";
+
+/* Class = "UILabel"; text = "[BRANCHPATH]"; ObjectID = "5fW-5j-C16"; */
+"5fW-5j-C16.text" = "[BRANCHPATH]";
+
+/* Class = "UILabel"; text = "[STATUS]"; ObjectID = "99g-PS-VKV"; */
+"99g-PS-VKV.text" = "[STATUS]";
+
+/* Class = "UILabel"; text = "[RESIDESSTATE]"; ObjectID = "QT0-Xf-2oG"; */
+"QT0-Xf-2oG.text" = "[RESIDESSTATE]";
+
+/* Class = "UILabel"; text = "[RESIDESCITY]"; ObjectID = "TqN-RO-44R"; */
+"TqN-RO-44R.text" = "[RESIDESCITY]";
+
+/* Class = "UILabel"; text = "Status: "; ObjectID = "U8o-vT-2OE"; */
+"U8o-vT-2OE.text" = "Status: ";
+
+/* Class = "UILabel"; text = "City:"; ObjectID = "Uqj-gH-n0N"; */
+"Uqj-gH-n0N.text" = "City:";
+
+/* Class = "UILabel"; text = "Branches:"; ObjectID = "aAD-3O-sAE"; */
+"aAD-3O-sAE.text" = "Branches:";
+
+/* Class = "UILabel"; text = "[RESIDESSTATE]"; ObjectID = "bF2-dd-pqt"; */
+"bF2-dd-pqt.text" = "[RESIDESSTATE]";
+
+/* Class = "UILabel"; text = "State:"; ObjectID = "bIN-Xr-pAw"; */
+"bIN-Xr-pAw.text" = "State:";
+
+/* Class = "UIButton"; normalTitle = "Action"; ObjectID = "fbM-fp-cLm"; */
+"fbM-fp-cLm.normalTitle" = "";
+
+/* Class = "UILabel"; text = "Country:"; ObjectID = "gJi-9c-s3n"; */
+"gJi-9c-s3n.text" = "Country:";
+
+/* Class = "UILabel"; text = "[FIRSTLASTNAME]"; ObjectID = "riF-Gp-uLy"; */
+"riF-Gp-uLy.text" = "[FIRSTLASTNAME]";
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "vsU-GL-utW"; */
+"vsU-GL-utW.normalTitle" = "Close";
+
+/* Class = "UILabel"; text = "Profile"; ObjectID = "zct-DK-2BN"; */
+"zct-DK-2BN.text" = "Profile";
+
+"remove_confirm_title" = "Confirmation";
+"remove_confirm_message_pending" = "Are you sure you want to cancel your pending friendship request?";
+"remove_confirm_message_friends" = "Are you sure you want to unfriend this member?";
+"add_friend_confirm_message" = "Are you sure you want to add this member?";
+"friend_status_friends" = "Friends";
+"friend_status_pending" = "Pending Friends";
+"friend_status_not_friends" = "Not Friends";
+"action_unfriend" = "Unfriend";
+"action_cancel" = "Cancel";
+"action_add_friend" = "Add Friend";
+
+"options_tab_bar_0" = "Feed";
+"options_tab_bar_1" = "Pics / Vids";
+"options_tab_bar_2" = "Chat";
+
+"chat_confirm_title" = "Start Chat";
+"chat_confirm_message" = "Would you like to start a new chat?";
+"chat_name" = "Quick Chat";

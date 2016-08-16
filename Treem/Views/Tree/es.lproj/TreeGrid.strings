@@ -1,0 +1,62 @@
+
+/* Class = "UILabel"; text = "Points:"; ObjectID = "Gqz-qy-mey"; */
+"Gqz-qy-mey.text" = "Puntos:";
+
+/* Class = "UILabel"; text = "Rewards %:"; ObjectID = "JzG-9f-pdz"; */
+"JzG-9f-pdz.text" = "Rewards %:";
+
+/* Class = "UILabel"; text = "0%"; ObjectID = "O88-ZY-EyQ"; */
+"O88-ZY-EyQ.text" = "0%";
+
+/* Class = "UIViewController"; title = "TreeGrid"; ObjectID = "XGr-Xz-pft"; */
+"XGr-Xz-pft.title" = "TreeGrid";
+
+/* Class = "UINavigationController"; title = "MainNavigationController"; ObjectID = "Yxs-rL-8d2"; */
+"Yxs-rL-8d2.title" = "MainNavigationController";
+
+/* Class = "UILabel"; text = "0.0%"; ObjectID = "nb9-vw-JgS"; */
+"nb9-vw-JgS.text" = "0.0%";
+
+"feed" = "Alimentar";
+
+"branch_add" = "Nueva Sucursal";
+
+"branch_delete_confirm_title" = "Eliminar Rama?";
+
+"branch_delete_confirm" = "La eliminación de esta rama también quitará las ramas secundarias y miembros vinculados a esas ramas. ¿Seguro que quieres eliminar esta rama?";
+
+"branch_error_no_color_selected" = "Color de Rama no seleccionado";
+
+"branch_error_no_name" = "No se da nombre Branch";
+
+"branch_error_add" = "Se ha producido un error al añadir la rama";
+
+"branch_error_delete" = "An error occurred while deleting the branch";
+
+"branch_error_edit_message" = "Se produjo un error durante la edición de la rama";
+
+"branch_error_move" = "Se produjo un error al mover la rama";
+
+"branch_error_too_many_levels" = "Branch has too many sublevels to fit here";
+
+"branch_move" = "Muevete\nAquí";
+
+"branch_place" = "Lugar\nAquí";
+
+"chat" = "Charlar";
+
+"equity_points" = "Puntos:";
+
+"exit" = "Salida";
+
+"members" = "Miembros";
+
+"post" = "Publicar";
+
+"explore" = "Explorar";
+
+"trending" = "Tendencias";
+
+"trunk_name" = "Todas";
+
+"share_link" = "Compartir Enlace";

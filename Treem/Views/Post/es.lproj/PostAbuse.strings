@@ -1,0 +1,12 @@
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "ENu-DQ-eGy"; */
+"ENu-DQ-eGy.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "Report"; ObjectID = "b0Y-rc-l4v"; */
+"b0Y-rc-l4v.normalTitle" = "Report";
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "ilY-59-O0h"; */
+"ilY-59-O0h.normalTitle" = "Close";
+
+/* Class = "UILabel"; text = "Report Abuse"; ObjectID = "wdX-Uc-H9I"; */
+"wdX-Uc-H9I.text" = "Report Abuse";

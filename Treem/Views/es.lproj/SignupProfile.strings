@@ -1,0 +1,51 @@
+
+/* Class = "UILabel"; text = "First Name"; ObjectID = "7Go-sM-Iku"; */
+"7Go-sM-Iku.text" = "Nombre de pila";
+
+/* Class = "UILabel"; text = "XXX-XXX-XXXX"; ObjectID = "BeG-oU-JNw"; */
+"BeG-oU-JNw.text" = "XXX-XXX-XXXX";
+
+/* Class = "UILabel"; text = "Phone Number"; ObjectID = "EUR-iK-cku"; */
+"EUR-iK-cku.text" = "Número de teléfono";
+
+/* Class = "UITextField"; placeholder = "Enter your last name"; ObjectID = "ING-PU-GcV"; */
+"ING-PU-GcV.placeholder" = "Ingrese su apellido";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "MBf-fe-RaE"; */
+"MBf-fe-RaE.normalTitle" = "Siguiente";
+
+/* Class = "UILabel"; text = "⚠ Letters and numbers only"; ObjectID = "SZh-Ad-sZX"; */
+"SZh-Ad-sZX.text" = "⚠ Letras y numeros solamente";
+
+/* Class = "UILabel"; text = "Last Name"; ObjectID = "Y2o-xb-5c9"; */
+"Y2o-xb-5c9.text" = "Apellido";
+
+/* Class = "UILabel"; text = "⚠ Letters and punctuation only"; ObjectID = "bch-Vy-6Ly"; */
+"bch-Vy-6Ly.text" = "⚠ Las letras y puntuacion única";
+
+/* Class = "UITextField"; placeholder = "Enter a unique username"; ObjectID = "c61-fY-QT9"; */
+"c61-fY-QT9.placeholder" = "Introduzca un nombre de usuario único";
+
+/* Class = "UITextField"; placeholder = "Enter your birthdate"; ObjectID = "nou-T8-01X"; */
+"nou-T8-01X.placeholder" = "Ingrese su fecha de nacimiento";
+
+/* Class = "UILabel"; text = "Birthdate"; ObjectID = "rU4-Ox-dsf"; */
+"rU4-Ox-dsf.text" = "Fecha de nacimiento";
+
+/* Class = "UITextField"; placeholder = "Enter your first name"; ObjectID = "sen-Sh-m5l"; */
+"sen-Sh-m5l.placeholder" = "Ingresa tu primer nombre";
+
+/* Class = "UILabel"; text = "⚠ Letters and punctuation only"; ObjectID = "sv2-fs-Dut"; */
+"sv2-fs-Dut.text" = "⚠ Las letras y puntuacion única";
+
+/* Class = "UILabel"; text = "Username"; ObjectID = "vg9-ku-X5v"; */
+"vg9-ku-X5v.text" = "Nombre de usuario";
+
+/* Class = "UIButton"; normalTitle = "Edit"; ObjectID = "yzK-UH-2CB"; */
+"yzK-UH-2CB.normalTitle" = "Editar";
+
+"username_exists" = "Nombre de usuario existe";
+
+"username_exists_message" = "Por favor, introduzca un nombre de usuario diferente.";
+
+"username_already_taken" = "⚠ Nombre de usuario ya tomado";

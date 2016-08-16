@@ -1,0 +1,65 @@
+
+/* Class = "UIViewController"; title = "Alerts"; ObjectID = "FoI-gm-DNU"; */
+"FoI-gm-DNU.title" = "Alertas";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "NXE-7s-Zvj"; */
+"NXE-7s-Zvj.normalTitle" = "Hecho";
+
+/* Class = "UILabel"; text = "Alerts"; ObjectID = "Ust-3P-stO"; */
+"Ust-3P-stO.text" = "Alertas";
+
+"no_alerts" = "No hay alertas en este momento";
+
+//Alert text
+"PENDING_FRIEND_REQUEST"    = "Hay una nueva solicitud de amistad de %@.";
+"ACCEPTED_FRIEND_REQUEST"   = "%@ ha aceptado tu solicitud de amistad.";
+"ACCEPTED_FRIEND_INVITE"    = "%@ ha aceptado su invitación para unirse a la semilla Treem.";
+"POST_REPLY"                = "%@ ha respondido a tu mensaje.";
+"POST_REACTION"             = "%@ ha reaccionado a su puesto.";
+"POST_SHARE"                = "%@ ha compartido su mensaje.";
+"POST_ABUSE_SENT"           = "Se ha informado de su puesto.";
+"POST_ABUSE_REVOKED"        = "Su mensaje ha sido eliminado.";
+"COMMENT_REPLY"             = "%@ comentado en un post que usted también ha comentado.";
+"TAGGED_POST"               = "%@ te ha etiquetado en una entrada.";
+"BRANCH_SHARE"              = "Usted tiene una nueva oferta de acciones rama de %@";
+"POST_UPLOAD_FINISHED"      = "Su respuesta ha terminado de cargar.";
+"CHAT_UPLOAD_FINISHED"      = "Su mensaje de chat ha terminado de cargar.";
+"BRANCH_SHARE"              = "Usted tiene una nueva oferta de acciones rama de %@";
+
+//Alert buttons
+"accept" = "Aceptar";
+"decline" = "Decadencia";
+
+//Alert action details
+"decline_prompt_title" = "Rechazar Solicitud de Amistad";
+"decline_prompt_details" = "¿Estás seguro?";
+"decline_confirm" = "Sí, declinar";
+"decline_cancel" = "No";
+
+// prompt for adding user to branch
+"decline_share_title"   = "Rama Comparten Declive";
+"decline_share_details" = "¿Está seguro de que desea rechazar la oferta de acciones rama?";
+
+"success_prompt_title" = "Solicitud de amistad Aceptado";
+"success_prompt_details" = "La solicitud de amistad fue aceptada y el usuario se asigna a la rama \"%@\".";
+
+"failure_prompt_title" = "Fracasado";
+"failure_prompt_details" = "Se produjo un error al agregar usuario en rama \"%@\".";
+
+// accepting a shared branch
+"branch_accept_success_title" = "Rama Agregado con Éxito";
+"branch_accept_success_details" = "Agregado con éxito en la rama %@";
+
+"branch_accept_failure_title" = "Fracasado";
+"branch_accept_failure1" = "Pasaron datos no válidos";
+"branch_accept_failure2" = "Árbol no válido";
+"branch_accept_failure3" = "Información de ubicación no es válida";
+"branch_accept_failure4" = "La rama que está intentando aceptar no es válido";
+"branch_accept_failure5" = "La colocación de la rama no superará las profundidades máximas, coloque en un nivel superior.";
+"branch_accept_failure6" = "Demasiadas ramas secundarias en la rama de uno de los padres";
+"branch_accept_failure7" = "Una rama ya existe en esa posición";
+"branch_accept_failure8" = "No se pudo encontrar una oferta de acciones válidas con esos detalles";
+
+
+"no_alerts" = "No hay alertas";
+"no_friend_requests" = "No amigos requestas";

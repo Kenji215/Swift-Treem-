@@ -1,0 +1,31 @@
+
+/* Class = "UITableViewController"; title = "SettingsTable"; ObjectID = "5Jf-dk-cSH"; */
+"5Jf-dk-cSH.title" = "SettingsTable";
+
+/* Class = "UILabel"; text = "Settings"; ObjectID = "Dj9-sW-hv2"; */
+"Dj9-sW-hv2.text" = "Ajustes";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "FLa-QN-QKj"; */
+"FLa-QN-QKj.normalTitle" = "Hecho";
+
+/* Class = "UINavigationItem"; title = "Main"; ObjectID = "azc-GI-5hu"; */
+"azc-GI-5hu.title" = "Principal";
+
+/* Class = "UINavigationController"; title = "NavController"; ObjectID = "obp-oq-F0g"; */
+"obp-oq-F0g.title" = "NavController";
+
+/* Class = "UIViewController"; title = "Settings"; ObjectID = "omo-pt-gIS"; */
+"omo-pt-gIS.title" = "Ajustes";
+
+/* Accessed from view controller */
+"help" = "Ayuda";
+
+"tree_settings" = "Del árbol";
+
+"logout" = "Cerrar sesion";
+
+"profile" = "Perfilar";
+
+"settings"= "Ajustes";
+
+"terms" = "Condiciones";

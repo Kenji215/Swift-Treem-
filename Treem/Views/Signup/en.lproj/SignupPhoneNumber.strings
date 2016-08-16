@@ -1,0 +1,22 @@
+
+/* Class = "UITextView"; text = "Phone number must have SMS text messaging enabled for access."; ObjectID = "EiQ-et-LzY"; */
+"EiQ-et-LzY.text" = "Phone number must have SMS text messaging enabled for access.";
+
+/* Class = "UITextField"; placeholder = "Enter digits only"; ObjectID = "d9g-SD-dcP"; */
+"d9g-SD-dcP.placeholder" = "Enter digits only";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "jCp-9l-VbL"; */
+"jCp-9l-VbL.normalTitle" = "Next";
+
+/* Class = "UILabel"; text = "Phone Number"; ObjectID = "niU-9X-gY7"; */
+"niU-9X-gY7.text" = "Phone Number";
+
+"invalid_number" = "Invalid Phone Number";
+
+"invalid_number_message" = "Phone number appears to be invalid. Check that the number is available in your current country or use the international number prefix.";
+
+"existing_number" = "Phone Number Exists";
+
+"existing_number_self_message" = "Phone number belongs to you, please enter a new number to change it.";
+
+"existing_number_other_message" = "Phone number belongs to another user, please choose a different number.";

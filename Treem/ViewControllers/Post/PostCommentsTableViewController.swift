@@ -1,0 +1,783 @@
+//
+//  PostCommentsTableViewController.swift
+//  Treem
+//
+//  Created by Matthew Walker on 2/3/16.
+//  Copyright © 2016 Treem LLC. All rights reserved.
+//
+
+import TTTAttributedLabel
+import UIKit
+
+class PostCommentsTableViewController: PagedTableViewController, PostDelegate, UIPopoverPresentationControllerDelegate, TTTAttributedLabelDelegate {
+    lazy var replyUsers     : Dictionary<Int, User> = [:]
+    
+    var postId                  : Int = 0
+    var onTableViewFrameChange  : ((repliesTable: UITableView)->())? = nil
+    var isShowingPostOptions    : Bool = false
+    var detailsDelegate         : PostDetailsViewController? = nil
+    var hasLoadingMask          : Bool = true
+    
+    private let fadeInTransition = FadeInAnimatedTransition()
+    
+    let downloadOperations = DownloadContentOperations()
+    
+    private let SELF_USER_ID = -999
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.emptyText = "No comments yet"
+
+        self.getComments(self.pageIndex, pageSize: self.pageSize)
+        
+        self.pagedDataCall = self.getComments
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        self.onTableViewFrameChange?(repliesTable: self.tableView)
+    }
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        if(self.items.indices.contains(indexPath.row)){
+            if let reply = self.items[indexPath.row] as? Reply {
+                return reply.cellHeightLayout
+            }
+        }
+        
+        return self.tableView.rowHeight
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("ReplyCell") as! ReplyTableViewCell
+        
+        cell.tag = indexPath.row
+
+        cell.postOptionsButton.active       = false
+        
+        if(self.items.indices.contains(indexPath.row)){
+            if let reply : Reply = self.items[indexPath.row] as? Reply, user : User = self.replyUsers[reply.userId] {
+                
+                // hide the options button if not editable
+                cell.postOptionsButton.hidden = !reply.editable
+                
+                // tap on avatar to view profile
+                let profileSelector = #selector(PostCommentsTableViewController.profileTouchUpInside(_:))
+                let userId = user.isCurrentUser ? self.SELF_USER_ID : user.id
+                
+                cell.avatarImageView.tag = userId
+                cell.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: profileSelector))
+                
+                // tap on name label to view profile
+                cell.nameLabel.tag = userId
+                cell.nameLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: profileSelector))
+                
+                // get avatar image
+                if let avatarURL = user.avatar, downloader = DownloadContentOperation(url: avatarURL, cacheKey: user.avatarId) {
+                    downloader.completionBlock = {
+                        if let image = downloader.image where !downloader.cancelled {
+                            // perform UI changes back on the main thread
+                            dispatch_async(dispatch_get_main_queue(), {
+                                
+                                // check that the cell hasn't been reused
+                                if (cell.tag == indexPath.row) {
+                                    
+                                    // if cell in view then animate, otherwise add if in table but not visible
+                                    if tableView.visibleCells.contains(cell) {
+                                        UIView.transitionWithView(
+                                            cell.avatarImageView,
+                                            duration: 0.1,
+                                            options: UIViewAnimationOptions.TransitionCrossDissolve,
+                                            animations: {
+                                                cell.avatarImageView.image = image
+                                            },
+                                            completion: nil
+                                        )
+                                    }
+                                    else {
+                                        cell.avatarImageView.image = image
+                                    }
+                                }
+                            })
+                        }
+                    }
+                    
+                    self.downloadOperations.startDownload(indexPath, downloadContentOperation: downloader)
+                }
+                
+                // get attached content items
+                if  let contentItems    = reply.contentItems where reply.contentItems?.count > 0,
+                    let contentItem     = contentItems[0] as? ContentItemDownload,
+                    let contentURL      = contentItem.contentURL
+                {
+                    let contentSize = reply.getContentSize(contentItem)
+                    
+                    // clear previously added views
+                    cell.mediaContainerView.subviews.forEach({ $0.removeFromSuperview() })
+                    
+                    if let downloader = DownloadContentOperation(url: contentURL, cacheKey: contentItem.contentURLId) {
+                        downloader.completionBlock = {
+                            // check if cancelled
+                            if downloader.cancelled {
+                                return
+                            }
+                            
+                            if let image = downloader.image {
+                                // check that cell hasn't been reused
+                                if (cell.tag == indexPath.row) {
+                                    
+                                    // perform UI changes back on the main thread
+                                    dispatch_async(dispatch_get_main_queue(), {
+                                        
+                                        let imageView = UIImageView(image: image)
+                                        
+                                        // if image exceeds the size of the viewing area scale it
+                                        if image.size.width > contentSize.width || image.size.height > contentSize.height {
+                                            imageView.contentMode = .ScaleAspectFit
+                                        }
+                                            // else show it centered
+                                        else {
+                                            imageView.contentMode = .Center
+                                        }
+                                        
+                                        // if imageview is a thumbnail for a video add an action
+                                        imageView.userInteractionEnabled = true
+                                        imageView.addGestureRecognizer(MediaTapGestureRecognizer(target:self
+                                            , action: #selector(PostCommentsTableViewController.mediaThumbnailTap(_:))
+                                            , contentURL: contentURL
+                                            , contentURLId    : contentItem.contentURLId
+                                            , contentID: contentItem.contentID
+                                            , contentType: contentItem.contentType
+                                            , contentOwner: false))
+                                        
+                                        var xPos: CGFloat = 0
+                                        
+                                        if contentSize.width < cell.mediaContainerView.bounds.width {
+                                            xPos = (cell.mediaContainerView.bounds.width * 0.5) - (contentSize.width * 0.5)
+                                        }
+                                        
+                                        imageView.frame = CGRectMake(xPos,0,contentSize.width,contentSize.height)
+                                        
+                                        cell.mediaContainerViewHeightConstraint.constant = contentSize.height
+                                        
+                                        cell.mediaContainerView.addSubview(imageView)
+                                    })
+                                }
+                            }
+                        }
+                        
+                        self.downloadOperations.startDownload(indexPath, downloadContentOperation: downloader)
+                    }
+                }
+                
+                cell.nameLabel.text         = user.getFullName()
+                cell.dateLabel.text         = reply.replyDate?.getRelativeDateFormattedString()
+                
+                // if comment text present apply URL highlighting styles
+                if let _ = reply.comment {
+                    cell.replyTextLabel.delegate = self
+                    AppStyles.sharedInstance.setURLAttributedLabelStyling(cell.replyTextLabel)
+                }
+                
+                cell.replyTextLabel.text    = reply.comment
+                
+                cell.UrlPreviewView.subviews.forEach({ $0.removeFromSuperview() })
+                
+                cell.messageHeightConstraint.constant       = reply.messageHeight
+                cell.messageBottomConstraint.constant       = reply.messageBottomMargin
+                
+                
+                // check for url preview
+                if let replyUrlData = reply.replyUrlData where reply.containsUrl {
+                    // add preview via frame placement
+                    let previewController   = UrlPreviewViewController.getStoryboardInstance()
+                    
+                    previewController.pageData          = replyUrlData
+                    previewController.view.frame        = CGRectMake(0, 0, Device.sharedInstance.mainScreen.bounds.width - 20, reply.urlPreviewHeight)
+                    
+                    cell.UrlPreviewView.addGestureRecognizer(UrlPreviewTapGestureRecognizer(target: self
+                        , action: #selector(PostCommentsTableViewController.loadUrl(_:))
+                        , data: replyUrlData))
+                    
+                    self.addChildViewController(previewController)
+                    
+                    cell.UrlPreviewView.addSubview(previewController.view)
+                }
+                
+                // Url preview layout properties
+                cell.UrlPreviewHeightConstraint.constant    = reply.urlPreviewHeight
+                cell.UrlPreviewBottomConstraint.constant    = reply.urlPreviewBottomMargin
+                
+                cell.postOptionsButton.tag = indexPath.row
+                cell.postOptionsButton.addTarget(self, action: #selector(PostCommentsTableViewController.viewReplyOptions(_:)), forControlEvents: .TouchUpInside)
+                
+                // load the existing reaction counts
+                self.setReactionCounts(cell, reply: reply)
+            }
+        }
+
+        // set react button properties
+        cell.reactButton.active = false
+        cell.reactButton.tag = indexPath.row
+        cell.reactButton.addTarget(self, action: #selector(PostCommentsTableViewController.reactTouchUpInside(_:)), forControlEvents: .TouchUpInside)
+        
+        return cell
+    }
+    
+    //Grab the comments for the given post
+    func getComments(page: Int, pageSize: Int) {
+        
+        if self.hasLoadingMask {
+            self.showLoadingMask()
+        }
+        
+        TreemFeedService.sharedInstance.getPostComments(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            postID: self.postId,
+            page: page,
+            pageSize: pageSize,
+            viewSize: UIScreen.mainScreen().bounds.width,
+            failureCodesHandled: nil,
+            success: {
+                data in
+                
+                let replyData = Reply.getRepliesFromData(data)
+                
+                if replyData.users.count > 0 {
+                    self.replyUsers.merge(replyData.users)
+                }
+                
+                if replyData.replies.count > 0 {
+                    self.hideEmptyView()
+                    
+                    self.setData(replyData.replies)
+                }
+                else if self.pageIndex == self.initialPageIndex {
+                    self.showEmptyView()
+                }
+                
+                if self.hasLoadingMask {
+                    self.cancelLoadingMask()
+                }
+            },
+            failure: {
+                error, wasHandled in
+                
+                if self.hasLoadingMask {
+                    self.cancelLoadingMask()
+                }
+            }
+        )
+    }
+    
+    func viewReplyOptions(sender: UIButton) {
+        if let reply = self.items[sender.tag] as? Reply {
+            
+            // animate cell to top of view (if not already)
+            self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: sender.tag, inSection: 0), atScrollPosition: .Top, animated: true)
+            
+            //The size of the popover is being set when creating the instance.
+            let postOptionsVC = PostOptionsViewController.getStoryboardInstance()
+            
+            postOptionsVC.indexRow              = sender.tag
+            postOptionsVC.reply                 = reply
+            postOptionsVC.sharedSelected        = false
+            postOptionsVC.delegate              = self
+            postOptionsVC.postDelegate          = self
+            postOptionsVC.transitioningDelegate = self.fadeInTransition
+            postOptionsVC.referringButton       = sender
+            postOptionsVC.popoverDelegate       = self
+            
+            self.presentViewController(postOptionsVC, animated: true, completion: nil)
+            
+            self.isShowingPostOptions = true
+        }
+    }
+    
+    func loadUrl(sender: UrlPreviewTapGestureRecognizer) {
+        if let linkData = sender.linkData {
+            if linkData.linkUrl == nil && linkData.linkDescription == nil && linkData.linkImage != nil {
+                
+                let vc = MediaImageViewController.getStoryboardInstance()
+                
+                if let cUrl = linkData.linkImage {
+                    vc.contentUrl = NSURL(string: cUrl)
+                    
+                    self.navigationController?.presentViewController(vc, animated: true, completion: nil)
+                }
+            }
+            else if let linkUrl = linkData.linkUrl {
+                self.showWebBrowser(linkUrl, defaultTitle: linkData.linkTitle)
+            }
+        }
+    }
+
+    func profileTouchUpInside(sender: UITapGestureRecognizer) {
+        if let tag = sender.view?.tag {
+            // assume current user
+            if tag == self.SELF_USER_ID {
+                let vc = ProfileViewController.getStoryboardInstance()
+                
+                vc.isPresenting = true
+                
+                self.presentViewController(vc, animated: true, completion: nil)
+            }
+            else {
+                let vc = MemberProfileViewController.getStoryboardInstance()
+                
+                // only one user can be send to the profile page
+                vc.userId = tag
+                
+                vc.friendChangeCallback = {
+                    if let refresh = self.refreshControl {
+                        refresh.beginRefreshing()
+                        self.tableView.setContentOffset(CGPointMake(0, self.tableView.contentOffset.y - refresh.frame.size.height), animated: true)
+                        refresh.sendActionsForControlEvents(.ValueChanged)
+                    }
+                }
+                
+                self.presentViewController(vc, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        return .None
+    }
+    
+    func replyWasDeleted(indexRow: Int) {
+        self.removeItem(indexRow)
+        self.detailsDelegate?.replyWasRemoved()
+    }
+    
+    private func updateCellHeight(cell: ReplyTableViewCell, reply: Reply, animationOptions: UIViewAnimationOptions? = nil, completion: ((Bool)->())? = nil) {
+        
+        if animationOptions != nil {
+            if animationOptions! == UIViewAnimationOptions.TransitionNone
+            {
+                cell.contentView.layoutIfNeeded()
+            }
+            else {
+                // update cell content layout with animation options defined
+                UIView.animateWithDuration(
+                    0.25,
+                    delay: 0.0,
+                    options: animationOptions!,
+                    animations: {
+                        cell.contentView.layoutIfNeeded()
+                    },
+                    completion: completion
+                )
+            }
+        }
+        else {
+            // update cell content layout
+            UIView.animateWithDuration(
+                0.25,
+                animations: {
+                    cell.contentView.layoutIfNeeded()
+                },
+                completion: completion
+            )
+        }
+        
+        // update table layout
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
+    }
+    
+    //# MARK: - Reaction Methods
+    
+    func reactTouchUpInside(sender: UIButton){
+        let indexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
+        
+        if(self.items.indices.contains(indexPath.row)){
+            if let reply : Reply = self.items[indexPath.row] as? Reply, cell = self.tableView.cellForRowAtIndexPath(indexPath) as? ReplyTableViewCell {
+                self.setReactionView(reply, cell: cell, indexPath: indexPath)
+            }
+        }
+    }
+    
+    func setReactionView(reply: Reply, cell: ReplyTableViewCell, indexPath: NSIndexPath) {
+        var actionViewHeight: CGFloat = 0
+
+        // if react button already selected close react action view
+        if cell.reactButton.active {
+            cell.resetActionView()
+        }
+        else {
+            
+            // action view references
+            let actionViewWidth         : CGFloat = cell.actionView.frame.width
+            
+            var xPos: CGFloat = cell.contentView.center.x - 0.5 * ((CGFloat(Post.ReactionType.allOrderedValues.count) * (
+                FeedViewController.SET_REACT_SIZE + FeedViewController.SET_REACT_WIDTH_SPACER)))
+            var yPos: CGFloat = 0
+            var rows: CGFloat = 1
+            
+            // precalculate some of the values used in each loop iteration
+            let doubleHeightSpacer  = FeedViewController.SET_REACT_HEIGHT_SPACER * 2
+            let halfWidthSpacer     = FeedViewController.SET_REACT_WIDTH_SPACER * 0.5
+            let widthPerButton      = FeedViewController.SET_REACT_SIZE + FeedViewController.SET_REACT_WIDTH_SPACER
+            let heightPerButton     = FeedViewController.SET_REACT_SIZE + doubleHeightSpacer
+            let reactFrame          = CGRectMake(halfWidthSpacer
+                ,FeedViewController.SET_REACT_HEIGHT_SPACER
+                ,FeedViewController.SET_REACT_SIZE
+                ,FeedViewController.SET_REACT_SIZE)
+            
+            let noCurrentReaction   = (reply.selfReact == nil)
+            
+            // add each reaction type image, check for additional rows as needed
+            for reaction in Post.ReactionType.allOrderedValues {
+                
+                // check if moving to next row
+                if (xPos + widthPerButton) > actionViewWidth - FeedViewController.SET_REACT_HEIGHT_SPACER {
+                    yPos += heightPerButton
+                    xPos = 0
+                    
+                    ++rows
+                }
+                // else adding to same row
+                
+                let reactButton         = ReactionButton()
+                reactButton.frame       = CGRectMake(xPos, yPos, widthPerButton, heightPerButton)
+                reactButton.reaction    = reaction
+                reactButton.tag         = indexPath.row
+                
+                // check if selected
+                if (noCurrentReaction && reaction == .Neutral) || (!noCurrentReaction && reaction == reply.selfReact) {
+                    reactButton.selected        = true
+                    cell.selectedReactionButton = reactButton
+                }
+                
+                reactButton.addTarget(self, action: #selector(PostCommentsTableViewController.reactionTypeTouchUpInside(_:)), forControlEvents: .TouchUpInside)
+                
+                let reactImageView          = UIImageView(frame: reactFrame)
+                reactImageView.image        = Post.getReactionImage(reaction)
+                reactImageView.contentMode  = .ScaleAspectFit
+                
+                reactButton.addSubview(reactImageView)
+                
+                cell.actionView.addSubview(reactButton)
+                
+                xPos += widthPerButton
+            }
+            
+            actionViewHeight = (rows * heightPerButton)
+            
+        }
+        
+        cell.reactButton.active = !cell.reactButton.active
+        
+        // update height
+        reply.actionViewHeight                      = actionViewHeight
+        cell.actionViewHeightConstraint.constant    = actionViewHeight
+        
+        self.updateCellHeight(cell, reply:reply)
+
+    }
+    
+    // reacton button handler
+    func reactionTypeTouchUpInside(sender: ReactionButton) {
+        // get post/cell for index
+        let indexPath = NSIndexPath(forRow: sender.tag, inSection: 0)
+        
+        if let cell = self.tableView.cellForRowAtIndexPath(indexPath) as? ReplyTableViewCell,
+            reply = self.items[sender.tag] as? Reply
+        {
+            // ignore if selecting the already selected reaction
+            if let reaction = sender.reaction where sender.reaction != cell.selectedReactionButton?.reaction {
+                // deselect other button if selected
+                if let previousReaction = cell.selectedReactionButton {
+                    previousReaction.selected = false
+                }
+                
+                // select current button
+                sender.selected = true
+                
+                // assign new selected button
+                cell.selectedReactionButton = sender
+                
+                // if removing any post reaction
+                if (reaction == .Neutral) {
+                    self.removeReplyReaction(cell, reply: reply, indexPath: indexPath)
+                }
+                    // else if setting/changing post reaction
+                else {
+                    self.setReplyReaction(cell, reply: reply, indexPath: indexPath, reaction: sender.reaction!)
+                }
+            }
+                // reaction is same and no reaction entered
+            else if sender.reaction == nil {
+                sender.selected = true
+                
+                cell.resetActionView()
+                cell.actionViewHeightConstraint.constant = 0
+                reply.actionViewHeight = 0
+                
+                // close reaction view (no service calls needed)
+                self.updateCellHeight(cell, reply: reply, completion: {
+                    _ in
+                    sender.selected = false
+                })
+            }
+        }
+    }
+
+    // load the reaction counts view
+    private func setReactionCounts(cell: ReplyTableViewCell, reply: Reply) {
+        var xPos        = CGFloat(0)
+        
+        // clear existing subview / gestures
+        cell.reactCountsView.subviews.forEach({ $0.removeFromSuperview() })
+        cell.reactCountsView.gestureRecognizers?.forEach(cell.reactCountsView.removeGestureRecognizer)
+        
+        // the react view is slightly taller than the react images, center them
+        var topSpacing = (cell.reactView.bounds.height - FeedViewController.REACT_IMAGE_SIZE) / 2
+        if(topSpacing < 0){ topSpacing = 0 }
+        
+        // used to determine if we can add more react images or if we're out of room
+        let maxWidth = cell.reactView.bounds.width - (cell.reactCountsViewRightConstraint.constant * 2) - cell.reactButton.bounds.width
+        
+        // check for reactions
+        if let reacts = reply.reactCounts {
+            let rCnt        = reacts.count
+            let labelFont   = UIFont.systemFontOfSize(FeedViewController.REACT_FONT_SIZE)
+
+            // if the current user is allowed to edit the post, they are allowed to see who the reactions are from
+            if(reply.editable){
+                cell.reactCountsView.tag = reply.replyId
+                cell.reactCountsView.addGestureRecognizer(UITapGestureRecognizer(target: self
+                        , action: #selector(PostCommentsTableViewController.reactionViewTouchUpInside(_:))))
+            }
+            
+            for x in 0 ..< rCnt {
+                let reaction    = reacts[x]
+                let text        = reaction.count.description
+                
+                if (x > 0) {
+                    xPos += FeedViewController.REACT_SPACING
+                }
+                
+                // add react smiley imageview
+                let reactFrame      = CGRectMake(xPos,topSpacing,FeedViewController.REACT_IMAGE_SIZE,FeedViewController.REACT_IMAGE_SIZE)
+                let reactImageView  = UIImageView(frame: reactFrame)
+                
+                reactImageView.contentMode  = .ScaleAspectFit
+                reactImageView.image        = Post.getReactionImage(reaction.react)
+                reactImageView.opaque       = false
+                
+                cell.reactCountsView.addSubview(reactImageView)
+                
+                xPos += (FeedViewController.REACT_IMAGE_SIZE + 2)
+                
+                // add react smiley number count
+                let reactLabelFrame = CGRectMake(xPos, topSpacing, text.widthWithConstrainedHeight(FeedViewController.REACT_IMAGE_SIZE, font: labelFont), FeedViewController.REACT_IMAGE_SIZE)
+                let reactLabel      = UILabel(frame: reactLabelFrame)
+                
+                reactLabel.textAlignment    = NSTextAlignment.Left
+                
+                reactLabel.text             = text
+                reactLabel.font             = labelFont
+                reactLabel.textColor        = FeedViewController.getReactionColor(reaction.react)
+                reactLabel.opaque           = false
+                reactLabel.backgroundColor  = UIColor.clearColor()
+                
+                // make sure we have space to put this reaction else break out
+                if((xPos + reactLabelFrame.width) < maxWidth){
+                    cell.reactCountsView.addSubview(reactLabel)
+                    xPos += reactLabelFrame.width
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        
+        cell.reactCountsViewWidthConstraint.constant = xPos
+    }
+    
+    // tapping on the reactions count view
+    func reactionViewTouchUpInside(sender: UITapGestureRecognizer){
+        
+        if let reactView = sender.view where reactView.tag > 0 {
+            let loadMaskVC = LoadingMaskViewController.getStoryboardInstance()
+            loadMaskVC.queueLoadingMask(reactView, timeBeforeShowingMask: 0.1, loadingViewAlpha: 0.05, showCompletion: nil)
+
+            TreemFeedService.sharedInstance.getReplyReactions(
+                CurrentTreeSettings.sharedInstance.treeSession
+                , replyID: reactView.tag
+                , success: {
+                    data in
+                    
+                    loadMaskVC.cancelLoadingMask({
+                        if let users = Post.getUserReactions(data) {
+                            
+                            let popover = MembersListPopoverViewController.getStoryboardInstance()
+                            
+                            popover.users = users
+                            
+                            let sender = reactView
+                            
+                            if let popoverMenuView = popover.popoverPresentationController {
+                                popoverMenuView.permittedArrowDirections    = .Up
+                                popoverMenuView.delegate                    = self
+                                popoverMenuView.sourceView                  = sender
+                                popoverMenuView.sourceRect                  = CGRect(x: reactView.bounds.width * 0.5, y: reactView.bounds.height * 0.5, width: 0, height: 0)
+                                popoverMenuView.backgroundColor             = UIColor.whiteColor()
+                                
+                                self.presentViewController(popover, animated: true, completion: nil)
+                            }
+                        }
+                    })
+                    
+                }
+                , failure: {
+                    error, wasHandled in
+                    
+                    if !wasHandled {
+                        loadMaskVC.cancelLoadingMask({
+                            CustomAlertViews.showGeneralErrorAlertView()
+                        })
+                    }
+                }
+            )
+
+        }
+    }
+
+    // remove reaction
+    private func removeReplyReaction(cell: ReplyTableViewCell, reply: Reply, indexPath: NSIndexPath) {
+        let loadMaskVC = LoadingMaskViewController.getStoryboardInstance()
+        
+        loadMaskVC.queueLoadingMask(cell.actionView, timeBeforeShowingMask: 0.1, showCompletion: nil)
+        loadMaskVC.view.backgroundColor = AppStyles.sharedInstance.lightGrayColor
+        loadMaskVC.activityColor        = AppStyles.sharedInstance.darkGrayColor
+        
+        TreemFeedService.sharedInstance.removeReplyReaction(
+            CurrentTreeSettings.sharedInstance.treeSession,
+            replyID: reply.replyId,
+            success: {
+                data in
+                
+                // update reaction in object
+                reply.changeSelfReaction(nil)
+                
+                cell.resetActionView()
+                cell.actionViewHeightConstraint.constant = 0
+                reply.actionViewHeight = 0
+                
+                // check that cell hasn't been reused
+                if (cell.tag == indexPath.row) {
+                    self.setReactionCounts(cell, reply: reply)
+                    
+                    self.updateCellHeight(cell, reply: reply, completion: {
+                        _ in
+                        
+                        cell.reactButton.active = false
+                    })
+                }
+            },
+            failure: {
+                error, wasHandled in
+                
+                if !wasHandled {
+                    // cancel loading mask and return to view with alert
+                    loadMaskVC.cancelLoadingMask({
+                        CustomAlertViews.showGeneralErrorAlertView()
+                    })
+                }
+            }
+        )
+    }
+    
+    // set reaction
+    private func setReplyReaction(cell: ReplyTableViewCell, reply: Reply, indexPath: NSIndexPath, reaction: Post.ReactionType) {
+        let loadMaskVC = LoadingMaskViewController.getStoryboardInstance()
+        
+        loadMaskVC.queueLoadingMask(cell.actionView, timeBeforeShowingMask: 0.1, showCompletion: nil)
+        loadMaskVC.view.backgroundColor = AppStyles.sharedInstance.lightGrayColor
+        loadMaskVC.activityColor        = AppStyles.sharedInstance.darkGrayColor
+        
+        TreemFeedService.sharedInstance.setReplyReaction (
+            CurrentTreeSettings.sharedInstance.treeSession,
+            replyID: reply.replyId,
+            reaction: reaction,
+            success: {
+                data in
+                
+                // update reaction in object
+                reply.changeSelfReaction(reaction)
+                
+                cell.resetActionView()
+                cell.actionViewHeightConstraint.constant = 0
+                reply.actionViewHeight = 0
+                
+                // check that cell hasn't been reused
+                if (cell.tag == indexPath.row) {
+                    self.setReactionCounts(cell, reply: reply)
+                    
+                    self.updateCellHeight(cell, reply: reply, completion: {
+                        _ in
+                        
+                        cell.reactButton.active = false
+                    })
+                }
+            },
+            failure: {
+                error, wasHandled in
+                
+                if !wasHandled {
+                    // cancel loading mask and return to view with alert
+                    loadMaskVC.cancelLoadingMask({
+                        CustomAlertViews.showGeneralErrorAlertView()
+                    })
+                }
+            }
+        )
+    }
+    
+    func mediaThumbnailTap(sender: MediaTapGestureRecognizer) {
+        if let cType = sender.contentType {
+            if(cType == .Video){
+                let vc = MediaVideoViewController.getStoryboardInstance()
+                
+                vc.contentId = sender.contentID
+                
+                self.navigationController?.presentViewController(vc, animated: true, completion: nil)
+            }
+            else{
+                
+                let vc = MediaImageViewController.getStoryboardInstance()
+                if let cUrl = sender.contentURL{
+                    vc.contentUrl = cUrl
+                }
+                else{
+                    vc.contentId = sender.contentID
+                }
+                
+                self.navigationController?.presentViewController(vc, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    //# MARK: Attributed Label Delegate Functions
+    func attributedLabel(label: TTTAttributedLabel, didSelectLinkWithURL url: NSURL) {
+        self.showWebBrowser(url.absoluteString)
+    }
+    
+    private func showWebBrowser(url: String, defaultTitle: String? = nil) {
+        let vc = WebBrowserViewController.getStoryboardInstance()
+        
+        vc.webUrl           = url
+        vc.defaultTitle     = defaultTitle
+        vc.branchColor      = CurrentTreeSettings.sharedInstance.treeSession.currentBranch?.color ?? AppStyles.sharedInstance.darkGrayColor
+        vc.isPrivateMode    = CurrentTreeSettings.sharedInstance.currentTree == TreeType.Public
+        vc.transitioningDelegate = AppStyles.directionUpViewAnimatedTransition
+        
+        self.presentViewController(vc, animated: true, completion: nil)
+    }
+}

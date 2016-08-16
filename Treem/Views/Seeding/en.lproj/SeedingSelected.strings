@@ -1,0 +1,15 @@
+
+/* Class = "UIButton"; normalTitle = "Clear Selected"; ObjectID = "8aD-gY-iCr"; */
+"8aD-gY-iCr.normalTitle" = "Clear Selected";
+
+/* Class = "UIButton"; normalTitle = "Close"; ObjectID = "giL-Ch-1hd"; */
+"giL-Ch-1hd.normalTitle" = "Close";
+
+
+
+
+"removal_warning_title" = "Removing members from a branch";
+"removal_warning_message" = "De-selecting members from this list means that they will get removed from the branch upon hitting 'Save'.";
+
+"unfriending_warning_title" = "Unfriending Users";
+"unfriending_warning_message" = "De-selecting members from this list will defriend them upon hitting 'Save'";

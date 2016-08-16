@@ -1,0 +1,2282 @@
+//
+//  TreeViewController.swift
+//  Treem
+//
+//  Created by Matthew Walker on 7/10/15.
+//  Copyright (c) 2015 Treem LLC. All rights reserved.
+//
+
+import UIKit
+import SwiftyJSON
+
+class TreeViewController : HexagonButtonGridViewController, UITextFieldDelegate, PostShareDelegate, AlertsAddUserDelegate {
+    
+    // direct sub views
+    @IBOutlet weak var gridView                 : UIView!
+    @IBOutlet weak var topEquityView            : UIView!
+    
+    // equity view outlets
+    @IBOutlet weak var equityPercentLabel           : UILabel!
+    @IBOutlet weak var equityDayPercentLabel        : StockTickerLabel!
+    @IBOutlet weak var equityPercentDescribeLabel   : UILabel!
+    @IBOutlet weak var TopEquityViewHeight: NSLayoutConstraint!
+    var initialEquityBarHeightConstant : CGFloat = 0.0
+    
+    @IBOutlet weak var equityRankLabel: UILabel!
+    @IBAction func unwindToTreeView(segue: UIStoryboardSegue) {}
+    
+    @IBAction func unwindToSecretTreeView(segue: UIStoryboardSegue) {
+        // can only be opened if coming from secret tree login
+        if let sourceVC = segue.sourceViewController as? SecretTreeLoginViewController {
+            self.loadSecretTreeGrid(sourceVC.currentTreeSessionToken)
+        }
+    }
+    
+    // child controllers (make sure to clear on tree reset)
+    private var addFormViewController   : TreeAddFormViewController?        = nil
+    private var editMenuViewController  : TreeEditBranchMenuViewController? = nil
+    private var moveFormViewController  : TreeMoveBranchFormViewController? = nil
+    private var selectFormViewController : TreeSelectBranchFormViewController? = nil
+    
+    // icons
+    private let maxBranchLevels         = 3
+    private let addIconImageName        = "Add-Tree"
+    private let centerIconImageName     = "Feed-Tree"
+    private let membersIconImageName    = "Members-Tree"
+    private let postIconImageName       = "Post-Tree"
+    private let chatIconImageName       = "Chat-Tree"
+    private let reverseIconImageName    = "Reverse"
+    private let exitIconImageName       = "Exit"
+    private let exploreIconImageName    = "Explore"
+    private let selectIconImageName     = "Tag"
+    private let shareTreeIconImageName  = "Share-Tree"
+    
+    // tree types
+    static let mainTreeID              = 1
+    static let secretTreeID            = 2
+    
+    // tree session
+    private let currentTree            = CurrentTreeSettings.sharedInstance.treeSession
+    
+    private var currentBranchLevel      : Int                   = 1
+    private var currentEditButton       : HexagonButton?        = nil {
+        didSet(newValue) {
+            if (newValue == nil) {
+                self.currentEditBranch = nil
+            }
+        }
+    }
+    private var currentEditBranch       : Branch?               = nil
+    private var currentBackButton       : HexagonButton?        = nil
+    private var currentExitPrivateButton: HexagonButton?        = nil
+    
+    private var editingInactiveButtonSet: Set<HexagonButton>?   = nil
+    private var isMovingBranch          : Bool                  = false
+    private var isPrivateMode           : Bool                  = false
+    private var movingBranchLevelCount  : Int                   = 0
+    
+    
+    // tree trunk in view (expandable portion)
+    private var trunk                   : TreeTrunkButton!
+    private var bottomTrunk             : Rectangle!
+    
+    // grid styles
+    private var currentGridTheme            : TreeGridTheme!
+    private var hexagonSingleCharacterFont  : UIFont = UIFont.systemFontOfSize(52)
+    private var hexagonActionFont           : UIFont = UIFont.systemFontOfSize(14)
+    private var hexagonTitleFont            : UIFont = UIFont.systemFontOfSize(15.0)
+    
+    // add view actions
+    private let actionAddEditBranchTouchUpInside        = "addEditBranchTouchUpInside"
+    private let actionBranchNameTextFieldChange         = "branchNameTextFieldChange:"
+    private let actionCancelAddEditBranchTouchUpInside  = "cancelAddEditBranchTouchUpInside:"
+    
+    // move view actions
+    private let actionMoveBranchCancelTouchUpInside     = "moveBranchCancelTouchUpInside"
+    
+    // edit view actions
+    private let actionBranchMenuCancelTouchUpInside     = "branchMenuCancelTouchUpInside"
+    private let actionBranchMenuEditTouchUpInside       = "branchMenuEditTouchUpInside"
+    private let actionBranchMenuMoveTouchUpInside       = "branchMenuMoveTouchUpInside"
+    private let actionBranchMenuDeleteTouchUpInside     = "branchMenuDeleteTouchUpInside"
+    private let actionBranchMenuFeedTouchUpInside       = "showFeedView"
+    private let actionBranchMenuMembersTouchUpInside    = "showMembersView"
+    private let actionBranchMenuPostTouchUpInside       = "showPostView"
+    //private let actionBranchMenuChatTouchUpInside       = "showChatView"
+    
+    // select view actions
+    private let actionSelectBranchCancelTouchUpInside     = "selectBranchCancelTouchUpInside"
+    
+    // hexagon grid button actions
+    private let actionBranchTouchUpInside               = "branchTouchUpInside:"
+    private let actionBranchPressHold                   = "branchPressHold:"
+    private let actionBranchBackTouchUpInside           = "branchBackTouchUpInside"
+    private let actionBranchPrivateTouchUpInside        = "branchPrivateTouchUpInside"
+    private let actionBranchPrivateExitTouchUpInside    = "branchPrivateExitTouchUpInside"
+    private let actionBranchMembersTouchUpInside        = "branchMembersTouchUpInside"
+    private let actionBranchPostTouchUpInside           = "branchPostTouchUpInside"
+    //private let actionBranchChatsTouchUpInside          = "branchChatsTouchUpInside"
+    
+    private let loadingMaskViewController   = LoadingMaskViewController.getStoryboardInstance()
+    private let errorViewController         = ErrorViewController.getStoryboardInstance()
+    
+    private var extraEditMenuOffset : CGFloat = 0
+    
+    var branchViewController   : BranchViewController?  = nil
+    var delegate: MainViewController? = nil
+    
+    
+    
+    // ------------------------------------------- //
+    // Delegates / Outside Calls
+    // ------------------------------------------ //
+    private var isSelectingBranch               : Bool = false                     // tells tree we're in selecting branch mode
+    private var selectingCenterHexIcon          : String? = nil                    // icon for the center "select" hex button
+    private var selectedCallback                : ((Int, String) -> ())? = nil     // what you want to have happen when the branch is selected
+    private var selectedClose                   : (((() -> ())?) -> ())? = nil                // what to do when we close the view (cancel or select branch)
+    
+    func sharePostSelectBranch(shareViewController: PostShareViewController?, completion: ((Int, String) -> ())?) {
+        
+        if let shareVC = shareViewController {
+            if let branchVC = self.branchViewController {
+                
+                shareVC.dismissViewControllerAnimated(false, completion:nil)
+                branchVC.navigationController?.popViewControllerAnimated(true)
+                
+                // on close, reset grid, push branch vc back on and show the share screen
+                self.selectedClose = {
+                    completeCallback in
+                    
+                    self.unsetSelectionMode()
+                    self.navigationController?.pushViewController(branchVC, animated: false)
+                    branchVC.presentViewController(shareVC, animated: true, completion: { completeCallback?() } )
+                }
+            }
+            
+            self.isSelectingBranch                      = true
+            self.selectingCenterHexIcon                 = self.shareTreeIconImageName
+            self.selectedCallback                       = completion
+            
+            self.setSelectionMode()
+        }
+    }
+    
+    func addUserSelectBranch(alertsViewController: AlertsViewController?
+        , completion:((Int, String) -> ())?) {
+            
+            
+            if let alertVC = alertsViewController {
+                alertVC.navigationController?.popToRootViewControllerAnimated(true)
+                
+                self.selectedClose = {
+                    completeCallback in
+                    
+                    self.unsetSelectionMode()
+                    self.navigationController?.pushViewController(alertVC, animated: true)
+                    
+                    completeCallback?()
+                }
+                
+                self.isSelectingBranch                      = true
+                self.selectingCenterHexIcon                 = self.selectIconImageName
+                self.selectedCallback                       = completion
+                
+                self.setSelectionMode()
+            }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.initialEquityBarHeightConstant = self.TopEquityViewHeight.constant
+        self.TopEquityViewHeight.constant = 0
+        self.topEquityView.hidden = true
+        
+        // issue with text translation (bug?)
+        self.equityRankLabel.text = Localization.sharedInstance.getLocalizedString("JzG-9f-pdz.text", table: "TreeGrid")
+        
+        self.hexagonGridView = gridView
+        
+        self.loadEquityRewardsData()
+        self.loadInitialTreeGrid()
+        
+        // preload content credentials (call always passes default tree settings due to service design)
+        TreemContentService.sharedInstance.checkRepoCreds(TreeSession(treeID: TreeViewController.mainTreeID, token: nil), complete: nil)
+    }
+    
+    // clear open keyboards on tap
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        view.endEditing(true)
+        super.touchesBegan(touches, withEvent: event)
+    }
+    
+    private func resetTreeGrid() {
+        // clear hexagon grid
+        self.clearGrid()
+        
+        // clear status data
+        self.currentBackButton              = nil
+        self.currentTree.currentBranch      = nil
+        self.currentBranchLevel             = 1
+        self.currentEditBranch              = nil
+        self.currentEditButton              = nil
+        self.currentExitPrivateButton       = nil
+        self.isMovingBranch                 = false
+        self.movingBranchLevelCount         = 0
+        self.editingInactiveButtonSet       = nil
+        self.bottomTrunk                    = nil
+        
+        // load background
+        self.gridView.backgroundColor       = self.currentGridTheme.backgroundColor
+        
+        if let image = self.currentGridTheme.backgroundImage {
+            if let delegate = delegate {
+                UIView.animateWithDuration(0.15, animations: {
+                    delegate.homeBackgroundImageView.image = UIImage(named: image)
+                })
+            }
+        }
+        
+        self.view.backgroundColor           = self.currentGridTheme.backgroundColor
+        self.loadingMaskViewController.view.backgroundColor = self.currentGridTheme.backgroundColor
+        
+        self.lineWidth = self.currentGridTheme.hexagonLineWidth
+        
+        // equity bar not present in secret tree
+        if !self.isPrivateMode {
+            // update base colors from current theme
+            self.equityPercentLabel.textColor    = self.currentGridTheme.barTextBoldColor
+            self.equityDayPercentLabel.textColor = self.currentGridTheme.barTextBoldColor
+            
+            // reload equity data
+            self.loadEquityRewardsData()
+        }
+    }
+    
+    // load data into equity rewards status bar
+    private func loadEquityRewardsData() {
+        self.topEquityView.hidden = true
+        
+        TreemEquityService.sharedInstance.getUserRollout(
+            parameters: nil,
+            failureCodesHandled: [
+                TreemServiceResponseCode.NetworkError,
+                TreemServiceResponseCode.LockedOut,
+                TreemServiceResponseCode.DisabledConsumerKey
+            ],
+            success: {
+                (data:JSON) in
+                
+                let earns_equity : Bool = data["earns_equity"].boolValue
+                
+                if (earns_equity) {
+                    //Percent change today
+                    let change_today : Int = data["change_today"].intValue
+                    
+                    //Show percent change from yesterday - making sure to avoid dividing by 0.
+                    self.equityDayPercentLabel.points = change_today
+                    
+                    //Percentile of all users
+                    self.equityPercentLabel.text = String(data["percentile"].doubleValue * 100) + "%"
+                    
+                    self.equityPercentDescribeLabel.text = Localization.sharedInstance.getLocalizedString("equity_from_yesterday", table: "TreeGrid")
+                    
+                    //Actually display the bar (constraint has to change because the background image's size is based off of it)
+                    self.topEquityView.hidden = false
+                    self.TopEquityViewHeight.constant = self.initialEquityBarHeightConstant
+                }
+                else {
+                    self.delegate?.showHideEquityButton(earns_equity)
+                }
+            },
+            failure: {
+                error,wasHandled in
+                // do nothing: don't show equity bar
+                self.delegate?.showHideEquityButton(false)
+            }
+        )
+    }
+    
+    private func getUserBranches() {
+        TreemBranchService.sharedInstance.getUserBranches(
+            self.currentTree,
+            parameters: nil,
+            responseCodesHandled: [
+                TreemServiceResponseCode.NetworkError,
+                TreemServiceResponseCode.LockedOut,
+                TreemServiceResponseCode.DisabledConsumerKey
+            ],
+            success: {
+                (data:JSON) in
+                
+                // add initial branches
+                self.setInitialBranch(data)
+                
+                // draw initial branches
+                self.loadTreeGrid()
+                
+                // cancel loading mask
+                self.loadingMaskViewController.cancelLoadingMask(nil)
+            },
+            failure: {
+                error,wasHandled in
+                // cancel loading mask
+                self.loadingMaskViewController.cancelLoadingMask({
+                    if !wasHandled {
+                        // if network error
+                        if (error == TreemServiceResponseCode.NetworkError) {
+                            self.errorViewController.showNoNetworkView(self.view, recover: self.getUserBranches)
+                        }
+                        else if (error == TreemServiceResponseCode.LockedOut) {
+                            self.errorViewController.showLockedOutView(self.view, recover: self.getUserBranches)
+                        }
+                        else if (error == TreemServiceResponseCode.DisabledConsumerKey) {
+                            self.errorViewController.showDeviceDisabledView(self.view, recover: self.getUserBranches)
+                        }
+                    }
+                })
+            }
+        )
+    }
+    
+    private func loadThemeInitial() {
+        let whiteColor = UIColor.whiteColor()
+        
+        self.currentGridTheme = TreeGridTheme (
+            barTextBoldColor        : UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 1),
+            backgroundColor         : UIColor.clearColor(),
+            backgroundImage         : "HomeBackground",
+            buttonStrokeColor       : UIColor.clearColor(),
+            trunkFillColor          : UIColor(red: 120 / 255, green: 160 / 255, blue: 40/255, alpha: 1),
+            trunkFillLowerColor     : UIColor(red: 235 / 255, green: 241 / 255, blue: 223 / 255, alpha: 0.6),
+            trunkTitleLowerColor    : UIColor(red: 142 / 255, green: 95 / 255, blue: 59 / 255, alpha: 0.7),
+            defaultBranchFillColor  : UIColor(red: 235 / 255, green: 241 / 255, blue: 223 / 255, alpha: 0.6),
+            backFillColor           : UIColor(red: 108 / 255, green: 108 / 255, blue: 108 / 255, alpha: 1),
+            addFillColor            : UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 0.6),
+            addTitleColor           : UIColor(red: 217 / 255, green: 217 / 255, blue: 217 / 255, alpha: 1),
+            actionTitleColor        : UIColor(red: 120 / 255, green: 160 / 255, blue: 40/255, alpha: 1),
+            editBranchAlpha         : 0.3,
+            branchBarTitleColor     : whiteColor,
+            hexagonLineWidth        : 2.6
+        )
+    }
+    
+    private func loadThemePrivate() {
+        self.currentGridTheme = TreeGridTheme (
+            barTextBoldColor        : UIColor(red: 225/255, green: 225/255, blue: 225/255, alpha: 1),
+            backgroundColor         : UIColor.clearColor(),
+            backgroundImage         : "HomeBackgroundDark",
+            buttonStrokeColor       : UIColor.clearColor(),
+            trunkFillColor          : UIColor(red: 70 / 255, green: 76 / 255, blue: 70 / 255, alpha: 1),
+            trunkFillLowerColor     : UIColor(red: 20 / 255, green: 26 / 255, blue: 20 / 255, alpha: 1),
+            trunkTitleLowerColor    : UIColor(red: 74 / 255, green: 80 / 255, blue: 74 / 255, alpha: 1),
+            defaultBranchFillColor  : UIColor(red: 30 / 255, green: 36 / 255, blue: 30 / 255, alpha: 0.44),
+            backFillColor           : UIColor(red: 124 / 255, green: 130 / 255, blue: 124/255, alpha: 1.0),
+            addFillColor            : UIColor(red: 0, green: 0, blue: 0, alpha: 1),
+            addTitleColor           : UIColor(red: 124 / 255, green: 130 / 255, blue: 124/255, alpha: 1.0),
+            actionTitleColor        : UIColor(red: 124 / 255, green: 130 / 255, blue: 124/255, alpha: 1.0),
+            editBranchAlpha         : 0.6,
+            branchBarTitleColor     : UIColor.whiteColor(),
+            hexagonLineWidth        : 3.0
+        )
+    }
+    
+    private func loadTreeGrid() {
+        // determine size of hexagon based on outer frame/device
+        var maxHexagonHeight    : CGFloat = 136
+        let maxFontSize         : CGFloat = 18.0
+        
+        let device = Device.sharedInstance
+        
+        if device.isResolutionSmallerThaniPhone5() {
+            maxHexagonHeight = 94
+            
+            self.initialCenterYAdjustment = self.TopEquityViewHeight.constant * 0.5
+        }
+        else if (device.isResolutionSmallerThaniPhone6()) {
+            maxHexagonHeight = 108
+        }
+        else if (device.isResolutionSmallerThaniPhone6Plus()) {
+            maxHexagonHeight = 124
+        }
+        else if (device.isiPad()) {
+            maxHexagonHeight = 160
+        }
+        // else use default
+        
+        // get radius for the height
+        var hexagonHeight = (self.gridView.frame.height) / 4 - self.lineWidth
+        
+        if(hexagonHeight > maxHexagonHeight) {
+            hexagonHeight = maxHexagonHeight
+        }
+        
+        var fontSize = round(hexagonHeight / 6.5)
+        
+        if fontSize > maxFontSize {
+            fontSize = maxFontSize
+        }
+        
+        self.hexagonActionFont = UIFont.systemFontOfSize(fontSize - 4.0)
+        
+        self.hexagonRadius = round(hexagonHeight / 2)
+        
+        // determine font size
+        self.hexagonTitleFont = UIFont.systemFontOfSize(fontSize)
+        
+        // draw grid backdrop views
+        self.drawTrunk()
+        
+        // create default center hexagon
+        let defaultCenterButton = HexagonButton()
+        
+        defaultCenterButton.gridPosition    = self.defaultGridCenterPosition
+        
+        // add default hexagon to layout
+        self.setActiveHexagonButtonProperties(defaultCenterButton)
+        
+        self.setBranchHexagonButtonProperties(defaultCenterButton, branch: self.currentTree.currentBranch!)
+        self.setHexagonButton(defaultCenterButton)
+        self.setHexButtonInViewCenter(defaultCenterButton)
+        
+        // set center icon (set after adding default hexagon to layout)
+        if !self.isPrivateMode {
+            defaultCenterButton.strokeColor             = self.currentGridTheme.buttonStrokeColor
+        }
+        
+        self.setCenterHexagonButtonProperties(defaultCenterButton)
+        
+        defaultCenterButton.type = .BRANCH
+        
+        // load initial active branches
+        self.setHexagonButtonsForActiveBranches(self.currentTree.currentBranch!.children)
+        
+        // load outer inactive branches
+        self.setHexagonButtonsForInactiveBranches()
+        
+        // load initial hexagon buttons into view
+        self.drawHexagonButtonsInViewCenter(Set([HexagonButton](self.hexagonButtons.values)))
+        
+        // animate buttons into view
+        let firstDelay = AppStyles.sharedInstance.viewAnimationDuration
+        self.animateExpandNeighborHexagonsIntoPosition(firstNeighborDelay: firstDelay, secondNeighborDelay: firstDelay + 0.05)
+        
+        // show branch action buttons
+        self.showBranchActionHexagonButtons()
+        
+        // show private exit button (if applicable)
+        self.showExitPrivateHexagonButton()
+<<<<<<< HEAD
+
+=======
+        
+>>>>>>> master
+        // If we're selecting a branch to add new users, this is where the setup gets kicked off, once the main initialization is done
+        if (self.isSelectingBranch) {
+            self.setSelectionMode()
+        }
+    }
+<<<<<<< HEAD
+
+=======
+    
+>>>>>>> master
+    // reload the current tree
+    func reloadTree() {
+        // clear child view controllers
+        self.addFormViewController      = nil
+        self.editMenuViewController     = nil
+        self.moveFormViewController     = nil
+        self.selectFormViewController   = nil
+<<<<<<< HEAD
+
+=======
+        
+>>>>>>> master
+        // clear extra viewcontrollers
+        self.childViewControllers.forEach({
+            $0.view.removeFromSuperview()
+            $0.removeFromParentViewController()
+        })
+        
+        if self.isPrivateMode {
+            self.loadSecretTreeGrid(CurrentTreeSettings.sharedInstance.treeSession.token)
+        }
+        else {
+            self.loadInitialTreeGrid()
+        }
+    }
+    
+    func loadInitialTreeGrid() {
+        self.isPrivateMode = false
+        
+        // initial tree does not require tree session token
+        self.currentTree.token = nil
+        
+        // change theme to initial
+        self.loadThemeInitial()
+        
+        // clear current tree grid data
+        self.resetTreeGrid()
+        
+        // load tree branches
+        self.currentTree.treeID = TreeViewController.mainTreeID
+        
+        self.loadingMaskViewController.queueLoadingMask(self.gridView, loadingViewAlpha: 0, showCompletion: nil)
+        
+        self.getUserBranches()
+    }
+    
+    func loadSecretTreeGrid(treeSessionToken: String?) {
+        self.isPrivateMode = true
+        
+        // equity can't be earned on secret tree
+        self.topEquityView.hidden = true
+        self.TopEquityViewHeight.constant = 0
+        
+        // secret tree requires tree session token
+        self.currentTree.token = treeSessionToken
+        
+        // change theme to private
+        self.loadThemePrivate()
+        
+        // clear current tree grid data
+        self.resetTreeGrid()
+        
+        // load private branches data
+        self.currentTree.treeID = TreeViewController.secretTreeID
+        
+        // queue loading mask on view until tree has been loaded
+        self.loadingMaskViewController.queueLoadingMask(self.gridView, loadingViewAlpha: 0, showCompletion: nil)
+        
+        // no data
+        self.getUserBranches()
+    }
+    
+    private func checkBranchViewControllerLoaded() {
+        if (self.branchViewController == nil) {
+            self.branchViewController = BranchViewController.getStoryboardInstance()
+        }
+        
+        if let branchVC = self.branchViewController {
+            branchVC.currentBranch              = self.currentTree.currentBranch!
+            branchVC.branchBarTitleColor        = self.currentGridTheme.branchBarTitleColor
+            branchVC.isPrivateMode              = self.isPrivateMode
+            branchVC.sharePostDelegate          = self
+        }
+    }
+    
+    // show chat
+    //    func showChatView() {
+    //        self.checkBranchViewControllerLoaded()
+    //
+    //        if let branchVC = self.branchViewController {
+    //            branchVC.activeBranchViewType   = BranchViewController.BranchSubAreaType.Chat
+    //
+    //            self.navigationController?.pushViewController(branchVC, animated: true)
+    //        }
+    //    }
+    
+    // show feed
+    func showFeedView() {
+        self.checkBranchViewControllerLoaded()
+        
+        if let branchVC = self.branchViewController {
+            branchVC.activeBranchViewType   = BranchViewController.BranchSubAreaType.Feed
+            
+            self.navigationController?.pushViewController(branchVC, animated: true)
+        }
+    }
+    
+    // show members
+    func showMembersView() {
+        self.checkBranchViewControllerLoaded()
+        
+        if let branchVC = self.branchViewController {
+            branchVC.activeBranchViewType   = BranchViewController.BranchSubAreaType.Members
+            
+            self.navigationController?.pushViewController(branchVC, animated: true)
+        }
+    }
+    
+    func forceShowAllMembersView() {
+        let branchVC = BranchViewController.getStoryboardInstance()
+        
+        branchVC.currentBranch              = self.getInitialBranch(nil)
+        branchVC.branchBarTitleColor        = self.currentGridTheme.branchBarTitleColor
+        
+        branchVC.activeBranchViewType   = BranchViewController.BranchSubAreaType.Members
+        
+        self.navigationController?.pushViewController(branchVC, animated: true)
+    }
+    
+    // show post
+    func showPostView() {
+        self.checkBranchViewControllerLoaded()
+        
+        if let branchVC = self.branchViewController {
+            branchVC.activeBranchViewType   = BranchViewController.BranchSubAreaType.Post
+            
+            self.navigationController?.pushViewController(branchVC, animated: true)
+        }
+    }
+    
+    // load add form
+    private func addEditBranchHandler(isNewBranch: Bool, branch: Branch? = nil) {
+        if(self.addFormViewController == nil) {
+            // initialize the add form controller to load into view
+            let addFormVC   = UIStoryboard(name: "TreeAddForm", bundle: nil).instantiateViewControllerWithIdentifier("TreeAddForm") as! TreeAddFormViewController
+            let addFormView = addFormVC.view
+            let hexButton   = self.currentEditButton!
+            
+            // set edit mode settings on the view (default is "add")
+            if(!isNewBranch) {
+                addFormVC.setEditModeSettings()
+            }
+            else {
+                hexButton.setTitle(nil, forState: .Normal)
+                hexButton.removeIconImage()
+            }
+            
+            // set handler for color change
+            addFormVC.colorChangeHandler = self.setCurrentEditHexagonColor
+            
+            // if top level branches
+            if(self.currentBranchLevel == 1) {
+                // if a new branch default to first color in palette not currently assigned to another branch
+                if(isNewBranch || branch == nil) {
+                    if let children = self.currentTree.currentBranch?.children {
+                        addFormVC.tapNonUsedColor(children)
+                    }
+                    else {
+                        addFormVC.tapFirstColor()
+                    }
+                }
+                    // else populate form with existing branch information
+                else {
+                    addFormVC.setEditDefaults(branch!)
+                }
+            }
+                // if lower level branches
+            else {
+                addFormVC.tapFirstColor()
+                
+                if let branch = branch {
+                    addFormVC.setEditDefaults(branch)
+                }
+                
+                self.setBranchColorHexagonButtonProperties(hexButton, branchColor: self.getBranchColor(nil, parent: self.currentTree.currentBranch!))
+            }
+            
+            // hook up add form events
+            addFormVC.addBranchButton.addTarget(self, action: Selector(self.actionAddEditBranchTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            addFormVC.cancelBranchAddButton.addTarget(self, action: Selector(self.actionCancelAddEditBranchTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            addFormVC.branchNameTextField.addTarget(self, action: Selector(self.actionBranchNameTextFieldChange), forControlEvents: UIControlEvents.EditingChanged)
+            addFormVC.branchNameTextField.delegate = self
+            
+            // store current add form view for action handlers
+            self.addFormViewController = addFormVC
+            
+            // animate add form into view
+            addFormView.frame = CGRectMake(0, self.view.bounds.minY - addFormView.frame.height, addFormView.frame.width, addFormView.frame.height)
+            
+            self.setEditMode(hexButton)
+            
+            self.view.addSubview(addFormView)
+            self.addChildViewController(addFormVC)
+            
+            // enable color selection only for first level
+            if(self.currentBranchLevel > 1) {
+                addFormVC.hideLowerBranchSettings()
+            }
+            
+            self.setHexButtonInViewCenter(hexButton, offsetAnimation: {
+                (xOffset: CGFloat, yOffset: CGFloat) in
+                
+                // todo replace with smarter check for how large add form is
+                let yExtraOffset = self.getAddEditExtraViewOffset(hexButton, addFormVC: addFormVC)
+                
+                self.gridView.bounds.origin.y += yExtraOffset
+                self.adjustTrunk(xOffset, yOffset: yOffset + yExtraOffset)
+                
+                addFormView.frame = self.view.frame
+                
+                addFormVC.branchNameTextField.becomeFirstResponder()
+            })
+        }
+    }
+    
+    func addEditBranchTouchUpInside() -> Bool {
+        if let hexAddEditButton = self.currentEditButton {
+            if let addEditFormVC = self.addFormViewController {
+                
+                // check if color given is valid
+                if(!addEditFormVC.isEditMode && addEditFormVC.selectedColorView == nil) {
+                    let alert = UIAlertController(
+                        title: nil,
+                        message: Localization.sharedInstance.getLocalizedString("branch_error_no_color_selected", table: "TreeGrid"),
+                        preferredStyle: UIAlertControllerStyle.Alert
+                    )
+                    
+                    alert.addAction(UIAlertAction(title: Localization.sharedInstance.getLocalizedString("ok", table: "Common"), style: UIAlertActionStyle.Default, handler: nil))
+                    addEditFormVC.presentViewController(alert, animated: true, completion: nil)
+                    
+                    return false
+                }
+                
+                // check if title given is valid
+                let title = addEditFormVC.branchNameTextField.text
+                
+                if(title?.characters.count < 1) {
+                    let alert = UIAlertController(
+                        title: nil,
+                        message: Localization.sharedInstance.getLocalizedString("branch_error_no_name", table: "TreeGrid"),
+                        preferredStyle: UIAlertControllerStyle.Alert
+                    )
+                    
+                    alert.addAction(UIAlertAction(title: Localization.sharedInstance.getLocalizedString("ok", table: "Common"), style: UIAlertActionStyle.Default, handler: nil))
+                    addEditFormVC.presentViewController(alert, animated: true, completion: nil)
+                    
+                    return false
+                }
+                
+                // if editing an existing branch
+                if(addEditFormVC.isEditMode) {
+                    let previousHexagon = self.getPreviousHexagonCenter()
+                    let existingBranch  = self.getBranchAtGridLocation(hexAddEditButton.gridPosition!, fromCenter: previousHexagon)
+                    
+                    if let branch = existingBranch {
+                        branch.color    = self.isPrivateMode ? hexAddEditButton.strokeColor : hexAddEditButton.fillColorInitial
+                        branch.title    = addEditFormVC.branchNameTextField.text!
+                        
+                        addEditFormVC.view.endEditing(true)
+                        
+                        self.loadingMaskViewController.queueLoadingMask(
+                            self.view,
+                            showCompletion: {
+                                
+                                TreemBranchService.sharedInstance.setUserBranch(
+                                    TreeSession(treeID: self.currentTree.treeID, token: self.currentTree.token),
+                                    branch: branch,
+                                    success: {
+                                        (data) -> Void in
+                                        
+                                        self.loadingMaskViewController.cancelLoadingMask({
+                                            self.dismissAddView()
+                                        })
+                                    },
+                                    failure: {
+                                        (error) -> Void in
+                                        
+                                        self.loadingMaskViewController.cancelLoadingMask({
+                                            CustomAlertViews.showCustomAlertView(
+                                                title: Localization.sharedInstance.getLocalizedString("save_error", table: "Common"),
+                                                message: Localization.sharedInstance.getLocalizedString("branch_error_edit", table: "TreeGrid")
+                                            )
+                                        })
+                                    }
+                                )
+                        })
+                    }
+                }
+                    // if adding a new branch
+                else {
+                    // set active branch on validation success
+                    let lastCenterGridPosition  = self.getPreviousHexagonCenter().gridPosition
+                    let newBranch               = Branch()
+                    
+                    newBranch.id        = 0
+                    newBranch.position  = self.getBranchPositionFromHexagonGridLocation(hexAddEditButton.gridPosition!, fromCenterGridPosition: lastCenterGridPosition)!
+                    newBranch.color     = self.isPrivateMode ? hexAddEditButton.strokeColor : hexAddEditButton.fillColorInitial
+                    newBranch.title     = addEditFormVC.branchNameTextField.text!
+                    newBranch.parent    = self.currentTree.currentBranch
+                    
+                    addEditFormVC.view.endEditing(true)
+                    
+                    self.loadingMaskViewController.queueLoadingMask(self.view, showCompletion: {
+                        TreemBranchService.sharedInstance.setUserBranch(
+                            TreeSession(treeID: self.currentTree.treeID, token: self.currentTree.token),
+                            branch: newBranch,
+                            success: {
+                                (data) -> Void in
+                                
+                                let newBranchID = NewBranchResponse(json: data).id
+                                
+                                if (newBranchID > 0) {
+                                    
+                                    newBranch.id = newBranchID
+                                    
+                                    // add new branch to tree
+                                    if (self.currentTree.currentBranch!.children != nil) {
+                                        self.currentTree.currentBranch!.children!.append(newBranch)
+                                    }
+                                    else {
+                                        self.currentTree.currentBranch!.children = [newBranch]
+                                    }
+                                    
+                                    // update hexagon with the new branch ID as well
+                                    hexAddEditButton.id     = newBranchID
+                                    
+                                    self.loadingMaskViewController.cancelLoadingMask({
+                                        self.dismissAddView()
+                                    })
+                                }
+                                else {
+                                    self.loadingMaskViewController.cancelLoadingMask(nil)
+                                    
+                                    // in case server side returns bad value
+                                    CustomAlertViews.showGeneralErrorAlertView()
+                                }
+                            },
+                            failure: {
+                                (error) -> Void in
+                                
+                                self.loadingMaskViewController.cancelLoadingMask({
+                                    CustomAlertViews.showCustomAlertView(
+                                        title: Localization.sharedInstance.getLocalizedString("save_error", table: "Common"),
+                                        message: Localization.sharedInstance.getLocalizedString("branch_error_add", table: "TreeGrid")
+                                    )
+                                })
+                            }
+                        )
+                    })
+                }
+                
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    func branchNameTextFieldChange(sender: UITextField) {
+        if let button = self.currentEditButton {
+            if let titleLabel = button.titleLabel {
+                titleLabel.lineBreakMode                = NSLineBreakMode.ByClipping
+                titleLabel.textAlignment                = NSTextAlignment.Center
+                titleLabel.numberOfLines                = 3
+                titleLabel.adjustsFontSizeToFitWidth    = true
+            }
+            
+            let text = sender.text
+            
+            if text?.composedCount == 1 {
+                button.titleFont = self.hexagonSingleCharacterFont
+            }
+            else {
+                button.titleFont = self.hexagonTitleFont
+            }
+            
+            button.setTitle(text, forState: UIControlState.Normal)
+            
+            sender.text = text
+        }
+    }
+    
+    func branchMenuCancelTouchUpInside() {
+        self.dismissEditMenuView()
+    }
+    
+    func branchMenuEditTouchUpInside() {
+        // cache before calling dismiss
+        let previousCenter = self.getPreviousHexagonCenter()
+        
+        self.dismissEditMenuView()
+        
+        if let currentButton = self.currentEditButton {
+            let branch = self.getBranchAtGridLocation(currentButton.gridPosition!, fromCenter: previousCenter)
+            
+            self.addEditBranchHandler(false, branch: branch)
+        }
+    }
+    
+    func branchMenuMoveTouchUpInside() {
+        // initialize the add form controller to load into view
+        let vc              = UIStoryboard(name: "TreeMoveBranchForm", bundle: nil).instantiateViewControllerWithIdentifier("TreeMoveBranchForm") as! TreeMoveBranchFormViewController
+        let moveFormView    = vc.view
+        let hexButton       = self.currentEditButton!
+        let previousCenter  = self.getPreviousHexagonCenter()
+        let branch          = self.getBranchAtGridLocation(hexButton.gridPosition!, fromCenter: previousCenter)
+        
+        // store current add form view for action handlers
+        self.moveFormViewController = vc
+        
+        //  add form into view
+        moveFormView.frame = CGRectMake(0, self.view.bounds.minX - moveFormView.frame.height, moveFormView.frame.width, moveFormView.frame.height)
+        
+        self.view.addSubview(moveFormView)
+        self.addChildViewController(vc)
+        
+        // check if color has been assigned to branch
+        if(branch!.color == nil) {
+            branch!.color = hexButton.fillColorInitial
+        }
+        
+        // update form based on branch settings
+        vc.setBranchBar(branch!)
+        
+        // hook up move form events
+        vc.moveBranchCancelButton.addTarget(self, action: Selector(self.actionMoveBranchCancelTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+        
+        // get number of branch levels for current moving branch
+        let branchLevelCount = self.getBranchLevelCount(branch)
+        
+        self.isMovingBranch         = true
+        self.movingBranchLevelCount = branchLevelCount
+        
+        // update the prior center hex button in view
+        self.setEditInactiveBranchHexagonButtonProperties(previousCenter)
+        
+        // update empty neighbors to reflect move instead of add
+        let neighbors = self.getHexButtonNeighbors(previousCenter)
+        
+        for button in neighbors {
+            if(button.id < 1) {
+                self.setEmptyBranchHexagonButtonProperties(button)
+            }
+        }
+        
+        self.setMoveMode(hexButton)
+        
+        // dismiss the edit view and undo menu view hexagon settings
+        self.dismissEditMenuView({
+            _ in
+            
+            UIView.animateWithDuration(self.animDuration, animations: {
+                moveFormView.frame.origin.y += vc.moveBranchView.frame.height
+            })
+        })
+    }
+    
+    func branchMenuDeleteTouchUpInside() {
+        // show confirmation alert
+        let alert = UIAlertController(
+            title: Localization.sharedInstance.getLocalizedString("branch_delete_confirm_title", table: "TreeGrid"), message: Localization.sharedInstance.getLocalizedString("branch_delete_confirm", table: "TreeGrid"),
+            preferredStyle: UIAlertControllerStyle.Alert
+        )
+        
+        alert.addAction(UIAlertAction(
+            title: Localization.sharedInstance.getLocalizedString("yes", table: "Common"),
+            style: UIAlertActionStyle.Default,
+            handler: self.branchMenuDeleteYes
+            ))
+        
+        alert.addAction(UIAlertAction(
+            title: Localization.sharedInstance.getLocalizedString("no", table: "Common"),
+            style: UIAlertActionStyle.Cancel,
+            handler: nil
+            ))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func branchMenuDeleteYes(action: UIAlertAction) {
+        // convert current button to default and remove branch from tree
+        if let currentButton = self.currentEditButton {
+            
+            self.loadingMaskViewController.queueLoadingMask(
+                self.view,
+                showCompletion: {
+                    TreemBranchService.sharedInstance.deleteUserBranch(
+                        TreeSession(treeID: self.currentTree.treeID, token: self.currentTree.token),
+                        deleteBranchID: currentButton.id,
+                        success: {
+                            data in
+                            
+                            self.setEmptyBranchHexagonButtonProperties(currentButton)
+                            self.removeBranchAtGridLocation(currentButton.gridPosition!, fromCenter: self.getPreviousHexagonCenter())
+                            
+                            self.dismissEditMenuView({
+                                (Bool) in
+                                
+                                self.loadingMaskViewController.cancelLoadingMask(nil)
+                            })
+                        },
+                        failure: {
+                            error in
+                            
+                            self.loadingMaskViewController.cancelLoadingMask({
+                                CustomAlertViews.showCustomAlertView(
+                                    title: Localization.sharedInstance.getLocalizedString("error", table: "Common"),
+                                    message: Localization.sharedInstance.getLocalizedString("branch_error_delete", table: "TreeGrid")
+                                )
+                            })
+                        }
+                    )
+                }
+            )
+        }
+    }
+    
+    func branchPressHoldHandler(sender: HexagonButton, isBranchEditable: Bool = true) {
+        if(self.editMenuViewController == nil) {
+            // create action menu
+            let vc          = TreeEditBranchMenuViewController.getStoryboardInstance()
+            let menuView    = vc.view
+            
+            vc.isBranchEditable = isBranchEditable
+            
+            self.editMenuViewController = vc
+            self.currentEditButton      = sender
+            self.currentEditBranch      = self.getBranchAtGridLocation(sender.gridPosition!, fromCenter: self.hexButtonInViewCenter)
+            
+            // hook up add form events
+            vc.cancelButton.addTarget(self, action: Selector(self.actionBranchMenuCancelTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            vc.editButton.addTarget(self, action: Selector(self.actionBranchMenuEditTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            vc.moveButton.addTarget(self, action: Selector(self.actionBranchMenuMoveTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            vc.deleteButton.addTarget(self, action: Selector(self.actionBranchMenuDeleteTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            vc.feedButton.addTarget(self, action: Selector(self.actionBranchMenuFeedTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            vc.membersButton.addTarget(self, action: Selector(self.actionBranchMenuMembersTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            vc.postButton.addTarget(self, action: Selector(self.actionBranchMenuPostTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            //vc.chatButton.addTarget(self, action: Selector(self.actionBranchMenuChatTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            
+            // animate add form into view
+            menuView.frame = CGRectMake(0, self.view.bounds.maxY, menuView.frame.width, menuView.frame.height)
+            
+            self.view.addSubview(menuView)
+            self.addChildViewController(vc)
+            
+            self.setHexButtonInViewCenter(sender, offsetAnimation: {
+                (xOffset: CGFloat, yOffset: CGFloat) in
+                
+                let menuOriginOffset = self.view.frame.maxY - menuView.frame.height
+                
+                self.hexagonGridView.bounds.origin.y -= menuOriginOffset
+                
+                // position menu at bottom of view
+                menuView.frame.origin.y = menuOriginOffset
+                
+                self.extraEditMenuOffset = menuOriginOffset
+            })
+        }
+        else {
+            self.editMenuViewController?.isBranchEditable = isBranchEditable
+        }
+    }
+    
+    func cancelAddEditBranchTouchUpInside(sender: UIButton) {
+        self.dismissAddView()
+    }
+    
+    private func dismissAddView(onMenuDismiss: ((Bool) -> ())? = nil, onViewShift: ((Bool) -> ())? = nil) {
+        // dismiss add form
+        if let addFormVC = self.addFormViewController {
+            if let currentButton = self.currentEditButton {
+                // check if branch exists at location
+                let branch      = self.getBranchAtGridLocation(currentButton.gridPosition!, fromCenter: self.getPreviousHexagonCenter())
+                let addFormView = addFormVC.view
+                
+                // todo replace with smarter check for how large add form is
+                let yExtraOffset = self.getAddEditExtraViewOffset(currentButton, addFormVC: addFormVC)
+                
+                if(branch != nil) {
+                    self.setBranchHexagonButtonProperties(currentButton, branch: branch!)
+                }
+                else {
+                    self.setEmptyBranchHexagonButtonProperties(currentButton)
+                }
+                
+                self.unsetEditCurrentPropertiesHexagonButton(currentButton)
+                self.unsetEditMode()
+                
+                // dismiss menu first
+                UIView.animateWithDuration(
+                    self.animDuration,
+                    animations: {
+                        addFormVC.branchNameTextField.resignFirstResponder()
+                        
+                        addFormView.frame.origin.y      -= addFormVC.addFormView.frame.height
+                    },
+                    completion: {
+                        (Bool) in
+                        
+                        // dismiss menu from view hierarchy
+                        addFormView.removeFromSuperview()
+                        addFormVC.removeFromParentViewController()
+                        
+                        if let dismiss = onMenuDismiss {
+                            dismiss(true)
+                        }
+                        
+                        // perform offset animation
+                        self.setPreviousHexButtonCenter(true,
+                            offsetAnimation: {
+                                (xOffset: CGFloat, yOffset: CGFloat) in
+                                
+                                self.gridView.bounds.origin.y   -= yExtraOffset
+                            },
+                            completion: {
+                                _ in
+                                
+                                self.addFormViewController = nil
+                                self.currentEditButton = nil
+                                
+                                if let viewShift = onViewShift {
+                                    viewShift(true)
+                                }
+                            }
+                        )
+                    }
+                )
+            }
+        }
+    }
+    
+    private func dismissEditMenuView(onMenuDismiss: ((Bool) -> ())? = nil, onViewShift: ((Bool) -> ())? = nil) {
+        // dismiss the edit menu form
+        if let editMenuVC = self.editMenuViewController {
+            let editMenuView = editMenuVC.view
+            
+            self.unsetEditMode()
+            
+            // dismiss menu first
+            UIView.animateWithDuration(
+                self.animDuration / 2,
+                animations: {
+                    editMenuView.frame.origin.y += editMenuVC.menuWrapperView.frame.height
+                },
+                completion: {
+                    (Bool) in
+                    
+                    // dismiss menu first before shift
+                    editMenuView.removeFromSuperview()
+                    editMenuVC.removeFromParentViewController()
+                    
+                    if let dismiss = onMenuDismiss {
+                        dismiss(true)
+                    }
+                    
+                    // perform offset animation
+                    self.setPreviousHexButtonCenter(true,
+                        offsetAnimation: {
+                            _ in
+                            
+                            self.gridView.bounds.origin.y += self.extraEditMenuOffset
+                        },
+                        completion: {
+                            _ in
+                            
+                            self.editMenuViewController = nil
+                            
+                            // reset extra offset
+                            self.extraEditMenuOffset = 0
+                            
+                            if let viewShift = onViewShift {
+                                viewShift(true)
+                            }
+                        }
+                    )
+                }
+            )
+        }
+    }
+    
+    private func dismissMoveView(completion: ((Bool) -> ())? = nil) {
+        if let moveFormVC = self.moveFormViewController {
+            let moveFormView = moveFormVC.view
+            
+            self.isMovingBranch         = false
+            self.movingBranchLevelCount = 0
+            
+            self.setHexagonButtonsForActiveBranches(self.currentTree.currentBranch!.children)
+            
+            self.setEditActiveBranchHexagonButtonProperties(self.hexButtonInViewCenter)
+            
+            self.unsetMoveMode()
+            
+            UIView.animateWithDuration(self.animDuration,
+                animations: {
+                    moveFormView.frame.origin.y -= moveFormVC.moveBranchView.frame.height
+                },
+                completion: {
+                    _ in
+                    
+                    moveFormView.removeFromSuperview()
+                    moveFormVC.removeFromParentViewController()
+                    
+                    self.currentEditButton = nil
+                }
+            )
+        }
+    }
+    
+    private func setInitialBranch (data: JSON?) {
+        self.currentTree.currentBranch = getInitialBranch(data)
+    }
+    
+    private func getInitialBranch(data: JSON?) -> Branch {
+        let branch = Branch()
+        
+        branch.id       = 0
+        branch.position = BranchPosition.Center
+        branch.color    = self.currentGridTheme.trunkFillColor
+        branch.title    = Localization.sharedInstance.getLocalizedString("Feed", table: "TreeGrid")
+        branch.parent   = nil
+        
+        if let children = data {
+            branch.children = branch.loadBranches(children, parent: branch)
+        }
+        
+        return branch
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        if(self.addEditBranchTouchUpInside()) {
+            textField.resignFirstResponder()
+        }
+        
+        return true
+    }
+    
+    // update buttons for active branches (create buttons if they don't current exist)
+    private func setHexagonButtonsForActiveBranches(activeBranches: [Branch]?) {
+        let activeHexagons = self.getHexButtonNeighbors(self.hexButtonInViewCenter)
+        
+        // default all active branches in view to initial active styles
+        for hexagon in activeHexagons {
+            self.setEmptyBranchHexagonButtonProperties(hexagon)
+            self.setHexagonButton(hexagon)
+        }
+        
+        // add branches specific updates (if current branch has child branches)
+        if let activeBranches = activeBranches {
+            for branch in activeBranches {
+                if let button = self.hexagonButtons[self.getHexagonGridLocationForBranch(branch.position)] {
+                    self.setBranchHexagonButtonProperties(button, branch: branch)
+                }
+            }
+        }
+    }
+    
+    private func setHexagonButtonsForInactiveBranches() {
+        let secondNeighbors = self.getHexButtonNeighbors(self.hexButtonInViewCenter, distance: 2, newNeighborsOnly: true, defaultStyleHandler: self.setInactiveBranchHexagonButtonProperties)
+        
+        // remove leaf in front of trunk
+        if(self.currentBranchLevel == 1) {
+            var buttonAboveTrunk: HexagonButton? = nil
+            
+            for neighbor in secondNeighbors {
+                if neighbor.gridPosition! == (0,2) {
+                    buttonAboveTrunk = neighbor
+                    break
+                }
+            }
+            
+            if(buttonAboveTrunk != nil) {
+                buttonAboveTrunk?.hidden = true
+            }
+        }
+    
+        self.setHexagonButtons(secondNeighbors)
+    }
+    
+    // get extra view shift offset when adding/editing a hexagon
+    private func getAddEditExtraViewOffset(button: HexagonButton, addFormVC: TreeAddFormViewController) -> CGFloat {
+        return button.height - (addFormVC.colorSelectView.frame.height)
+    }
+    
+    private func getHexagonGridLocationForBranch(branchPosition : BranchPosition) -> HexagonGridPosition {
+        var gridPosition: HexagonGridPosition
+        
+        let currentGridPosition = self.hexButtonInViewCenter.gridPosition ?? self.defaultGridCenterPosition
+        let x = currentGridPosition.x
+        let y = currentGridPosition.y
+        
+        let even            = (y % 2 == 0)
+        let evenOffset      = (even ? 1 : 0)
+        let oddOffset       = (even ? 0 : 1)
+        
+        switch branchPosition {
+        case .BottomLeft:
+            gridPosition = HexagonGridPosition(x: x - oddOffset, y: y + 1)
+        case .BottomRight:
+            gridPosition = HexagonGridPosition(x: x + evenOffset, y: y + 1)
+        case .Left:
+            gridPosition = HexagonGridPosition(x: x + -1, y: y)
+        case .Right:
+            gridPosition = HexagonGridPosition(x: x + 1, y: y)
+        case .TopLeft:
+            gridPosition = HexagonGridPosition(x: x - oddOffset, y: y + -1)
+        case .TopRight:
+            gridPosition = HexagonGridPosition(x: x + evenOffset, y: y + -1)
+        default:
+            gridPosition = HexagonGridPosition(x: x, y: y)
+        }
+        
+        return gridPosition
+    }
+    
+    // determine how many branch levels are nested in current branch
+    func getBranchLevelCount(branch: Branch?) -> Int {
+        // base condition
+        if(branch == nil || branch?.id == 0) {
+            return 0
+        }
+        
+        // set one for current branch
+        let branchLevel = 1
+        
+        // determine largest child sub branch level
+        var subBranchLevel          = 0
+        var largestSubBranchLevel   = 0
+        
+        // iterate through children
+        if let children = branch?.children {
+            for branch in children {
+                subBranchLevel = getBranchLevelCount(branch)
+                
+                if subBranchLevel > largestSubBranchLevel {
+                    largestSubBranchLevel = subBranchLevel
+                }
+            }
+        }
+        
+        return branchLevel + largestSubBranchLevel
+    }
+    
+    func getBranchPositionFromHexagonGridLocation(gridPosition: HexagonGridPosition, fromCenterGridPosition: HexagonGridPosition? = nil) -> BranchPosition? {
+        let centerGridPosition  = fromCenterGridPosition ?? self.hexButtonInViewCenter.gridPosition ?? self.defaultGridCenterPosition
+        let centerX             = centerGridPosition.x
+        let centerY             = centerGridPosition.y
+        let xDiff               = gridPosition.x - centerX
+        let yDiff               = gridPosition.y - centerY
+        let even                = (centerY % 2 == 0)
+        let evenOffset          = (even ? 1 : 0)
+        let oddOffset           = (even ? 0 : 1)
+        
+        var branchPosition: BranchPosition?
+        
+        // bottom left
+        switch (xDiff, yDiff) {
+        case (0, 0):
+            branchPosition = BranchPosition.Center
+        case (1, 0):
+            branchPosition = BranchPosition.Right
+        case (-1, 0):
+            branchPosition = BranchPosition.Left
+        case (-oddOffset, 1):
+            branchPosition = BranchPosition.BottomLeft
+        case (evenOffset, 1):
+            branchPosition = BranchPosition.BottomRight
+        case (-oddOffset, -1):
+            branchPosition = BranchPosition.TopLeft
+        case (evenOffset, -1):
+            branchPosition = BranchPosition.TopRight
+        default:
+            branchPosition = nil
+        }
+        
+        return branchPosition
+    }
+    
+    func branchExistsInHexagonButton(button: HexagonButton) -> Bool {
+        return button.id > 0
+    }
+    
+    private func drawTrunk() {
+        // draw trunk
+        let trunk               = TreeTrunkButton()
+        
+        trunk.hexagonRadius     = self.hexagonRadius
+        trunk.hexagonWidth      = self.hexagonWidth
+        trunk.hexagonHeight     = self.hexagonHeight
+        trunk.fillColorInitial  = self.currentGridTheme.trunkFillLowerColor
+        trunk.enabled           = false
+        
+        // clear stroke shapes buttons differently (stroke doesn't get applied if clear)
+        let isClearStroke               = self.currentGridTheme.buttonStrokeColor.colorIsClear()
+        let lineWidthFactor   : CGFloat = isClearStroke ? 2 : 2.25
+        let lineWidthConstant : CGFloat = isClearStroke ? 0 : (self.lineWidth * 0.5)
+        
+        let width   = self.hexagonWidth
+        let center  = self.getViewCenter()
+        let topY    = center.y + (self.hexagonRadius * 2) + (self.lineWidth * lineWidthFactor)
+        
+        trunk.frame = CGRectMake(
+            center.x - (width * 0.5) + lineWidthConstant,
+            topY - (self.lineWidth * 0.5),
+            width,
+            self.gridView.frame.height - topY
+        )
+        
+        self.addHexGridBackDropView(trunk)
+        
+        // store references
+        self.trunk          = trunk
+        self.bottomTrunk    = trunk.bottomTrunkExpandable
+    }
+    
+    func adjustTrunk(xOffset: CGFloat, yOffset: CGFloat) {
+        if(self.bottomTrunk != nil && yOffset > 0) {
+            self.bottomTrunk.frame.size.height += yOffset
+        }
+    }
+    
+    //Upon tapping on one of the branch buttons (Including "Add" and the center button)
+    func branchTouchUpInside(hexButton:HexagonButton) {
+        // touch feed button in center
+        if(hexButton == self.hexButtonInViewCenter) {
+            // selecting a branch to add a new friend to
+            if (self.isSelectingBranch && hexButton.type != .EMPTYBRANCH) {
+                
+                let selId = hexButton.id
+                let selTitle = hexButton.titleLabel!.text!
+                
+                // close the view and fire our callback
+                self.selectedClose?({
+                    self.selectedCallback?(selId, selTitle)
+                    self.selectedCallback = nil
+                })
+                
+            }
+                // load feed
+            else {
+                self.showFeedView()
+            }
+        }
+            // touch branch
+        else {
+            let branchExists = branchExistsAtLocation(self.getBranchPositionFromHexagonGridLocation(hexButton.gridPosition!)!)
+            
+            // if branch already exists, open/show branch
+            if(branchExists) {
+                ++self.currentBranchLevel
+                
+                let oldHexagonNeighbors         = self.getHexButtonNeighbors(self.hexButtonInViewCenter)
+                let oldHexagonSecondNeighbors   = self.getHexButtonNeighbors(self.hexButtonInViewCenter, distance: 2)
+                let newHexagonNeighbors         = self.getHexButtonNeighbors(hexButton)
+                let newSecondNeighbors          = self.getHexButtonNeighbors(hexButton, distance: 2, newNeighborsOnly: true, defaultStyleHandler: self.setInactiveBranchHexagonButtonProperties)
+                let isMaxLevel                  = (self.currentBranchLevel > self.maxBranchLevels)
+                
+                var disableHexButtons           = oldHexagonNeighbors.union(oldHexagonSecondNeighbors)
+                
+                // if max level reached, disable current children as well
+                if(isMaxLevel) {
+                    disableHexButtons = disableHexButtons.union(newHexagonNeighbors)
+                }
+                else {
+                    disableHexButtons = disableHexButtons.subtract(newHexagonNeighbors)
+                }
+                
+                disableHexButtons.remove(hexButton)
+                
+                // disable buttons no longer in focus (out of view and not going to change for new center)
+                for button in disableHexButtons {
+                    self.setInactiveBranchHexagonButtonProperties(button)
+                }
+                
+                // remove current back button
+                if let backButton = self.currentBackButton {
+                    self.setInactiveBranchHexagonButtonProperties(backButton)
+                    self.currentBackButton = nil
+                }
+                
+                // remove current exit private button
+                if let privateButton = self.currentExitPrivateButton {
+                    self.setInactiveBranchHexagonButtonProperties(privateButton)
+                    self.currentExitPrivateButton = nil
+                }
+                
+                // update current hex button in center
+                self.setHexButtonInViewCenter(hexButton, offsetAnimation: self.adjustTrunk)
+                
+                self.setHexagonButtons(newSecondNeighbors)
+                
+                self.drawHexagonButtonsInViewCenter(newSecondNeighbors)
+                
+                self.animateExpandHexagonsIntoPositionFromCenter(newSecondNeighbors)
+                
+                // store color for branch if not previously assigned
+                self.setBranchColorIfNeeded(self.currentTree.currentBranch!)
+                
+                // update children if max depth hasn't been exceeded
+                if !isMaxLevel {
+                    self.setHexagonButtonsForActiveBranches(self.currentTree.currentBranch!.children)
+                }
+                
+                // add back button
+                self.showBackHexagonButton()
+                
+                // show branch action hexagon buttons
+                self.showBranchActionHexagonButtons()
+                
+                // show exit private button
+                self.showExitPrivateHexagonButton()
+                
+                // if moving, check center
+                if(self.isMovingBranch) {
+                    self.setMoveModeForCurrentBranchLevel()
+                    self.setEditInactiveBranchHexagonButtonProperties(self.hexButtonInViewCenter)
+                }
+                
+                self.setActiveHexagonButtonProperties(hexButton)
+                
+                // apply specific customizations for center hexagon
+                self.setCenterHexagonButtonProperties(hexButton)
+                
+                //If in selection mode, make sure to properly enable/disable buttons
+                if (self.isSelectingBranch) { self.setSelectedEnabledDisabledButtons(hexButton) }
+                
+            }
+                // check if branch is getting moved
+            else if(self.isMovingBranch && self.currentEditBranch != nil) {
+                if let toBranchPosition = self.getBranchPositionFromHexagonGridLocation(hexButton.gridPosition!) {
+                    
+                    self.loadingMaskViewController.queueLoadingMask(self.view, showCompletion: {
+                        // move request
+                        TreemBranchService.sharedInstance.moveUserBranch(
+                            TreeSession(treeID: self.currentTree.treeID, token: self.currentTree.token),
+                            branch: self.currentEditBranch!,
+                            toParentID          : self.currentTree.currentBranch!.id,
+                            toBranchPosition    : toBranchPosition,
+                            success: {
+                                (data) -> Void in
+                                self.isMovingBranch         = false
+                                self.movingBranchLevelCount = 0
+                                
+                                let branch          = self.currentEditBranch!
+                                let index           = branch.parent!.children!.indexOf(branch)
+                                
+                                // remove from data
+                                self.currentEditBranch!.parent!.children?.removeAtIndex(index!)
+                                
+                                // update the button being moved if currently in view
+                                let neighbors = self.getHexButtonNeighbors(self.hexButtonInViewCenter)
+                                
+                                for button in neighbors {
+                                    if(button.id == self.currentEditBranch?.id) {
+                                        self.setEmptyBranchHexagonButtonProperties(button)
+                                        break
+                                    }
+                                }
+                                
+                                self.unsetMoveMode()
+                                
+                                // update to new position
+                                self.currentEditBranch!.position    = toBranchPosition
+                                self.currentEditBranch!.parent      = self.currentTree.currentBranch
+                                
+                                // check if color needs to be updated
+                                self.setBranchColorIfNeeded(self.currentEditBranch!)
+                                
+                                // add updated branch information
+                                if(self.currentTree.currentBranch!.children != nil) {
+                                    self.currentTree.currentBranch!.children?.append(self.currentEditBranch!)
+                                }
+                                else {
+                                    self.currentTree.currentBranch!.children = [self.currentEditBranch!]
+                                }
+                                
+                                self.loadingMaskViewController.cancelLoadingMask({
+                                    self.dismissMoveView()
+                                })
+                            },
+                            failure: {
+                                (error) -> Void in
+                                
+                                CustomAlertViews.showCustomAlertView(
+                                    title: Localization.sharedInstance.getLocalizedString("error", table: "Common"),
+                                    message: Localization.sharedInstance.getLocalizedString("branch_error_move", table: "TreeGrid")
+                                )
+                            }
+                        )
+                    })
+                }
+                else {
+                    CustomAlertViews.showNoNetworkAlertView()
+                }
+            }
+                // if branch does not exist at location, fire add branch handler
+            else {
+                // store currently editing button
+                self.currentEditButton = hexButton
+                self.currentEditBranch = self.getBranchAtGridLocation(hexButton.gridPosition!, fromCenter: self.getPreviousHexagonCenter())
+                
+                self.addEditBranchHandler(true, branch: nil)
+            }
+        }
+    }
+    
+    func branchPrivateTouchUpInside() {
+        // load pin set form
+        let vc = UIStoryboard(name: "SecretTreeLogin", bundle: nil).instantiateViewControllerWithIdentifier("SecretTreeLogin")
+        
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func branchPrivateExitTouchUpInside() {
+        self.currentTree.token = nil
+        
+        self.loadInitialTreeGrid()
+    }
+    
+    func setCurrentEditHexagonColor(color: UIColor?) {
+        if let currentEditBtn = self.currentEditButton {
+            if let fillColor = color {
+                self.setBranchColorHexagonButtonProperties(currentEditBtn, branchColor: fillColor)
+            }
+        }
+    }
+    
+    //    func branchChatsTouchUpInside() {
+    //        self.showChatView()
+    //    }
+    
+    func branchMembersTouchUpInside() {
+        self.showMembersView()
+    }
+    
+    func branchPostTouchUpInside() {
+        self.showPostView()
+    }
+    
+    func branchBackTouchUpInside() {
+        --self.currentBranchLevel // do first
+        
+        let newCenter                  = self.getPreviousHexagonCenter()
+        let newHexagonNeighbors        = self.getHexButtonNeighbors(newCenter)
+        let newHexagonSecondNeighbors  = self.getHexButtonNeighbors(newCenter, distance: 2)
+        let lastHexagonSecondNeighbors = self.getHexButtonNeighbors(self.hexButtonInViewCenter, distance: 2)
+        let lastRemoveSecondNeighbors  = lastHexagonSecondNeighbors.subtract(newHexagonNeighbors).subtract(newHexagonSecondNeighbors)
+        
+        // contract last outer hexagons
+        self.animateContractHexagonsIntoCenterFromPosition(lastRemoveSecondNeighbors)
+        
+        // remove current back button
+        if(self.currentBackButton != nil) {
+            self.setInactiveBranchHexagonButtonProperties(self.currentBackButton!)
+            self.currentBackButton = nil
+        }
+        
+        // move to last hexagon center
+        self.setPreviousHexButtonCenter(true)
+        
+        self.currentTree.currentBranch = self.currentTree.currentBranch!.parent
+        
+        self.setBranchHexagonButtonProperties(newCenter, branch: self.currentTree.currentBranch!)
+        
+        // reset current outer hexagons
+        for hexagon in newHexagonSecondNeighbors {
+            self.setInactiveBranchHexagonButtonProperties(hexagon)
+        }
+        
+        // reset inner hexagons
+        self.setHexagonButtonsForActiveBranches(self.currentTree.currentBranch!.children)
+        
+        self.setCenterHexagonButtonProperties(newCenter)
+        
+        // create new second neighbors and animate into view
+        let newSecondNeighbors = self.getHexButtonNeighbors(newCenter, distance: 2, newNeighborsOnly: true, defaultStyleHandler: self.setInactiveBranchHexagonButtonProperties)
+        
+        self.setHexagonButtons(newSecondNeighbors)
+        
+        self.drawHexagonButtonsInViewCenter(newSecondNeighbors)
+        
+        self.animateExpandHexagonsIntoPositionFromCenter(newSecondNeighbors)
+        
+        // add back button if not at top
+        if(self.currentTree.currentBranch!.parent != nil) {
+            self.showBackHexagonButton()
+        }
+        
+        // if moving, check center
+        if(self.isMovingBranch) {
+            self.setMoveModeForCurrentBranchLevel()
+            self.setEditInactiveBranchHexagonButtonProperties(self.hexButtonInViewCenter)
+        }
+        
+        // show branch action hexagon buttons
+        self.showBranchActionHexagonButtons()
+        
+        // show exit private button
+        self.showExitPrivateHexagonButton()
+        
+        if(self.currentBranchLevel == 1) {
+            let hexagon = self.getHexagonButtonFromGridPosition(HexagonGridPosition(x: 0, y: 2))
+            
+            hexagon?.hidden = true
+        }
+        
+        //If in selection mode, make sure to properly enable/disable buttons
+        if (self.isSelectingBranch) { self.setSelectedEnabledDisabledButtons(newCenter) }
+        
+    }
+    
+    func branchPressHold(gesture: UILongPressGestureRecognizer) {
+        if let hexButton = gesture.view as? HexagonButton {
+            if gesture.state == UIGestureRecognizerState.Began {
+                // store currently editing button
+                self.currentEditButton = hexButton
+                self.currentEditBranch = self.getBranchAtGridLocation(hexButton.gridPosition!, fromCenter: self.getPreviousHexagonCenter())
+                
+                self.setEditMode(hexButton)
+                
+                self.branchPressHoldHandler(hexButton, isBranchEditable: hexButton.id > 0 && hexButton != self.hexButtonInViewCenter)
+            }
+        }
+    }
+    
+    func moveBranchCancelTouchUpInside() {
+        self.dismissMoveView()
+    }
+    
+    func branchExistsAtLocation(branchPosition: BranchPosition) -> Bool {
+        var branchExists: Bool = false
+        
+        // get direct child branches for selected branch
+        let childBranches: [Branch]? = self.currentTree.currentBranch!.children
+        
+        // check if branch already exists at location
+        if(childBranches != nil) {
+            for branch in childBranches! {
+                if(branch.position == branchPosition) {
+                    self.currentTree.currentBranch = branch
+                    branchExists = true
+                    break
+                }
+            }
+        }
+        
+        return branchExists
+    }
+    
+    func getBranchAtGridLocation(gridPosition: HexagonGridPosition, fromCenter: HexagonButton) -> Branch? {
+        var branch: Branch? = nil
+        
+        // get branch position from grid position
+        let branchPosition = self.getBranchPositionFromHexagonGridLocation(gridPosition, fromCenterGridPosition: fromCenter.gridPosition)
+        
+        // get direct child branches for selected branch
+        if let childBranches = self.currentTree.currentBranch!.children {
+            if childBranches.count > 0 {
+                for i in 0...childBranches.count -  1 {
+                    if(childBranches[i].position == branchPosition) {
+                        branch = childBranches[i]
+                        break
+                    }
+                }
+            }
+        }
+        
+        return branch
+    }
+    
+    // check if branch has a color assigned and if not assigns appropriate color to branch
+    private func setBranchColorIfNeeded(branch: Branch)
+    {
+        if let parent = branch.parent {
+            if parent.id > 0 {
+                branch.color = self.getBranchColor(branch, parent: parent)
+            }
+        }
+    }
+    
+    private func getBranchColor(branch: Branch?, parent: Branch) -> UIColor? {
+        var color: UIColor? = branch?.color ?? nil
+        
+        if parent.id > 0 {
+            if (self.isPrivateMode) {
+                color = parent.color?.darkerColorForColor()
+            }
+            else {
+                color = parent.color?.lighterColorForColor()
+            }
+        }
+        
+        return color
+    }
+    
+    func removeBranchAtGridLocation(gridPosition: HexagonGridPosition, fromCenter: HexagonButton) -> Bool {
+        var returnBranch: Bool = false
+        
+        // check if branch already exists at location
+        if let children = self.currentTree.currentBranch!.children {
+            
+            // get branch position from grid position
+            let branchPosition = self.getBranchPositionFromHexagonGridLocation(gridPosition, fromCenterGridPosition: fromCenter.gridPosition)
+            
+            if children.count > 0 {
+                for i in 0...children.count -  1 {
+                    if(children[i].position == branchPosition) {
+                        self.currentTree.currentBranch!.children!.removeAtIndex(i)
+                        
+                        // if removing last branch nil the children value
+                        if self.currentTree.currentBranch!.children!.count < 1 {
+                            self.currentTree.currentBranch!.children = nil
+                        }
+                        
+                        returnBranch = true
+                        break
+                    }
+                }
+            }
+        }
+        
+        return returnBranch
+    }
+    
+    private func setActiveHexagonButtonProperties(button: HexagonButton) {
+        if let titleLabel = button.titleLabel {
+            titleLabel.lineBreakMode                = NSLineBreakMode.ByClipping
+            titleLabel.textAlignment                = NSTextAlignment.Center
+            titleLabel.numberOfLines                = 3
+            titleLabel.adjustsFontSizeToFitWidth    = true
+        }
+        
+        button.removeTarget(nil, action: nil, forControlEvents: UIControlEvents.TouchUpInside)
+        button.gestureRecognizers?.removeAll()
+        
+        button.addTarget(self, action: Selector(self.actionBranchTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+        button.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: Selector(self.actionBranchPressHold)))
+        
+        button.enabled = true
+        button.alpha   = 1.0
+        button.hidden  = false
+    }
+    
+    private func setActionHexagonButtonProperties(button: HexagonButton, iconImageName: String? = nil, title: String? = nil) {
+        let color = self.currentTree.currentBranch?.color ?? self.currentGridTheme.trunkFillColor
+        
+        button.enabled                  = true
+        button.hidden                   = false
+        
+        button.iconImageDarkens         = !self.isPrivateMode
+        button.iconImageName            = iconImageName
+        
+        button.iconImageColor           = color
+        button.titleFont                = hexagonActionFont
+        
+        button.type = .ACTION
+        
+        button.setTitle(title, forState: .Normal)
+        button.setTitleColor(color, forState: .Normal)
+        button.removeTarget(nil, action: nil, forControlEvents: UIControlEvents.TouchUpInside)
+        button.gestureRecognizers?.removeAll()
+        
+        button.id = 0
+        
+        // if button over trunk, make more opaque
+        if button.gridPosition! == (0, 2) {
+            button.fillColorInitial = button.fillColorInitial.colorWithAlphaComponent(0.95)
+        }
+    }
+    
+    private func setCenterHexagonButtonProperties(button: HexagonButton) {
+        let color = self.currentTree.currentBranch?.color ?? self.currentGridTheme.trunkFillColor
+        
+        button.iconImageDarkens         = !self.isPrivateMode || self.currentBranchLevel == 1
+        button.iconImageName            = (self.selectingCenterHexIcon != nil ? self.selectingCenterHexIcon : self.centerIconImageName)
+        button.useGradientBackground    = false
+        button.titleFont                = self.hexagonActionFont
+        button.fillColorInitial         = self.currentGridTheme.defaultBranchFillColor
+        button.iconImageColor           = color
+        
+        button.setTitleColor(color, forState: .Normal)
+        
+        // move branch title to one line to avoid icon conflict
+        button.titleLabel?.numberOfLines = 2
+        button.titleLabel?.lineBreakMode = .ByTruncatingTail
+        button.titleLabel?.adjustsFontSizeToFitWidth = false
+    }
+    
+    // set button styles for an active empty branch
+    func setEmptyBranchHexagonButtonProperties(button: HexagonButton) {
+        self.setActiveHexagonButtonProperties(button)
+        
+        button.fillColorInitial         = self.currentGridTheme.addFillColor
+        button.titleFont                = self.hexagonActionFont
+        button.strokeColor              = self.currentGridTheme.buttonStrokeColor
+        button.useGradientBackground    = false
+        button.removeIconImage()
+        
+        button.setTitleColor(self.currentGridTheme.addTitleColor, forState: .Normal)
+        
+        button.type = .EMPTYBRANCH
+        
+        var emptyTitle: String
+        
+        if(self.isMovingBranch) {
+            // check if branch can be moved here
+            if(self.movingBranchLevelCount - 1 > (self.maxBranchLevels - self.currentBranchLevel)) {
+                emptyTitle      = Localization.sharedInstance.getLocalizedString("branch_error_too_many_levels", table: "TreeGrid")
+                button.enabled  = false
+            }
+            else {
+                emptyTitle = Localization.sharedInstance.getLocalizedString("branch_move", table: "TreeGrid")
+            }
+        }
+        else {
+            emptyTitle = Localization.sharedInstance.getLocalizedString("branch_add", table: "TreeGrid")
+            button.iconImageName = self.addIconImageName
+            button.iconImageColor = self.currentGridTheme.addTitleColor
+        }
+        
+        button.setTitle(emptyTitle, forState: .Normal)
+        
+        button.id       = 0
+        button.hidden   = false
+        
+        if button.gridPosition! == (0, 2) {
+            button.fillColorInitial = button.fillColorInitial.colorWithAlphaComponent(0.95)
+        }
+    }
+    
+    func setBranchHexagonButtonProperties(button: HexagonButton, branch: Branch) {
+        var fillColor: UIColor?
+        
+        // set ID first in case of dependencies in other functions
+        button.id = branch.id
+        
+        self.setActiveHexagonButtonProperties(button)
+        
+        button.useGradientBackground = true
+        
+        // color assigned to top branches only
+        if(branch.parent == nil || branch.parent!.id == 0) {
+            if(branch.color != nil) {
+                fillColor = branch.color!
+            }
+        }
+            // otherwise it is based of off parent color level
+        else {
+            self.setBranchColorIfNeeded(branch)
+            
+            fillColor = branch.color
+        }
+        
+        self.setBranchColorHexagonButtonProperties(button, branchColor: fillColor)
+        
+        if(button.gridPosition == nil) {
+            button.gridPosition = self.getHexagonGridLocationForBranch(branch.position)
+        }
+        
+        button.setTitle(branch.title, forState: .Normal)
+        
+        if(branch.title.composedCount == 1) {
+            button.titleFont = self.hexagonSingleCharacterFont
+        }
+        else {
+            button.titleFont = self.hexagonTitleFont
+        }
+        
+        button.removeIconImage()
+        
+        button.type = .BRANCH
+        
+        // prevent moving onto same hexagon
+        if(self.isMovingBranch && button.id == self.currentEditBranch?.id) {
+            self.setEditInactiveBranchHexagonButtonProperties(button)
+        }
+    }
+    
+    private func setBranchColorHexagonButtonProperties(button: HexagonButton, branchColor: UIColor?) {
+        // in secret tree, only border is colored
+        if self.isPrivateMode {
+            if let fill = branchColor {
+                button.strokeColor = fill
+                
+                button.useGradientBackground = false
+                
+                // if top feed button
+                if self.currentTree.currentBranch!.parent == nil && button.id == 0 && self.currentEditButton == nil {
+                    button.fillColorInitial = self.currentGridTheme.trunkFillColor
+                    button.setTitleColor(self.currentGridTheme.addTitleColor, forState: .Normal)
+                }
+                    // if center
+                else {
+                    button.fillColorInitial = self.currentGridTheme.addFillColor
+                    button.setTitleColor(fill.lighterColorForColor(), forState: .Normal)
+                }
+            }
+        }
+            // in initial tree, fill is colored with branch color
+        else {
+            button.useGradientBackground = true
+            
+            if let fill = branchColor?.colorWithAlphaComponent(1.0) {
+                button.fillColorInitial = fill
+            }
+            
+            button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        }
+    }
+    
+    private func setInactiveBranchHexagonButtonProperties(button: HexagonButton) {
+        button.fillColorInitial         = self.currentGridTheme.defaultBranchFillColor
+        button.strokeColor              = self.currentGridTheme.buttonStrokeColor
+        button.enabled                  = false
+        button.titleFont                = self.hexagonTitleFont
+        button.id                       = 0
+        button.hidden                   = false
+        button.useGradientBackground    = false
+        
+        button.titleLabel?.lineBreakMode                = NSLineBreakMode.ByClipping
+        button.titleLabel?.textAlignment                = NSTextAlignment.Center
+        button.titleLabel?.numberOfLines                = 3
+        button.titleLabel?.adjustsFontSizeToFitWidth    = true
+        button.setTitle(nil, forState: .Normal)
+        button.titleLabel?.text = nil
+        button.removeTarget(nil, action: nil, forControlEvents: UIControlEvents.TouchUpInside)
+        button.gestureRecognizers?.removeAll()
+        button.removeIconImage()
+        
+        // check to add private branch event
+        if(!self.isPrivateMode && self.currentBranchLevel == 1 && button.gridPosition! == (0, -2)) {
+            button.addTarget(self, action: Selector(self.actionBranchPrivateTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            button.enabled = true
+        }
+    }
+    
+    private func setEditInactiveBranchHexagonButtonProperties(button: UIButton) {
+        button.alpha    = self.currentGridTheme.editBranchAlpha
+        button.enabled  = false
+    }
+    
+    private func setEditMode(editButton: HexagonButton) {
+        // disable all hexagons outside of the one currently being edited
+        for (_,button) in self.hexagonButtons {
+            if(button != editButton) {
+                self.setEditInactiveBranchHexagonButtonProperties(button)
+            }
+        }
+    }
+    
+    private func setMoveMode(moveButton: HexagonButton) {
+        // cannot move to current position
+        self.setEditInactiveBranchHexagonButtonProperties(moveButton)
+        
+        // set move mode settings for the current branch level
+        self.setMoveModeForCurrentBranchLevel()
+    }
+    
+    private func setMoveModeForCurrentBranchLevel() {
+        var secondNeighbors = self.getHexButtonNeighbors(self.hexButtonInViewCenter, distance: 2)
+        
+        if let backButton = self.currentBackButton {
+            secondNeighbors.remove(backButton)
+            self.setEditActiveBranchHexagonButtonProperties(backButton)
+        }
+        
+        // disable inner hexagons if on last level
+        if self.currentBranchLevel >= self.maxBranchLevels {
+            let neighbors = self.getHexButtonNeighbors(self.hexButtonInViewCenter)
+            
+            for button in neighbors where button.id > 0 {
+                self.setEditInactiveBranchHexagonButtonProperties(button)
+            }
+        }
+        
+        // disable all outer hexagons
+        for button in secondNeighbors {
+            self.setEditInactiveBranchHexagonButtonProperties(button)
+        }
+    }
+    
+    private func unsetMoveMode() {
+        // re-enable all hexagon buttons
+        for (_,button) in self.hexagonButtons {
+            self.setEditActiveBranchHexagonButtonProperties(button)
+        }
+    }
+    
+    private func setEditCurrentPropertiesHexagonButton (button: HexagonButton) {
+        button.enabled = false
+    }
+    
+    func unsetEditCurrentPropertiesHexagonButton (button: HexagonButton) {
+        button.enabled = true
+    }
+    
+    private func setEditActiveBranchHexagonButtonProperties(button: UIButton) {
+        button.alpha    = 1.0
+        button.enabled  = true
+    }
+    
+    func unsetEditMode() {
+        // re-enable all hexagon buttons
+        for (_,button) in self.hexagonButtons {
+            if !self.isMovingBranch || button.id > 0 && button.id != self.currentEditBranch?.id {
+                self.setEditActiveBranchHexagonButtonProperties(button)
+            }
+        }
+    }
+    
+    private func showBackHexagonButton() {
+        let centerPosition  = self.hexButtonInViewCenter.gridPosition
+        let button          = self.hexagonButtons[HexagonGridPosition(x: centerPosition!.x, y: centerPosition!.y + 2)]!
+        
+        self.setInactiveBranchHexagonButtonProperties(button)
+        self.setActionHexagonButtonProperties(button, iconImageName: self.reverseIconImageName, title: Localization.sharedInstance.getLocalizedString("back", table: "Common"))
+        
+        button.addTarget(self, action: Selector(self.actionBranchBackTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+        
+        button.iconImageColor = self.currentGridTheme.backFillColor
+        button.setTitleColor(self.currentGridTheme.backFillColor, forState: .Normal)
+        
+        // update current back button
+        self.currentBackButton = button
+    }
+    
+    private func showBranchActionHexagonButtons() {
+        self.showChatHexagonButton()
+        self.showExploreHexagonButton()
+        self.showMembersHexagonButton()
+        self.showPostHexagonButton()
+    }
+    
+    private func showChatHexagonButton() {
+        let centerPosition  = self.hexButtonInViewCenter.gridPosition
+        let button          = self.hexagonButtons[HexagonGridPosition(x: centerPosition!.x + 1, y: centerPosition!.y - 2)]!
+        
+        self.setInactiveBranchHexagonButtonProperties(button)
+        self.setActionHexagonButtonProperties(button, iconImageName: self.chatIconImageName, title: Localization.sharedInstance.getLocalizedString("chat", table: "TreeGrid"))
+        
+        //button.addTarget(self, action: Selector(self.actionBranchChatsTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+    }
+    
+    private func showExploreHexagonButton() {
+        let centerPosition  = self.hexButtonInViewCenter.gridPosition
+        let button          = self.hexagonButtons[HexagonGridPosition(x: centerPosition!.x - 1, y: centerPosition!.y - 2)]!
+        
+        self.setInactiveBranchHexagonButtonProperties(button)
+        self.setActionHexagonButtonProperties(button, iconImageName: self.exploreIconImageName, title: Localization.sharedInstance.getLocalizedString("Explore", table: "TreeGrid"))
+    }
+    
+    private func showMembersHexagonButton() {
+        let centerPosition  = self.hexButtonInViewCenter.gridPosition
+        let button          = self.hexagonButtons[HexagonGridPosition(x: centerPosition!.x - 1, y: centerPosition!.y + 2)]!
+        
+        self.setInactiveBranchHexagonButtonProperties(button)
+        self.setActionHexagonButtonProperties(button, iconImageName: self.membersIconImageName, title: Localization.sharedInstance.getLocalizedString("members", table: "TreeGrid"))
+        
+        button.addTarget(self, action: Selector(self.actionBranchMembersTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+    }
+    
+    private func showPostHexagonButton() {
+        let centerPosition  = self.hexButtonInViewCenter.gridPosition
+        let button          = self.hexagonButtons[HexagonGridPosition(x: centerPosition!.x + 1, y: centerPosition!.y + 2)]!
+        
+        self.setInactiveBranchHexagonButtonProperties(button)
+        self.setActionHexagonButtonProperties(button, iconImageName: self.postIconImageName, title: Localization.sharedInstance.getLocalizedString("post", table: "TreeGrid"))
+        
+        button.addTarget(self, action: Selector(self.actionBranchPostTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+    }
+    
+    private func showExitPrivateHexagonButton() {
+        if(self.isPrivateMode) {
+            let centerPosition  = self.hexButtonInViewCenter.gridPosition
+            let button          = self.hexagonButtons[HexagonGridPosition(x: centerPosition!.x, y: centerPosition!.y - 2)]!
+            
+            self.setInactiveBranchHexagonButtonProperties(button)
+            self.setActionHexagonButtonProperties(button, iconImageName: self.exitIconImageName, title: Localization.sharedInstance.getLocalizedString("exit", table: "TreeGrid"))
+            
+            button.addTarget(self, action: Selector(self.actionBranchPrivateExitTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+            
+            self.currentExitPrivateButton = button
+        }
+    }
+    
+    func removEditBranchButtion() {
+        // convert current button to default and remove branch from tree
+        if let currentButton = self.currentEditButton {
+            self.setEmptyBranchHexagonButtonProperties(currentButton)
+            
+            // remove branch
+            self.removeBranchAtGridLocation(currentButton.gridPosition!, fromCenter: self.getPreviousHexagonCenter())
+        }
+    }
+    
+    /* If the screen is being use to select a branch to add users, this is the main function that sets up functionality.
+    
+    TreeSelectBranchForm is the view that gets added to the top of the screen, with a cancel button as well as the currently-selected Branch's name.
+    
+    The only on-screen hex buttons that are enbled during this phase are branches (excluding empty ones) and the Back button.
+    */
+    func setSelectionMode() {
+        
+        
+        // initialize the add form controller to load into view
+        let vc              = UIStoryboard(name: "TreeSelectBranchForm", bundle: nil).instantiateViewControllerWithIdentifier("TreeSelectBranchForm") as! TreeSelectBranchFormViewController
+        let selectFormView      = vc.view
+        
+        // store current add form view for action handlers
+        self.selectFormViewController = vc
+        
+        // size the view to only the size needed
+        selectFormView.frame = CGRectMake(0,0,selectFormView.frame.width, vc.getViewHeight())
+        
+        // add view to the current view
+        self.view.addSubview(selectFormView)
+        self.addChildViewController(vc)
+        
+        vc.selectBranchCancelButton.addTarget(self, action: Selector(self.actionSelectBranchCancelTouchUpInside), forControlEvents: UIControlEvents.TouchUpInside)
+        
+        self.setSelectedEnabledDisabledButtons(self.hexButtonInViewCenter)
+        
+        // set current center button
+        self.hexButtonInViewCenter.iconImageName = (self.selectingCenterHexIcon != nil ? self.selectingCenterHexIcon : self.centerIconImageName)
+        
+        self.delegate?.mainTabBar.userInteractionEnabled = false
+    }
+    
+    func setSelectedEnabledDisabledButtons(hexButton: HexagonButton){
+        self.updateBranchBar(hexButton)
+        
+        for (_,button) in self.hexagonButtons {
+            if (button.type == .BRANCH || button == self.currentBackButton) {
+                self.setEditActiveBranchHexagonButtonProperties(button)
+            }
+            else {
+                self.setEditInactiveBranchHexagonButtonProperties(button)
+            }
+        }
+    }
+    
+    // Upon moving to a different branch while selecting, update the bar at the top.
+    func updateBranchBar(hexButton: HexagonButton) {
+        
+        let branch = Branch()
+        branch.title = hexButton.id == 0 ? "Trunk" : (hexButton.titleLabel?.text)! //The trunk button's text is "All", which is ambiguous, so override it
+        branch.color = hexButton.fillColorInitial
+        
+        self.selectFormViewController?.setBranchBar(branch)
+    }
+    
+    // cancel event
+    func selectBranchCancelTouchUpInside() {
+        self.selectedClose?(nil)
+    }
+    
+    // reset the grid back to non select branch mode... this needs to be the last thing that get's fired (best to place in "selectedPostCallback")
+    func unsetSelectionMode() {
+        
+        self.isSelectingBranch = false
+        self.selectingCenterHexIcon = nil
+        self.selectedClose = nil
+        
+        self.hexButtonInViewCenter.iconImageName    = self.centerIconImageName
+        
+        for (_,button) in self.hexagonButtons {
+            self.setEditActiveBranchHexagonButtonProperties(button)
+        }
+        
+        if let selectFormVC = self.selectFormViewController {
+            let selectFormView = selectFormVC.view
+            
+            UIView.animateWithDuration(self.animDuration,
+                animations: {
+                    selectFormView.frame.origin.y -= selectFormVC.selectBranchView.frame.height
+                },
+                completion: {
+                    _ in
+                    
+                    selectFormView.removeFromSuperview()
+                    selectFormVC.removeFromParentViewController()
+                    
+                }
+            )
+        }
+        
+        self.delegate?.mainTabBar.userInteractionEnabled = true
+    }
+}

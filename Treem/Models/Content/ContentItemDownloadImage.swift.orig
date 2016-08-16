@@ -1,0 +1,60 @@
+//
+//  ContentItemDownloadImage.swift
+//  Treem
+//
+//  Created by Matthew Walker on 12/16/15.
+//  Copyright © 2015 Treem LLC. All rights reserved.
+//
+
+import Foundation
+import SwiftyJSON
+
+class ContentItemDownloadImage : ContentItemDownload {
+<<<<<<< HEAD
+    var fullURL         : NSURL? = nil
+    var feedURL         : NSURL? = nil
+    var avatarURL       : NSURL? = nil
+    
+    var fullWidth       : Int? = nil
+    var fullHeight      : Int? = nil
+    var feedWidth       : Int? = nil
+    var feedHeight      : Int? = nil
+    var avatarWidth     : Int? = nil
+    var avatarHeight    : Int? = nil
+=======
+    var url             : NSURL? = nil
+    var width           : Int? = nil
+    var height          : Int? = nil
+>>>>>>> master
+    
+    var createDate      : NSDate? = nil
+    var owner           : Bool = false
+    
+    override init(data: JSON) {
+<<<<<<< HEAD
+        self.fullURL     = NSURL.getNSURL(data["l_url"].string)
+        self.feedURL     = NSURL.getNSURL(data["m_url"].string)
+        self.avatarURL   = NSURL.getNSURL(data["s_url"].string)
+        
+        self.fullWidth      = data["l_width"].int
+        self.fullHeight     = data["l_height"].int
+        
+        self.feedWidth      = data["m_width"].int
+        self.feedHeight     = data["m_height"].int
+        
+        self.avatarWidth    = data["s_width"].int
+        self.avatarHeight   = data["s_height"].int
+=======
+        self.url     = NSURL.getNSURL(data["url"].string)
+        self.width      = data["width"].int
+        self.height     = data["height"].int        
+>>>>>>> master
+        
+        self.createDate         = NSDate(iso8601String: data["create_date"].string)
+        self.owner              = (data["owner"].intValue == 1) ? true : false
+        
+        super.init(data: data)
+        
+        self.contentType = .Image
+    }
+}

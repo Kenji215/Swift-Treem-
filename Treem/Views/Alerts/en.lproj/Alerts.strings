@@ -1,0 +1,72 @@
+
+/* Class = "UIViewController"; title = "Alerts"; ObjectID = "FoI-gm-DNU"; */
+"FoI-gm-DNU.title" = "Alerts";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "NXE-7s-Zvj"; */
+"NXE-7s-Zvj.normalTitle" = "Done";
+
+/* Class = "UILabel"; text = "Alerts"; ObjectID = "Ust-3P-stO"; */
+"Ust-3P-stO.text" = "Alerts";
+
+"no_alerts" = "No alerts right now";
+
+
+//Alert text
+"PENDING_FRIEND_REQUEST"    = "You have a new friend request from %@.";
+"ACCEPTED_FRIEND_REQUEST"   = "%@ has accepted your friend request.";
+"ACCEPTED_FRIEND_INVITE"    = "%@ has accepted your seed invitation to join Treem.";
+"POST_REPLY"                = "%@ has responded to your post.";
+"POST_REACTION"             = "%@ has reacted to your post.";
+"POST_SHARE"                = "%@ has shared your post.";
+"POST_ABUSE_SENT"           = "Your post has been reported.";
+"POST_ABUSE_REVOKED"        = "Your post has been removed due to being reported for abuse.";
+"COMMENT_REPLY"             = "%@ commented on a post that you've also commented on.";
+"TAGGED_POST"               = "%@ has tagged you in a post.";
+"BRANCH_SHARE"              = "You have a new branch share offer from %@";
+"POST_UPLOAD_FINISHED"      = "Your post has finished uploading.";
+"CHAT_UPLOAD_FINISHED"      = "Your chat message has finished uploading.";
+"BRANCH_SHARE"              = "You have a new branch share offer from %@";
+"NON_REQUEST_ALERTS"        = "";
+"POST_REPLY_REACTION"       = "%@ has reacted to your comment.";
+"REPLY_UPLOAD_FINISHED"     = "Your reply has finished uploading.";
+
+//Alert buttons
+"accept"            = "Accept";
+"decline"           = "Decline";
+
+//Alert action details
+"decline_prompt_title"  = "Decline Friend Request";
+"decline_prompt_details" = "Are you sure you want to decline the friend request?";
+"decline_confirm"       = "Yes";
+"decline_cancel"        = "No";
+
+// prompt for adding user to branch
+"decline_share_title"   = "Decline Branch Share";
+"decline_share_details" = "Are you sure you want to decline the branch share offer?";
+
+"success_prompt_title" = "Friend Request Accepted";
+"success_prompt_details" = "Friend request was accepted and user was assigned to branch \"%@\".";
+
+"failure_prompt_title" = "Unsuccessful";
+"failure_prompt_details" = "An error occurred while adding user to branch \"%@\".";
+
+
+// accepting a shared branch
+"branch_accept_success_title" = "Successfully Added Branch";
+"branch_accept_success_details" = "Successfully added branch onto %@";
+
+"branch_accept_failure_title" = "Unsuccessful";
+"branch_accept_failure1" = "Invalid data passed";
+"branch_accept_failure2" = "Invalid tree";
+"branch_accept_failure3" = "Invalid placement information";
+"branch_accept_failure4" = "The branch you are trying to accept is invalid";
+"branch_accept_failure5" = "Placing the branch there will exceed the maximum depths, place on a higher level.";
+"branch_accept_failure6" = "Too many child branches on one parent branch";
+"branch_accept_failure7" = "A branch already exists in that position";
+"branch_accept_failure8" = "Could not find a valid share offer with those details";
+
+
+
+"no_alerts" = "No alerts";
+"no_friend_requests" = "No friend requests";
+"no_branch_requests" = "No branch shares";

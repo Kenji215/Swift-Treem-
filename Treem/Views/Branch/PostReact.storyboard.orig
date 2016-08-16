@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <scenes>
+        <!--Post React View Controller-->
+        <scene sceneID="gI7-Ni-XHG">
+            <objects>
+                <viewController storyboardIdentifier="PostReact" modalPresentationStyle="overFullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Crf-rO-lGv" customClass="PostReactViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GAG-NX-Eak"/>
+                        <viewControllerLayoutGuide type="bottom" id="2MS-KZ-HPy"/>
+                    </layoutGuides>
+                    <view key="view" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="xHR-Zg-Lsv">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ML6-8C-eco" userLabel="Menu Wrapper View">
+                                <rect key="frame" x="0.0" y="230" width="600" height="370"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cYg-l9-jTv" userLabel="Happy View">
+                                        <rect key="frame" x="10" y="10" width="58" height="93"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fl3-7b-Tcq" userLabel="Happy Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="58" id="YyX-Hg-Pyq"/>
+                                                    <constraint firstAttribute="width" constant="58" id="akV-xq-f3L"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Happy"/>
+                                                <connections>
+                                                    <action selector="happyButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="eUL-LP-Brm"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eP8-kU-L3L" userLabel="Happy Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="fl3-7b-Tcq" firstAttribute="top" secondItem="cYg-l9-jTv" secondAttribute="top" id="4r0-al-4Gt"/>
+                                            <constraint firstItem="fl3-7b-Tcq" firstAttribute="leading" secondItem="cYg-l9-jTv" secondAttribute="leading" id="5GN-AL-QMz"/>
+                                            <constraint firstItem="eP8-kU-L3L" firstAttribute="top" secondItem="fl3-7b-Tcq" secondAttribute="bottom" constant="2" id="L5A-CL-jsc"/>
+                                            <constraint firstAttribute="width" constant="58" id="NxR-nz-5UV"/>
+                                            <constraint firstItem="eP8-kU-L3L" firstAttribute="centerX" secondItem="cYg-l9-jTv" secondAttribute="centerX" id="RKK-kd-S5W"/>
+                                            <constraint firstAttribute="height" constant="93" id="qv6-IY-8tF"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fnX-4r-rJc" userLabel="Cool View">
+<<<<<<< HEAD:Treem/Views/Branch/PostReact.storyboard
+                                        <rect key="frame" x="271" y="10" width="58" height="93"/>
+=======
+                                        <rect key="frame" x="256" y="10" width="58" height="93"/>
+>>>>>>> master:Treem/Views/Branch/PostReact.storyboard
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="El8-fJ-eCX" userLabel="Cool Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="58" id="3Rc-s0-wqU"/>
+                                                    <constraint firstAttribute="height" constant="58" id="O9o-XV-GVL"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Cool"/>
+                                                <connections>
+                                                    <action selector="coolButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="osr-6r-yep"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QwS-wJ-3aO" userLabel="Cool Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="58" id="6Mw-4T-Sls"/>
+                                            <constraint firstAttribute="height" constant="93" id="9bu-qM-uLn"/>
+                                            <constraint firstItem="El8-fJ-eCX" firstAttribute="top" secondItem="fnX-4r-rJc" secondAttribute="top" id="Efx-ad-S3h"/>
+                                            <constraint firstItem="QwS-wJ-3aO" firstAttribute="top" secondItem="El8-fJ-eCX" secondAttribute="bottom" constant="2" id="GJ0-dd-ote"/>
+                                            <constraint firstItem="QwS-wJ-3aO" firstAttribute="centerX" secondItem="fnX-4r-rJc" secondAttribute="centerX" id="PuM-4G-pzd"/>
+                                            <constraint firstItem="El8-fJ-eCX" firstAttribute="leading" secondItem="fnX-4r-rJc" secondAttribute="leading" id="xdH-r6-hXU"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xs9-gR-tzH" userLabel="Angry View">
+                                        <rect key="frame" x="532" y="10" width="58" height="93"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G3n-8o-mHG" userLabel="Angry Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="58" id="MSo-eZ-bEh"/>
+                                                    <constraint firstAttribute="width" constant="58" id="nuX-G2-JGP"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Angry"/>
+                                                <connections>
+                                                    <action selector="angryButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="jbM-iw-BxD"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ChX-e0-Vst" userLabel="Angry Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="ChX-e0-Vst" firstAttribute="centerX" secondItem="Xs9-gR-tzH" secondAttribute="centerX" id="2rv-6A-51p"/>
+                                            <constraint firstAttribute="width" constant="58" id="9lo-jH-SZ9"/>
+                                            <constraint firstAttribute="height" constant="93" id="Qag-ki-14E"/>
+                                            <constraint firstItem="G3n-8o-mHG" firstAttribute="leading" secondItem="Xs9-gR-tzH" secondAttribute="leading" id="YPw-31-V36"/>
+                                            <constraint firstItem="G3n-8o-mHG" firstAttribute="top" secondItem="Xs9-gR-tzH" secondAttribute="top" id="fdQ-bg-IQO"/>
+                                            <constraint firstItem="ChX-e0-Vst" firstAttribute="top" secondItem="G3n-8o-mHG" secondAttribute="bottom" constant="2" id="tjs-JK-Fyo"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="doe-fj-YKU" userLabel="Sad View">
+                                        <rect key="frame" x="10" y="113" width="58" height="93"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jsh-fP-rQn" userLabel="Sad Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="58" id="ZYg-NK-fft"/>
+                                                    <constraint firstAttribute="height" constant="58" id="j9N-hi-xth"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Sad"/>
+                                                <connections>
+                                                    <action selector="sadButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="TlG-hj-cvI"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y9h-y5-xzE" userLabel="Sad Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="58" id="4gX-Em-bR0"/>
+                                            <constraint firstItem="y9h-y5-xzE" firstAttribute="centerX" secondItem="doe-fj-YKU" secondAttribute="centerX" id="Fdk-De-rTS"/>
+                                            <constraint firstItem="jsh-fP-rQn" firstAttribute="top" secondItem="doe-fj-YKU" secondAttribute="top" id="cZu-y9-2LE"/>
+                                            <constraint firstItem="y9h-y5-xzE" firstAttribute="top" secondItem="jsh-fP-rQn" secondAttribute="bottom" constant="2" id="dmZ-Pa-I0V"/>
+                                            <constraint firstItem="jsh-fP-rQn" firstAttribute="leading" secondItem="doe-fj-YKU" secondAttribute="leading" id="rFd-NT-mZA"/>
+                                            <constraint firstAttribute="height" constant="93" id="sed-Eo-ZBw"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3TC-FP-dGD" userLabel="Love View">
+<<<<<<< HEAD:Treem/Views/Branch/PostReact.storyboard
+                                        <rect key="frame" x="271" y="113" width="58" height="93"/>
+=======
+                                        <rect key="frame" x="256" y="113" width="58" height="93"/>
+>>>>>>> master:Treem/Views/Branch/PostReact.storyboard
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p46-ZE-Rch" userLabel="Love Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="58" id="Rti-Fd-sJc"/>
+                                                    <constraint firstAttribute="width" constant="58" id="TJj-4E-f5C"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Love"/>
+                                                <connections>
+                                                    <action selector="loveButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="BBo-lu-GVc"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bVv-o6-jkD" userLabel="Love Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="bVv-o6-jkD" firstAttribute="centerX" secondItem="3TC-FP-dGD" secondAttribute="centerX" id="30x-MB-VJW"/>
+                                            <constraint firstAttribute="height" constant="93" id="Nlg-wI-XXl"/>
+                                            <constraint firstAttribute="width" constant="58" id="cdc-rn-z11"/>
+                                            <constraint firstItem="p46-ZE-Rch" firstAttribute="leading" secondItem="3TC-FP-dGD" secondAttribute="leading" id="mta-T9-oj0"/>
+                                            <constraint firstItem="bVv-o6-jkD" firstAttribute="top" secondItem="p46-ZE-Rch" secondAttribute="bottom" constant="2" id="oFA-Si-BPg"/>
+                                            <constraint firstItem="p46-ZE-Rch" firstAttribute="top" secondItem="3TC-FP-dGD" secondAttribute="top" id="vhd-vh-CaE"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="chO-Qi-Hxj" userLabel="Silly View">
+                                        <rect key="frame" x="532" y="113" width="58" height="93"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nvr-Yk-CJy" userLabel="Silly Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="58" id="eAM-Rt-elK"/>
+                                                    <constraint firstAttribute="height" constant="58" id="eDo-ZH-PxG"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Silly"/>
+                                                <connections>
+                                                    <action selector="sillyButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="Gov-BZ-xCA"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="51x-yv-we6" userLabel="Silly Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="58" id="2bH-El-0G9"/>
+                                            <constraint firstItem="nvr-Yk-CJy" firstAttribute="leading" secondItem="chO-Qi-Hxj" secondAttribute="leading" id="E6e-K4-JaM"/>
+                                            <constraint firstItem="51x-yv-we6" firstAttribute="top" secondItem="nvr-Yk-CJy" secondAttribute="bottom" constant="2" id="Jc2-YN-H9f"/>
+                                            <constraint firstAttribute="height" constant="93" id="abb-6S-nob"/>
+                                            <constraint firstItem="51x-yv-we6" firstAttribute="centerX" secondItem="chO-Qi-Hxj" secondAttribute="centerX" id="qyZ-YV-uVY"/>
+                                            <constraint firstItem="nvr-Yk-CJy" firstAttribute="top" secondItem="chO-Qi-Hxj" secondAttribute="top" id="xAz-WN-zWk"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NgB-Dg-ZY1" userLabel="Hilarious View">
+                                        <rect key="frame" x="10" y="216" width="58" height="93"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iND-Hd-u6L" userLabel="Hilarious Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="58" id="9MB-0e-Mt0"/>
+                                                    <constraint firstAttribute="height" constant="58" id="w1a-Qn-P2G"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Hilarious"/>
+                                                <connections>
+                                                    <action selector="hilariousButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="dwt-VY-U9v"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AvY-9K-IlL" userLabel="Hilarious Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="AvY-9K-IlL" firstAttribute="centerX" secondItem="NgB-Dg-ZY1" secondAttribute="centerX" id="1Bb-2B-JD3"/>
+                                            <constraint firstItem="iND-Hd-u6L" firstAttribute="leading" secondItem="NgB-Dg-ZY1" secondAttribute="leading" id="MRr-mQ-6yr"/>
+                                            <constraint firstItem="iND-Hd-u6L" firstAttribute="top" secondItem="NgB-Dg-ZY1" secondAttribute="top" id="Qur-5a-ZWr"/>
+                                            <constraint firstAttribute="width" constant="58" id="aLK-BF-l6G"/>
+                                            <constraint firstAttribute="height" constant="93" id="ngs-sI-cu6"/>
+                                            <constraint firstItem="AvY-9K-IlL" firstAttribute="top" secondItem="iND-Hd-u6L" secondAttribute="bottom" constant="2" id="rGE-Lq-azc"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qh9-uw-gkZ" userLabel="Amazed View">
+<<<<<<< HEAD:Treem/Views/Branch/PostReact.storyboard
+                                        <rect key="frame" x="271" y="216" width="58" height="93"/>
+=======
+                                        <rect key="frame" x="256" y="216" width="58" height="93"/>
+>>>>>>> master:Treem/Views/Branch/PostReact.storyboard
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kxn-qO-SVC" userLabel="Amazed Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="58" id="Yjo-zQ-r4H"/>
+                                                    <constraint firstAttribute="width" constant="58" id="iA3-rZ-gcV"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Amazed"/>
+                                                <connections>
+                                                    <action selector="amazedButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="Aos-Zy-c1a"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="my4-6m-KBm" userLabel="Amazed Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="93" id="2TP-rc-kZM"/>
+                                            <constraint firstItem="my4-6m-KBm" firstAttribute="top" secondItem="kxn-qO-SVC" secondAttribute="bottom" constant="2" id="6i3-Lv-5KN"/>
+                                            <constraint firstItem="kxn-qO-SVC" firstAttribute="top" secondItem="qh9-uw-gkZ" secondAttribute="top" id="7fh-kU-iwV"/>
+                                            <constraint firstItem="my4-6m-KBm" firstAttribute="centerX" secondItem="qh9-uw-gkZ" secondAttribute="centerX" id="JMG-bf-OZv"/>
+                                            <constraint firstAttribute="width" constant="58" id="cBW-a4-AAz"/>
+                                            <constraint firstItem="kxn-qO-SVC" firstAttribute="leading" secondItem="qh9-uw-gkZ" secondAttribute="leading" id="hPp-W8-8PS"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BnT-6Y-WUS" userLabel="Worried View">
+                                        <rect key="frame" x="532" y="216" width="58" height="93"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pGf-6D-ca2" userLabel="Worried Button">
+                                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
+                                                <accessibility key="accessibilityConfiguration">
+                                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="58" id="5UQ-yb-zWd"/>
+                                                    <constraint firstAttribute="width" constant="58" id="bhU-zB-SMU"/>
+                                                </constraints>
+                                                <state key="normal" title="Button" image="Worried"/>
+                                                <connections>
+                                                    <action selector="worriedButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="Aem-Zk-EeP"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qE4-8C-mMr" userLabel="Amazed Count">
+                                                <rect key="frame" x="24" y="60" width="11" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="58" id="ILc-5L-Kh3"/>
+                                            <constraint firstAttribute="height" constant="93" id="X46-cV-yDC"/>
+                                            <constraint firstItem="pGf-6D-ca2" firstAttribute="leading" secondItem="BnT-6Y-WUS" secondAttribute="leading" id="grB-6U-liY"/>
+                                            <constraint firstItem="pGf-6D-ca2" firstAttribute="top" secondItem="BnT-6Y-WUS" secondAttribute="top" id="k6u-gL-Dca"/>
+                                            <constraint firstItem="qE4-8C-mMr" firstAttribute="centerX" secondItem="BnT-6Y-WUS" secondAttribute="centerX" id="o3f-iB-WwI"/>
+                                            <constraint firstItem="qE4-8C-mMr" firstAttribute="top" secondItem="pGf-6D-ca2" secondAttribute="bottom" constant="2" id="vlb-xp-Za6"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8w9-iH-gsb" userLabel="Close View">
+                                        <rect key="frame" x="0.0" y="309" width="600" height="60"/>
+                                        <subviews>
+                                            <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eV7-iT-Gtf">
+                                                <rect key="frame" x="10" y="10" width="580" height="40"/>
+                                                <color key="backgroundColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="ofk-n9-3MD"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <state key="normal" title="Close">
+                                                    <color key="titleColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="closeButtonTouchUpInside:" destination="Crf-rO-lGv" eventType="touchUpInside" id="MGC-L2-Pdj"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="60" id="QWZ-Fz-4xF"/>
+                                            <constraint firstAttribute="trailing" secondItem="eV7-iT-Gtf" secondAttribute="trailing" constant="10" id="ZLy-od-Kmp"/>
+                                            <constraint firstItem="eV7-iT-Gtf" firstAttribute="top" secondItem="8w9-iH-gsb" secondAttribute="top" constant="10" id="dgc-UQ-YE4"/>
+                                            <constraint firstItem="eV7-iT-Gtf" firstAttribute="leading" secondItem="8w9-iH-gsb" secondAttribute="leading" constant="10" id="t4F-0J-IXv"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.94999999999999996" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="chO-Qi-Hxj" firstAttribute="top" secondItem="Xs9-gR-tzH" secondAttribute="bottom" constant="10" id="3qK-OC-nTR"/>
+<<<<<<< HEAD:Treem/Views/Branch/PostReact.storyboard
+                                    <constraint firstItem="fnX-4r-rJc" firstAttribute="centerX" secondItem="ML6-8C-eco" secondAttribute="centerX" id="51d-rt-QKd"/>
+=======
+                                    <constraint firstItem="fnX-4r-rJc" firstAttribute="centerX" secondItem="ML6-8C-eco" secondAttribute="centerX" constant="-15" id="51d-rt-QKd"/>
+>>>>>>> master:Treem/Views/Branch/PostReact.storyboard
+                                    <constraint firstAttribute="trailing" secondItem="Xs9-gR-tzH" secondAttribute="trailing" constant="10" id="9f8-qP-Ueo"/>
+                                    <constraint firstItem="8w9-iH-gsb" firstAttribute="top" secondItem="NgB-Dg-ZY1" secondAttribute="bottom" id="Beh-NU-Ier"/>
+                                    <constraint firstItem="cYg-l9-jTv" firstAttribute="top" secondItem="ML6-8C-eco" secondAttribute="top" constant="10" id="DXm-Z5-Bqj"/>
+                                    <constraint firstAttribute="trailing" secondItem="BnT-6Y-WUS" secondAttribute="trailing" constant="10" id="DZS-m6-pVb"/>
+                                    <constraint firstItem="cYg-l9-jTv" firstAttribute="leading" secondItem="ML6-8C-eco" secondAttribute="leading" constant="10" id="K9q-Tw-4h3"/>
+                                    <constraint firstAttribute="height" constant="370" id="L4B-Ot-reW"/>
+                                    <constraint firstItem="8w9-iH-gsb" firstAttribute="leading" secondItem="ML6-8C-eco" secondAttribute="leading" id="OfU-yh-oDK"/>
+                                    <constraint firstAttribute="trailing" secondItem="chO-Qi-Hxj" secondAttribute="trailing" constant="10" id="Ugb-DD-NYH"/>
+                                    <constraint firstItem="3TC-FP-dGD" firstAttribute="centerX" secondItem="ML6-8C-eco" secondAttribute="centerX" constant="-15" id="aZ6-VG-9If"/>
+                                    <constraint firstAttribute="trailing" secondItem="8w9-iH-gsb" secondAttribute="trailing" id="c5x-I4-zFS"/>
+                                    <constraint firstItem="doe-fj-YKU" firstAttribute="leading" secondItem="ML6-8C-eco" secondAttribute="leading" constant="10" id="dN3-E8-ZZe"/>
+                                    <constraint firstItem="qh9-uw-gkZ" firstAttribute="centerX" secondItem="ML6-8C-eco" secondAttribute="centerX" constant="-15" id="gE4-70-ab9"/>
+                                    <constraint firstItem="NgB-Dg-ZY1" firstAttribute="leading" secondItem="ML6-8C-eco" secondAttribute="leading" constant="10" id="iTd-Zr-svb"/>
+                                    <constraint firstItem="3TC-FP-dGD" firstAttribute="top" secondItem="fnX-4r-rJc" secondAttribute="bottom" constant="10" id="kI9-ca-7xO"/>
+                                    <constraint firstItem="fnX-4r-rJc" firstAttribute="top" secondItem="ML6-8C-eco" secondAttribute="top" constant="10" id="qSh-Cy-CP2"/>
+                                    <constraint firstItem="qh9-uw-gkZ" firstAttribute="top" secondItem="3TC-FP-dGD" secondAttribute="bottom" constant="10" id="sKn-oI-6qN"/>
+                                    <constraint firstItem="doe-fj-YKU" firstAttribute="top" secondItem="cYg-l9-jTv" secondAttribute="bottom" constant="10" id="tsZ-bg-8yV"/>
+                                    <constraint firstItem="BnT-6Y-WUS" firstAttribute="top" secondItem="chO-Qi-Hxj" secondAttribute="bottom" constant="10" id="vj4-6P-80F"/>
+                                    <constraint firstItem="Xs9-gR-tzH" firstAttribute="top" secondItem="ML6-8C-eco" secondAttribute="top" constant="10" id="vmg-Er-NV5"/>
+                                    <constraint firstItem="NgB-Dg-ZY1" firstAttribute="top" secondItem="doe-fj-YKU" secondAttribute="bottom" constant="10" id="xLv-JK-ciA"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="2MS-KZ-HPy" firstAttribute="top" secondItem="ML6-8C-eco" secondAttribute="bottom" id="9d1-eA-f8d"/>
+                            <constraint firstItem="ML6-8C-eco" firstAttribute="leading" secondItem="xHR-Zg-Lsv" secondAttribute="leading" id="Bj8-Ji-LU1"/>
+                            <constraint firstItem="ML6-8C-eco" firstAttribute="trailing" secondItem="xHR-Zg-Lsv" secondAttribute="trailing" id="RGl-rp-Pqg"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="amazedButton" destination="kxn-qO-SVC" id="Gzh-j0-oew"/>
+                        <outlet property="amazedCountLabel" destination="my4-6m-KBm" id="dbo-YR-8hF"/>
+                        <outlet property="angryButton" destination="G3n-8o-mHG" id="giz-NF-jmU"/>
+                        <outlet property="angryCountLabel" destination="ChX-e0-Vst" id="pXM-Sd-zYO"/>
+                        <outlet property="closeButton" destination="eV7-iT-Gtf" id="Ira-XQ-hy5"/>
+                        <outlet property="coolButton" destination="El8-fJ-eCX" id="14x-II-CZm"/>
+                        <outlet property="coolCountLabel" destination="QwS-wJ-3aO" id="PWy-cO-rCA"/>
+                        <outlet property="happyButton" destination="fl3-7b-Tcq" id="8jI-zq-xEu"/>
+                        <outlet property="happyCountLabel" destination="eP8-kU-L3L" id="Q3O-Tj-kWa"/>
+                        <outlet property="hilariousButton" destination="iND-Hd-u6L" id="6cp-pI-GhT"/>
+                        <outlet property="hilariousCountLabel" destination="AvY-9K-IlL" id="04w-kD-my8"/>
+                        <outlet property="loveButton" destination="p46-ZE-Rch" id="qa7-ey-J7C"/>
+                        <outlet property="loveCountLabel" destination="bVv-o6-jkD" id="W4u-GP-Y0t"/>
+                        <outlet property="mainView" destination="xHR-Zg-Lsv" id="kwR-CJ-VEf"/>
+                        <outlet property="menuWrapperView" destination="ML6-8C-eco" id="6Yr-Qt-1pa"/>
+                        <outlet property="sadButton" destination="jsh-fP-rQn" id="kmE-tr-xZy"/>
+                        <outlet property="sadCountLabel" destination="y9h-y5-xzE" id="WRh-TA-hgq"/>
+                        <outlet property="sillyButton" destination="nvr-Yk-CJy" id="VOM-6v-Lkg"/>
+                        <outlet property="sillyCountLabel" destination="51x-yv-we6" id="5fu-Fh-rXV"/>
+                        <outlet property="worriedButton" destination="pGf-6D-ca2" id="eiy-5A-pG3"/>
+                        <outlet property="worriedCountLabel" destination="qE4-8C-mMr" id="byL-Lj-oIS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qTs-SR-HOa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="478" y="367"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Amazed" width="88" height="88"/>
+        <image name="Angry" width="88" height="88"/>
+        <image name="Cool" width="88" height="88"/>
+        <image name="Happy" width="88" height="88"/>
+        <image name="Hilarious" width="88" height="88"/>
+        <image name="Love" width="88" height="88"/>
+        <image name="Sad" width="88" height="88"/>
+        <image name="Silly" width="88" height="88"/>
+        <image name="Worried" width="88" height="88"/>
+    </resources>
+</document>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="chQ-Go-4Ec">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Post Options View Controller-->
+        <scene sceneID="UyH-o7-wBR">
+            <objects>
+                <viewController storyboardIdentifier="PostOptions" modalPresentationStyle="overFullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="chQ-Go-4Ec" customClass="PostOptionsViewController" customModule="Treem" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ulR-6b-c1j"/>
+                        <viewControllerLayoutGuide type="bottom" id="FBY-Fs-Ct0"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="nxv-9s-lms">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fuH-2q-Y2V">
+                                <rect key="frame" x="392" y="78" width="208" height="240"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bcJ-Yu-J2m" userLabel="Who Can See This" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="208" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="25" id="FIQ-N1-bWW"/>
+                                            <constraint firstAttribute="height" constant="25" id="Kln-9H-eav"/>
+                                            <constraint firstAttribute="height" constant="48" id="v0a-mQ-sno"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="0.0" maxY="8"/>
+                                        <inset key="titleEdgeInsets" minX="15" minY="0.0" maxX="10" maxY="0.0"/>
+                                        <state key="normal" title="Who can see this post" image="Members"/>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="FIQ-N1-bWW"/>
+                                                <exclude reference="Kln-9H-eav"/>
+                                            </mask>
+                                        </variation>
+                                        <connections>
+                                            <action selector="membersButtonTouchUpInside:" destination="chQ-Go-4Ec" eventType="touchUpInside" id="GZA-X8-Qqb"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oga-fJ-46I" userLabel="Reactions Button" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="48" width="208" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="ksS-Ta-hkD"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="10" maxY="8"/>
+                                        <inset key="titleEdgeInsets" minX="19" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="Reactions" image="Neutral"/>
+                                        <connections>
+                                            <action selector="reactionsButtonTouchUpInside:" destination="chQ-Go-4Ec" eventType="touchUpInside" id="kfH-tq-Bu0"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vmx-z6-XmW" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="96" width="208" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="QC3-z7-MIK"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="10" maxY="8"/>
+                                        <inset key="titleEdgeInsets" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="Edit this post" image="Edit"/>
+                                        <connections>
+                                            <action selector="editTouchUpInside:" destination="chQ-Go-4Ec" eventType="touchUpInside" id="19v-b9-0Mx"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ycl-BY-lQo" userLabel="Delete Button" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="144" width="208" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="CAB-6M-leA"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="10" maxY="8"/>
+                                        <inset key="titleEdgeInsets" minX="19" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="Delete this post" image="Trash"/>
+                                        <connections>
+                                            <action selector="deleteButtonTouchUpInside:" destination="chQ-Go-4Ec" eventType="touchUpInside" id="4xr-wB-wrX"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c42-f0-STq" customClass="MenuItemRowButton" customModule="Treem" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="192" width="208" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="dgl-5q-Ldh"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <inset key="contentEdgeInsets" minX="10" minY="8" maxX="10" maxY="8"/>
+                                        <inset key="titleEdgeInsets" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="Report this post" image="Report"/>
+                                        <connections>
+                                            <action selector="abuseTouchUpInside:" destination="chQ-Go-4Ec" eventType="touchUpInside" id="qmk-Jv-NBx"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="vmx-z6-XmW" secondAttribute="trailing" id="4gz-U4-5VA"/>
+                                    <constraint firstItem="vmx-z6-XmW" firstAttribute="leading" secondItem="fuH-2q-Y2V" secondAttribute="leading" id="6bb-AG-VRs"/>
+                                    <constraint firstAttribute="trailing" secondItem="Ycl-BY-lQo" secondAttribute="trailing" id="ASb-yh-txG"/>
+                                    <constraint firstItem="oga-fJ-46I" firstAttribute="leading" secondItem="fuH-2q-Y2V" secondAttribute="leading" id="Cm2-Io-csS"/>
+                                    <constraint firstAttribute="bottom" secondItem="c42-f0-STq" secondAttribute="bottom" id="JLi-I9-YU2"/>
+                                    <constraint firstItem="c42-f0-STq" firstAttribute="leading" secondItem="fuH-2q-Y2V" secondAttribute="leading" id="LqQ-HW-wr3"/>
+                                    <constraint firstItem="Ycl-BY-lQo" firstAttribute="bottom" secondItem="c42-f0-STq" secondAttribute="top" id="MUq-wC-EcQ"/>
+                                    <constraint firstItem="vmx-z6-XmW" firstAttribute="bottom" secondItem="Ycl-BY-lQo" secondAttribute="top" id="UIf-P9-3GV"/>
+                                    <constraint firstAttribute="trailing" secondItem="oga-fJ-46I" secondAttribute="trailing" id="VAl-WS-mpI"/>
+                                    <constraint firstAttribute="trailing" secondItem="bcJ-Yu-J2m" secondAttribute="trailing" id="ar2-c3-eob"/>
+                                    <constraint firstAttribute="trailing" secondItem="c42-f0-STq" secondAttribute="trailing" id="fNW-z4-O7O"/>
+                                    <constraint firstItem="vmx-z6-XmW" firstAttribute="top" secondItem="oga-fJ-46I" secondAttribute="bottom" id="fVl-tP-WjZ"/>
+                                    <constraint firstItem="oga-fJ-46I" firstAttribute="top" secondItem="bcJ-Yu-J2m" secondAttribute="bottom" id="rXK-hv-k6X"/>
+                                    <constraint firstAttribute="width" constant="208" id="sGh-Op-k2Q"/>
+                                    <constraint firstItem="Ycl-BY-lQo" firstAttribute="leading" secondItem="fuH-2q-Y2V" secondAttribute="leading" id="wKn-Kc-54E"/>
+                                    <constraint firstItem="bcJ-Yu-J2m" firstAttribute="leading" secondItem="fuH-2q-Y2V" secondAttribute="leading" id="wqw-rh-MnN"/>
+                                    <constraint firstItem="bcJ-Yu-J2m" firstAttribute="top" secondItem="fuH-2q-Y2V" secondAttribute="top" id="zN0-D3-7We"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fO5-c1-33X" customClass="FeedActionButton" customModule="Treem" customModuleProvider="target">
+                                <rect key="frame" x="554" y="46" width="46" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="46" id="NkC-Tu-FTz"/>
+                                    <constraint firstAttribute="height" constant="32" id="pW8-su-53Q"/>
+                                </constraints>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <inset key="imageEdgeInsets" minX="14" minY="10" maxX="14" maxY="10"/>
+                                <state key="normal" image="Options"/>
+                                <connections>
+                                    <action selector="postOptionsButtonTouchUpInside:" destination="chQ-Go-4Ec" eventType="touchUpInside" id="75r-uG-508"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="fO5-c1-33X" secondAttribute="trailing" id="3BG-4i-TMl"/>
+                            <constraint firstItem="fO5-c1-33X" firstAttribute="top" secondItem="ulR-6b-c1j" secondAttribute="bottom" constant="46" id="p1K-Ej-PsC"/>
+                            <constraint firstAttribute="trailing" secondItem="fuH-2q-Y2V" secondAttribute="trailing" id="sut-4z-xSP"/>
+                            <constraint firstItem="fuH-2q-Y2V" firstAttribute="top" secondItem="fO5-c1-33X" secondAttribute="bottom" id="tOp-sE-U75"/>
+                        </constraints>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="600" height="600"/>
+                    <connections>
+                        <outlet property="deleteButton" destination="Ycl-BY-lQo" id="Pd1-Ve-iiP"/>
+                        <outlet property="deleteButtonHeightConstraint" destination="CAB-6M-leA" id="xod-A3-zLT"/>
+                        <outlet property="editButton" destination="vmx-z6-XmW" id="Q0g-pm-22b"/>
+                        <outlet property="editButtonHeightConstraint" destination="QC3-z7-MIK" id="2C1-LF-D13"/>
+                        <outlet property="membersCanViewButton" destination="bcJ-Yu-J2m" id="JN0-gM-f20"/>
+                        <outlet property="membersCanViewButtonHeightConstraint" destination="v0a-mQ-sno" id="qjD-eO-zZy"/>
+                        <outlet property="optionsView" destination="fuH-2q-Y2V" id="vWD-pO-BIi"/>
+                        <outlet property="postOptionsButton" destination="fO5-c1-33X" id="1Yz-sH-VpW"/>
+                        <outlet property="postOptionsButtonTopConstraint" destination="p1K-Ej-PsC" id="x8n-qc-hao"/>
+                        <outlet property="reactionsButton" destination="oga-fJ-46I" id="b9r-iU-B6p"/>
+                        <outlet property="reactionsButtonHeightConstraint" destination="ksS-Ta-hkD" id="9I5-mo-BL5"/>
+                        <outlet property="reportButton" destination="c42-f0-STq" id="KhA-XE-sWr"/>
+                        <outlet property="reportButtonHeightConstraint" destination="dgl-5q-Ldh" id="oE7-FY-uej"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Uct-Uz-lbc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="165" y="0.0"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Edit" width="25" height="25"/>
+        <image name="Members" width="27" height="25"/>
+        <image name="Neutral" width="21" height="24"/>
+        <image name="Options" width="36" height="22"/>
+        <image name="Report" width="25" height="25"/>
+        <image name="Trash" width="20" height="25"/>
+    </resources>
+</document>

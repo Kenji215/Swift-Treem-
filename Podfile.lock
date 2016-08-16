@@ -1,0 +1,76 @@
+PODS:
+  - AWSCore (2.3.4)
+  - AWSS3 (2.3.4):
+    - AWSCore (= 2.3.4)
+  - CLImageEditor/AllTools (0.1.4):
+    - CLImageEditor/Core
+    - CLImageEditor/EmoticonTool
+    - CLImageEditor/ResizeTool
+    - CLImageEditor/SplashTool
+    - CLImageEditor/StickerTool
+    - CLImageEditor/TextTool
+  - CLImageEditor/Core (0.1.4)
+  - CLImageEditor/EmoticonTool (0.1.4):
+    - CLImageEditor/Core
+  - CLImageEditor/ResizeTool (0.1.4):
+    - CLImageEditor/Core
+  - CLImageEditor/SplashTool (0.1.4):
+    - CLImageEditor/Core
+  - CLImageEditor/StickerTool (0.1.4):
+    - CLImageEditor/Core
+  - CLImageEditor/TextTool (0.1.4):
+    - CLImageEditor/Core
+  - CorePlot (2.0)
+  - Kingfisher (2.3.0)
+  - KMPlaceholderTextView (1.2.0)
+  - libPhoneNumber-iOS (0.8.10)
+  - Locksmith (2.0.6)
+  - OAuthSwift (0.5.2)
+  - SinchRTC (3.9.1)
+  - SwiftyJSON (2.3.2)
+  - TTTAttributedLabel (1.13.4)
+
+DEPENDENCIES:
+  - AWSCore
+  - AWSS3
+  - CLImageEditor/AllTools (from `https://github.com/yackle/CLImageEditor.git`)
+  - CorePlot (from `https://github.com/core-plot/core-plot.git`, branch `release-2.0`)
+  - Kingfisher
+  - KMPlaceholderTextView
+  - libPhoneNumber-iOS
+  - Locksmith
+  - OAuthSwift
+  - SinchRTC
+  - SwiftyJSON
+  - TTTAttributedLabel
+
+EXTERNAL SOURCES:
+  CLImageEditor:
+    :git: https://github.com/yackle/CLImageEditor.git
+  CorePlot:
+    :branch: release-2.0
+    :git: https://github.com/core-plot/core-plot.git
+
+CHECKOUT OPTIONS:
+  CLImageEditor:
+    :commit: f0c838c54b412880f60c24646981a46bac31939e
+    :git: https://github.com/yackle/CLImageEditor.git
+  CorePlot:
+    :commit: 686e30ef9e7b7cb63f5ae8f2b0b40b18622671af
+    :git: https://github.com/core-plot/core-plot.git
+
+SPEC CHECKSUMS:
+  AWSCore: 926eb781459b58d4319b0fa4f5f3bffb6b28b112
+  AWSS3: f49fde807d6cfc373f1bdb8150c9770d470ca2fd
+  CLImageEditor: 9d388449af816729da67e68465e20462f181841d
+  CorePlot: b7f422ad363f2b0e48152471d6da45ce232eb8c6
+  Kingfisher: 234d9dce7e523cd0d868d67672a0dec9efc767da
+  KMPlaceholderTextView: cae8ee889bd38d20587eee6b2623b8218f31b8f5
+  libPhoneNumber-iOS: 7bfd00f843fdcd82b5182b463e8eb3b27579f41d
+  Locksmith: 42ec3d535448e3c218f4342782b07a222b1acfd1
+  OAuthSwift: 1ef042d4362e755e24a78f158d817245641a5d24
+  SinchRTC: 364114635e0aa443cf0f3778efe91521a1df444e
+  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
+  TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
+
+COCOAPODS: 0.39.0
